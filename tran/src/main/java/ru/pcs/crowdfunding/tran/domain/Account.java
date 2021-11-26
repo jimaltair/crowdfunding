@@ -21,7 +21,7 @@ public class Account {
     private Long id;
 
     @Column(name = "is_active", nullable = false)
-    private int isActive;
+    private boolean isActive;
 
     @Column(name = "date_created", nullable = false)
     private Instant createdAt;
