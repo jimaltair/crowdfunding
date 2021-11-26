@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,4 +29,7 @@ public class Account {
 
     @Column(name = "date_modified", nullable = false)
     private Instant modifiedAt;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
+    private List<Payment> payments;
 }
