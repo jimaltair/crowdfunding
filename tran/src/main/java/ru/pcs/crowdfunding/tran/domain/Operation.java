@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -41,4 +42,7 @@ public class Operation {
 
     @Column(name = "sum_payment", nullable = false)
     private BigDecimal sum;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "operation")
+    private List<Payment> payments;
 }
