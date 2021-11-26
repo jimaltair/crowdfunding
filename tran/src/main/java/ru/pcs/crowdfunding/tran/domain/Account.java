@@ -17,7 +17,7 @@ import java.util.List;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "is_active", nullable = false)
