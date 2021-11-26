@@ -12,8 +12,8 @@ import java.util.List;
 @ToString(exclude = {"projects"})
 @EqualsAndHashCode(exclude = {"projects"})
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "client")
+public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

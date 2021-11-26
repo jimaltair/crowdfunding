@@ -23,7 +23,7 @@ public class Project {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    private Client author;
 
     @Column(name = "title", nullable = false)
     private String title;

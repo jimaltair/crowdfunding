@@ -25,7 +25,7 @@ public class ProjectComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author", nullable = false)
-    private User author;
+    private Client author;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
