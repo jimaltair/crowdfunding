@@ -11,8 +11,8 @@ import javax.persistence.*;
 @ToString()
 @EqualsAndHashCode()
 @Entity
-@Table(name = "authorization")
-public class Authorization {
+@Table(name = "authorization_info")
+public class AuthorizationInfo {
     public enum Role {
         USER,
         MODERATOR,
