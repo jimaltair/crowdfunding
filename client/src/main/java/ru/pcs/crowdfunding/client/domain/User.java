@@ -3,13 +3,14 @@ package ru.pcs.crowdfunding.client.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString()
-@EqualsAndHashCode()
+@ToString(exclude = {"projects"})
+@EqualsAndHashCode(exclude = {"projects"})
 @Entity
 @Table(name = "user")
 public class User {
@@ -35,4 +36,7 @@ public class User {
 
     @Column(name = "account_id", nullable = false, unique = true)
     private Long accountId;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
+    private List<Project> projects;
 }
