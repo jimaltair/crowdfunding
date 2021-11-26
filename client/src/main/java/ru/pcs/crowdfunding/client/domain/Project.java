@@ -28,8 +28,7 @@ public class Project {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
-    @Lob
+    @Column(name = "description", length = 4096)
     private String description;
 
     @Column(name = "created_at", nullable = false)

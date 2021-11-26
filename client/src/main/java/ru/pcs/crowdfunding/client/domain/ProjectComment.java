@@ -30,7 +30,6 @@ public class ProjectComment {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "text", nullable = false)
-    @Lob
+    @Column(name = "text", length = 4096, nullable = false)
     private String text;
 }
