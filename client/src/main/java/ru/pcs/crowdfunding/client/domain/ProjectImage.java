@@ -19,7 +19,7 @@ public class ProjectImage {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @Column(name = "path", nullable = false)
