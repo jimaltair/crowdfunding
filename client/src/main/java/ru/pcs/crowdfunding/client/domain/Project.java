@@ -5,13 +5,14 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString()
-@EqualsAndHashCode()
+@ToString(exclude = {"images"})
+@EqualsAndHashCode(exclude = {"images"})
 @Entity
 @Table(name = "project")
 public class Project {
@@ -43,7 +44,9 @@ public class Project {
     @Column(name = "account_id", nullable = false)
     private Long accountId;
 
-    // status
-    // images
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
+    private List<ProjectImage> images;
+
     // comments
+    // status
 }
