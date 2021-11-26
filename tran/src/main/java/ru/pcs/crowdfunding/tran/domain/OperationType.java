@@ -1,9 +1,6 @@
 package ru.pcs.crowdfunding.tran.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,6 +8,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString()
+@EqualsAndHashCode()
 @Entity
 @Table(name = "operation_type")
 public class OperationType {
