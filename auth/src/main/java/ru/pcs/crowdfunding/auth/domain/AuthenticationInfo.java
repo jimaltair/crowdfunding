@@ -11,8 +11,8 @@ import javax.persistence.*;
 @ToString()
 @EqualsAndHashCode()
 @Entity
-@Table(name = "authentication")
-public class Authentication {
+@Table(name = "authentication_info")
+public class AuthenticationInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
