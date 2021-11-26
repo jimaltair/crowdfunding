@@ -27,15 +27,15 @@ public class Operation {
     @Column(name = "date_time", nullable = false)
     private Instant datetime;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "operation_type", nullable = false)
     private OperationType operationType;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debit_account_id", nullable = false)
     private Account debitAccount;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_account_id", nullable = false)
     private Account creditAccount;
 

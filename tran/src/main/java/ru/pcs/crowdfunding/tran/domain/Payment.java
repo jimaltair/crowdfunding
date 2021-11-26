@@ -20,14 +20,14 @@ public class Payment {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @Column(name = "sum_payment", nullable = false)
     private BigDecimal sum;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "operation_id", nullable = false)
     private Operation operation;
 }
