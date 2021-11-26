@@ -27,12 +27,10 @@ public class AuthenticationInfo {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "access_token")
-    @Lob
+    @Column(name = "access_token", length = 4096)
     private String accessToken;
 
-    @Column(name = "refresh_token")
-    @Lob
+    @Column(name = "refresh_token", length = 4096)
     private String refreshToken;
 
     @Column(name = "is_active", nullable = false)
