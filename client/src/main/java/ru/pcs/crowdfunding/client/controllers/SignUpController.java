@@ -24,7 +24,7 @@ public class SignUpController {
         return "signUp";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, value = "/signUp")
     @ResponseStatus(HttpStatus.CREATED)
     public String signUp(@Valid SignUpForm form, BindingResult result, Model model) {
         if (result.hasErrors()) {
