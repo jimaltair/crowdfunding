@@ -1,10 +1,10 @@
 -- auto-generated definition
 create table account
 (
-    account_id    bigint default nextval('account_account_id_seq'::regclass) not null
+    id    bigint default nextval('account_account_id_seq'::regclass) not null
         constraint accounts_pk
             primary key,
-    is_active     integer,
+    is_active     boolean                                                     not null,
     date_created  timestamp                                                   not null,
     date_modified timestamp                                                   not null
 );
@@ -21,5 +21,5 @@ alter table account
     owner to postgres;
 
 create unique index accounts_account_id_uindex
-    on account (account_id);
+    on account (id);
 
