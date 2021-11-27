@@ -10,14 +10,12 @@ import ru.pcs.crowdfunding.client.services.PingService;
 @RestController
 @RequestMapping("/api/v0/ping")
 @RequiredArgsConstructor
-@Slf4j
 public class PingController {
 
     private final PingService pingService;
 
     @GetMapping
     public String doGet() {
-        log.info("Accessing http://localhost:8080/api/v0/ping. Result: {}", pingService.getPong());
         return pingService.getPong();
     }
 }
