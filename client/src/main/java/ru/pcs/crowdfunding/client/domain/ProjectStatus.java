@@ -29,4 +29,7 @@ public class ProjectStatus {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Column(name = "description", length = 4096)
+    private String description;
 }
