@@ -12,8 +12,8 @@ public class SignUpServiceImpl implements SignUpService {
          Client client = Client.builder()
                 .firstName(form.getFirstName())
                 .lastName(form.getLastName())
-                .country(form.country())
-                .city(form.city())
+                .country(form.getCountry())
+                .city(form.getCity())
                 .email(form.getEmail().toLowerCase(Locale.ROOT))
                 .password(form.getPassword())
                 .build();
