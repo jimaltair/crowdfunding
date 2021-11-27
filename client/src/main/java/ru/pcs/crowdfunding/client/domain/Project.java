@@ -7,12 +7,13 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"images", "comments", "status"})
-@EqualsAndHashCode(exclude = {"images", "comments", "status"})
+@ToString(exclude = {"images"})
+@EqualsAndHashCode(exclude = {"images"})
 @Entity
 @Table(name = "project")
 public class Project {
@@ -40,15 +41,13 @@ public class Project {
     @Column(name = "money_goal", nullable = false)
     private BigDecimal moneyGoal;
 
-    @Column(name = "account_id", nullable = false, unique = true)
+    @Column(name = "account_id", unique = true)
     private Long accountId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", nullable = false)
+    private ProjectStatus status;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<ProjectImage> images;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
-    private List<ProjectComment> comments;
-
-    @OneToOne(mappedBy = "project")
-    private ProjectStatus status;
 }
