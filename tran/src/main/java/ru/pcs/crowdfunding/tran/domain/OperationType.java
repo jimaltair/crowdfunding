@@ -27,6 +27,6 @@ public class OperationType {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name", nullable = false)
-    private Type name;
+    @Column(name = "type", nullable = false)
+    private Type type;
 }
