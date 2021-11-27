@@ -35,7 +35,7 @@ public class Client {
     @Column(name = "avatar_image_path")
     private String avatarImagePath;
 
-    @Column(name = "account_id", nullable = false, unique = true)
+    @Column(name = "account_id", unique = true)
     private Long accountId;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
