@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidPassword {
-    String message() default "invalid password";
+    String message() default "invalid password or password must contains !, # , @, $ or %.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default  {};
 }
