@@ -12,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"images", "comments"})
-@EqualsAndHashCode(exclude = {"images", "comments"})
+@ToString(exclude = {"images"})
+@EqualsAndHashCode(exclude = {"images"})
 @Entity
 @Table(name = "project")
 public class Project {
@@ -50,7 +50,4 @@ public class Project {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<ProjectImage> images;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
-    private List<ProjectComment> comments;
 }
