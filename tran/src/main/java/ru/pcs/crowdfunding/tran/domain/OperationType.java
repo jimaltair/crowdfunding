@@ -29,4 +29,7 @@ public class OperationType {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private Type type;
+
+    @Column(name = "description", length = 4096)
+    private String description;
 }
