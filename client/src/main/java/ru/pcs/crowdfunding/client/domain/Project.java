@@ -41,7 +41,7 @@ public class Project {
     @Column(name = "money_goal", nullable = false)
     private BigDecimal moneyGoal;
 
-    @Column(name = "account_id", nullable = false, unique = true)
+    @Column(name = "account_id", unique = true)
     private Long accountId;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
