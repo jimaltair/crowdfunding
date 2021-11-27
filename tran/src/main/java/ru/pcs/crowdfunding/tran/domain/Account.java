@@ -22,7 +22,7 @@ public class Account {
     private Long id;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive;
+    private Boolean isActive;
 
     @Column(name = "date_created", nullable = false)
     private Instant createdAt;
