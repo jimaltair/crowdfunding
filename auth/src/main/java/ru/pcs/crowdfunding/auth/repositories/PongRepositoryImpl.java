@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class PongRepositoryImpl implements PongRepository {
-
     //language=SQL
     private final static String SQL_SELECT_PONG = "SELECT 'Pong from AuthorizationService!';";
 

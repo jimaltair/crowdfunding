@@ -6,7 +6,6 @@ import ru.pcs.crowdfunding.client.repositories.PongRepository;
 
 @Service
 @RequiredArgsConstructor
-
 public class PingServiceImpl implements PingService {
 
     private final PongRepository pongRepository;
