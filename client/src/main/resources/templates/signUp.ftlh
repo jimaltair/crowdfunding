@@ -2,6 +2,8 @@
 <#import "spring.ftl" as spring/>
 <head>
     <meta charset="UTF-8">
+    <title>SignUp</title>
+</head>
 <body>
 <h1>Sign Up Page</h1>
 <h2>Please Enter your data:</h2>
