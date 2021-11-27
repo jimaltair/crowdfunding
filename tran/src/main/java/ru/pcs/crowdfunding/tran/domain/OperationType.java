@@ -4,7 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,6 +27,9 @@ public class OperationType {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name", nullable = false)
-    private Type name;
+    @Column(name = "type", nullable = false)
+    private Type type;
+
+    @Column(name = "description", length = 4096)
+    private String description;
 }
