@@ -1,9 +1,9 @@
 package ru.pcs.crowdfunding.client.services;
 
-import ru.pcs.crowdfunding.client.domain.Project;
+import ru.pcs.crowdfunding.client.dto.ProjectDto;
 
 import java.util.Optional;
 
 public interface ProjectsService {
-    Optional<Project> findById(Long id);
+    Optional<ProjectDto> findById(Long id);
 }
