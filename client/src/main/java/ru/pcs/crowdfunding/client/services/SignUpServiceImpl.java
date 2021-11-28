@@ -4,6 +4,8 @@ import ru.pcs.crowdfunding.client.dto.SignUpForm;
 
 import java.util.Locale;
 
+@Service
+@RequiredArgsConstructor
 public class SignUpServiceImpl implements SignUpService {
     private final ClientsRepository clientsRepository;
 
