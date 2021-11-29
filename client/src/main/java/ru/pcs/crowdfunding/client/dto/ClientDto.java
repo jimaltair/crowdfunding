@@ -14,12 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ClientDto {
+
     private Long id;
-    private String firstName;
-    private String lastName;
+
+    private String clientName;
+//    private String about;
+
     private String country;
     private String city;
+
     private String avatarImagePath;
+
     private Long accountId;
     private List<Project> projects;
 
@@ -31,8 +36,7 @@ public class ClientDto {
         return ClientDto.builder()
                 .id(client.getId())
                 .accountId(client.getAccountId())
-                .firstName(client.getFirstName())
-                .lastName(client.getLastName())
+                .clientName(client.getFirstName() + " " + client.getLastName())
                 .country(client.getCountry())
                 .city(client.getCity())
                 .avatarImagePath(client.getAvatarImagePath())
