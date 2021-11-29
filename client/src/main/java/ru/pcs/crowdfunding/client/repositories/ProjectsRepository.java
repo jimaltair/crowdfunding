@@ -23,12 +23,12 @@ public interface ProjectsRepository extends JpaRepository<Project, Long> {
     Page<Project> findProjectsByDescriptionContains(String description, Pageable pageable);
     Page<Project> findProjectsByTitleContains(String title, Pageable pageable);
 
-    Page<Project> findProjectsByFinishDateBetween(Instant finishDateOne, Instant finishDateTwo, Pageable pageable);
-    Page<Project> findProjectsByFinishDateBefore(Instant finishDate, Pageable pageable);
-    Page<Project> findProjectsByFinishDateAfter(Instant finishDate, Pageable pageable);
-    Page<Project> findProjectsByCreatedAtBetween(Instant createdDateOne, Instant createsDateTwo, Pageable pageable);
-    Page<Project> findProjectsByCreatedAtBefore(Instant createdDate, Pageable pageable);
-    Page<Project> findProjectsByCreatedAtAfter(Instant createdDate, Pageable pageable);
+    Page<Project> findProjectsByFinishDateBetween(Instant finishDateStart, Instant finishDateEnd, Pageable pageable);
+    Page<Project> findProjectsByFinishDateAfter(Instant finishDateStart, Pageable pageable);
+    Page<Project> findProjectsByFinishDateBefore(Instant finishDateEnd, Pageable pageable);
+    Page<Project> findProjectsByCreatedAtBetween(Instant createdDateStart, Instant createsDateEnd, Pageable pageable);
+    Page<Project> findProjectsByCreatedAtAfter(Instant createdDateStart, Pageable pageable);
+    Page<Project> findProjectsByCreatedAtBefore(Instant createdDateEnd, Pageable pageable);
 
     Page<Project> findProjectsByMoneyGoalBetween(BigDecimal moneyGoalMin, BigDecimal moneyGoalMax, Pageable pageable);
     Page<Project> findProjectsByMoneyGoalGreaterThan(BigDecimal moneyGoalMin, Pageable pageable);
