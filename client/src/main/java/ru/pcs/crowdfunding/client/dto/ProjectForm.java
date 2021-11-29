@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.awt.*;
 
 /**
  * 28.11.2021
