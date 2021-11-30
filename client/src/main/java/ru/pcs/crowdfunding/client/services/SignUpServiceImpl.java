@@ -1,6 +1,10 @@
 package ru.pcs.crowdfunding.client.services;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.SignUpForm;
+import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
 import java.util.Locale;
 
