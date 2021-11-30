@@ -8,8 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
+import ru.pcs.crowdfunding.auth.dto.AuthenticationResponse;
 import ru.pcs.crowdfunding.auth.services.AuthService;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Controller
@@ -21,37 +23,85 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<AuthenticationInfoDto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<AuthenticationResponse> getById(@PathVariable("id") Long id) {
         log.info("get AuthenticationInfo by id {}", id);
+
+        boolean success = true;
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String errorMessage = null;
         Optional<AuthenticationInfoDto> authenticationInfo = authService.findById(id);
+
         if (!authenticationInfo.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client with id " + id + " not found");
+            success = false;
+            status = HttpStatus.NOT_FOUND;
+            errorMessage = "Client with id " + id + " not found";
         }
         log.debug("result = {}", authenticationInfo.get());
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(authenticationInfo.get());
+
+        AuthenticationResponse response = AuthenticationResponse.builder()
+                .success(success)
+                .error(success ? null : Arrays.asList(status.toString(), errorMessage))
+                .data(authenticationInfo)
+                .build();
+        return ResponseEntity.status(status).body(response);
     }
 
     @PostMapping
-    public ResponseEntity<AuthenticationInfoDto> addAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
+    public ResponseEntity<AuthenticationResponse> addAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
         AuthenticationInfoDto authenticationInfoDto = authService.addAuthenticationInfo(authenticationInfo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(authenticationInfoDto);
+
+        AuthenticationResponse response = AuthenticationResponse.builder()
+                .success(true)
+                .error(null)
+                .data(authenticationInfoDto)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<AuthenticationInfoDto> updateAuthenticationInfo(@PathVariable("id") Long id, @RequestBody AuthenticationInfoDto authenticationInfo) {
+    public ResponseEntity<AuthenticationResponse> updateAuthenticationInfo(@PathVariable("id") Long id,
+                                                                           @RequestBody AuthenticationInfoDto authenticationInfo) {
+        boolean success = true;
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String errorMessage = null;
         Optional<AuthenticationInfoDto> authenticationInfoDto = authService.updateAuthenticationInfo(id, authenticationInfo);
+
         if (!authenticationInfoDto.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Can't update. Client with id " + id + " not found");
+            success = false;
+            status = HttpStatus.NOT_FOUND;
+            errorMessage = "Can't update. Client with id " + id + " not found";
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(authenticationInfoDto.get());
+
+        AuthenticationResponse response = AuthenticationResponse.builder()
+                .success(success)
+                .error(success ? null : Arrays.asList(status.toString(), errorMessage))
+                .data(authenticationInfoDto)
+                .build();
+
+        return ResponseEntity.status(status).body(response);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<AuthenticationInfoDto> deleteAuthenticationInfo(@PathVariable("id") Long id) {
+    public ResponseEntity<AuthenticationResponse> deleteAuthenticationInfo(@PathVariable("id") Long id) {
+
+        boolean success = true;
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String errorMessage = null;
         Optional<AuthenticationInfoDto> authenticationInfoDto = authService.deleteAuthenticationInfo(id);
+
         if (!authenticationInfoDto.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Can't delete. Client with id " + id + " not found");
+            success = false;
+            status = HttpStatus.NOT_FOUND;
+            errorMessage = "Can't delete. Client with id " + id + " not found";
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(authenticationInfoDto.get());
+
+        AuthenticationResponse response = AuthenticationResponse.builder()
+                .success(success)
+                .error(success ? null : Arrays.asList(status.toString(), errorMessage))
+                .data(authenticationInfoDto)
+                .build();
+
+        return ResponseEntity.status(status).body(response);
     }
 }
