@@ -144,46 +144,6 @@
                                 <h4>Типа свои проекты </h4>
                                 <table class="table table-th-block">
                                     <tbody>
-
-<#--                                    название проекта-->
-
-<#--                                    <tr>-->
-<#--                                        <td class="active">Имя:</td>-->
-<#--                                        <td>${clientDto.firstName}</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Фамилия:</td>-->
-<#--                                        <td>${clientDto.lastName}</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Страна:</td>-->
-<#--                                        <td>${clientDto.country}</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Город:</td>-->
-<#--                                        <td>${clientDto.city}</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Почта:</td>-->
-<#--                                        <td>${clientDto.email}</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Запасная почта:</td>-->
-<#--                                        <td>${clientDto.secondEmail}</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Поле с данными:</td>-->
-<#--                                        <td>данные пользователя</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Поле с данными:</td>-->
-<#--                                        <td>данные пользователя</td>-->
-<#--                                    </tr>-->
-<#--                                    <tr>-->
-<#--                                        <td class="active">Кошелёк:</td>-->
-<#--                                        <td>300 p</td>-->
-<#--                                    </tr>-->
-<#--                                    </tbody>-->
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="sponsored_projects">

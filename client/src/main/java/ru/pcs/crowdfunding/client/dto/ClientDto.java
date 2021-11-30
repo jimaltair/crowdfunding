@@ -34,17 +34,12 @@ public class ClientDto {
     private String email;
     private String secondEmail;
 
-//    на форму приходят также основной и запасной email, но их нет в Client
-//    private String email;
-//    private String secondEmail;
-
     public static ClientDto from(Client client) {
         return ClientDto.builder()
                 .id(client.getId())
                 .accountId(client.getAccountId())
                 .firstName(client.getFirstName())
                 .lastName(client.getLastName())
-//                .clientName(client.getFirstName() + " " + client.getLastName())
                 .country(client.getCountry())
                 .city(client.getCity())
                 .avatarImagePath(client.getAvatarImagePath())
