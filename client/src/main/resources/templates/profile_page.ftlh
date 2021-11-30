@@ -1,20 +1,20 @@
+<#import "spring.ftl" as spring/>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>profile page</title>
 </head>
-
-<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="/static/bootstrap/css/font-awesome.min.css"/>
-<script src="/static/bootstrap/js/jquery-1.11.3.min.js"></script>
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="/bootstrap/css/font-awesome.min.css"/>
+<script src="/bootstrap/js/jquery-1.11.3.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
 
 <br><br><br>
 
 <style>
     body {
-        background-image: url("/static/img/bg-1.png");
+        background-image: url("/img/bg-1.png");
     }
 
     #main {
@@ -70,9 +70,9 @@
                     </div>
                     <div class="panel-body">
                         <div class="text-center" id="author">
-                            <img src="/static/img/avatar_vasiliy.jpg">
-                            <h3>Василий Понторезов</h3>
-                            <p>Я простой Русский пацан и мне всё по барабану.</p>
+                            <img src="/img/avatar_vasiliy.jpg">
+                            <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
+                            <p>${clientDto.about}</p>
                             <p class="sosmed-author">
                                 <a href="#"><i class="fa fa-facebook" title="Facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter" title="Twitter"></i></a>
@@ -96,32 +96,33 @@
                         <div id="myTabContent" class="tab-content">
                             <hr>
                             <div class="tab-pane fade active in" id="detail">
+<#----------------------->
                                 <h4>Данные профиля</h4>
                                 <table class="table table-th-block">
                                     <tbody>
                                     <tr>
                                         <td class="active">Имя:</td>
-                                        <td>Василий</td>
+                                        <td>${clientDto.firstName}</td>
                                     </tr>
                                     <tr>
                                         <td class="active">Фамилия:</td>
-                                        <td>Понторезов</td>
+                                        <td>${clientDto.lastName}</td>
                                     </tr>
                                     <tr>
                                         <td class="active">Страна:</td>
-                                        <td>Россия</td>
+                                        <td>${clientDto.country}</td>
                                     </tr>
                                     <tr>
                                         <td class="active">Город:</td>
-                                        <td>Волгоград</td>
+                                        <td>${clientDto.country}</td>
                                     </tr>
                                     <tr>
                                         <td class="active">Почта:</td>
-                                        <td>vasiliy.pont@mail.ru</td>
+                                        <td>${clientDto.email}</td>
                                     </tr>
                                     <tr>
                                         <td class="active">Запасная почта:</td>
-                                        <td>vasiliy.pont@gmail.com</td>
+                                        <td>${clientDto.secondEmail}</td>
                                     </tr>
                                     <tr>
                                         <td class="active">Поле с данными:</td>
@@ -133,13 +134,17 @@
                                     </tr>
                                     <tr>
                                         <td class="active">Кошелёк:</td>
-                                        <td>300 ₽</td>
+                                        <td>300 p</td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
+                            <#----------------------------------->
                             <div class="tab-pane fade" id="own_projects">
-                                <h4>Свои проекты</h4>
+                                <h4>Типа свои проекты </h4>
+                                <table class="table table-th-block">
+                                    <tbody>
+                                </table>
                             </div>
                             <div class="tab-pane fade" id="sponsored_projects">
                                 <h4>Поддержанные проекты</h4>
@@ -163,6 +168,7 @@
                                     </div>
                                 </form>
                             </div>
+                            <br>
                             <div class="tab-pane fade" id="change_profile">
                                 <form role="form" class="form-horizontal">
                                     <div class="form-group">
