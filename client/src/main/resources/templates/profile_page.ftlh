@@ -6,16 +6,16 @@
     <title>profile page</title>
 </head>
 
-<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="/bootstrap/css/font-awesome.min.css"/>
-<script src="/bootstrap/js/jquery-1.11.3.min.js"></script>
-<script src="/bootstrap/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="/static/bootstrap/css/font-awesome.min.css"/>
+<script src="/static/bootstrap/js/jquery-1.11.3.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 
 <br><br><br>
 
 <style>
     body {
-        background-image: url("/img/bg-1.png");
+        background-image: url("/static/img/bg-1.png");
     }
 
     #main {
@@ -71,7 +71,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="text-center" id="author">
-                            <img src="/img/avatar_vasiliy.jpg">
+                            <img src="/static/img/avatar_vasiliy.jpg">
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <p>${clientDto.about}</p>
                             <p class="sosmed-author">
