@@ -1,6 +1,7 @@
 package ru.pcs.crowdfunding.client.clients;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -8,19 +9,21 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class AuthorizationServiceRestTemplateClient implements AuthorizationServiceClient {
-
-    private final static String URL = "http://localhost:8081";
-    private final static String PING_URL = URL + "/api/v0/ping";
+    private static final String PING_URL = "/api/v0/ping";
 
     private final RestTemplate restTemplate;
+    private final String remoteAddress;
 
     @Autowired
-    public AuthorizationServiceRestTemplateClient(RestTemplateBuilder restTemplateBuilder) {
+    public AuthorizationServiceRestTemplateClient(
+            RestTemplateBuilder restTemplateBuilder,
+            @Value("${clients.authorization-service.remote-address}") String remoteAddress) {
         this.restTemplate = restTemplateBuilder.build();
+        this.remoteAddress = remoteAddress;
     }
 
     @Override
     public ResponseEntity<String> ping() {
-        return restTemplate.getForEntity(PING_URL, String.class);
+        return restTemplate.getForEntity(remoteAddress + PING_URL, String.class);
     }
 }
