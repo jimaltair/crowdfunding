@@ -22,7 +22,7 @@ public class AuthenticationController {
     @RequestMapping(method = RequestMethod.POST, value = "/signUp ????????")
     @ResponseStatus(HttpStatus.CREATED)
     public String signUp(Long userId, String password, String email, BindingResult result, Model model) {
-        if(userId == null && email == null && password == null){
+        if(userId == null || email == null || password == null){
             return "signUp";
         }
 
