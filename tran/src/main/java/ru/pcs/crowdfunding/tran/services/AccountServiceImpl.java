@@ -13,8 +13,8 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
-    AccountsRepository accountsRepository;
-    PaymentsRepository paymentsRepository;
+    private final AccountsRepository accountsRepository;
+    private final PaymentsRepository paymentsRepository;
 
     @Override
     public Long createAccount(Account account) {
