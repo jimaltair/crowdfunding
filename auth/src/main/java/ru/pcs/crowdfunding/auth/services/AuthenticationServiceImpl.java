@@ -6,6 +6,8 @@ import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 
+import java.util.Locale;
+
 @Service
 @RequiredArgsConstructor
 class AuthenticationServiceImpl implements AuthenticationService {
