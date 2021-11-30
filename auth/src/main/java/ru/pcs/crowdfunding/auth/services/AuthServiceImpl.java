@@ -14,7 +14,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Optional<AuthenticationInfoDto> findById(Long id) {
-        return Optional.empty();
+        return Optional.of(AuthenticationInfoDto.builder().build());
     }
 
     @Override
@@ -23,12 +23,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthenticationInfoDto updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo) {
-        return AuthenticationInfoDto.builder().build();
+    public Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo) {
+        return Optional.of(AuthenticationInfoDto.builder().build());
     }
 
     @Override
-    public AuthenticationInfoDto deleteAuthenticationInfo(Long id) {
-        return AuthenticationInfoDto.builder().build();
+    public Optional<AuthenticationInfoDto> deleteAuthenticationInfo(Long id) {
+        return Optional.of(AuthenticationInfoDto.builder().build());
     }
 }

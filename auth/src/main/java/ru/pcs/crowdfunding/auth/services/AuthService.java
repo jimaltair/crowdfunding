@@ -10,7 +10,7 @@ public interface AuthService {
 
     AuthenticationInfoDto addAuthenticationInfo(AuthenticationInfoDto authenticationInfo);
 
-    AuthenticationInfoDto updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo);
+    Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo);
 
-    AuthenticationInfoDto deleteAuthenticationInfo(Long id);
+    Optional<AuthenticationInfoDto> deleteAuthenticationInfo(Long id);
 }
