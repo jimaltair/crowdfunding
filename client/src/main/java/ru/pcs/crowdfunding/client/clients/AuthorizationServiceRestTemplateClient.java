@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.pcs.crowdfunding.client.dto.AuthSignUpRequest;
+import ru.pcs.crowdfunding.client.dto.ResponseDto;
 
 @Component
 public class AuthorizationServiceRestTemplateClient implements AuthorizationServiceClient {
@@ -24,7 +25,7 @@ public class AuthorizationServiceRestTemplateClient implements AuthorizationServ
     }
 
     @Override
-    public ResponseEntity<Void> signUp(AuthSignUpRequest request) {
-        return restTemplate.postForEntity(remoteAddress + SIGNUP_URL, request, Void.class);
+    public ResponseEntity<ResponseDto> signUp(AuthSignUpRequest request) {
+        return restTemplate.postForEntity(remoteAddress + SIGNUP_URL, request, ResponseDto.class);
     }
 }
