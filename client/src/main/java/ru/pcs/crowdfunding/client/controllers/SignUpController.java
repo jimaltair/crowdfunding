@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.pcs.crowdfunding.client.dto.SignUpForm;
+import ru.pcs.crowdfunding.client.services.SignUpService;
 
 import javax.validation.Valid;
 

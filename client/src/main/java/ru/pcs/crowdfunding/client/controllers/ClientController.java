@@ -32,8 +32,12 @@ public class ClientController {
         }
         log.debug("result = {}", client.get());
 
-        model.addAttribute("client" , client.get());
-        return "clientProfile";
+        client.get().setEmail("TODO: добавить email");
+        client.get().setSecondEmail("TODO: добавить второй email");
+        client.get().setAbout("TODO: добавить инфу о клиенте");
+
+        model.addAttribute("clientDto" , client.get());
+        return "profile_page";
     }
 
 }

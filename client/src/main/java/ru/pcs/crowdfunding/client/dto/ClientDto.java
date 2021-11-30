@@ -18,7 +18,10 @@ public class ClientDto {
     private Long id;
 
     private String clientName;
-//    private String about;
+    private String firstName;
+    private String lastName;
+
+    private String about;
 
     private String country;
     private String city;
@@ -28,6 +31,9 @@ public class ClientDto {
     private Long accountId;
     private List<Project> projects;
 
+    private String email;
+    private String secondEmail;
+
 //    на форму приходят также основной и запасной email, но их нет в Client
 //    private String email;
 //    private String secondEmail;
@@ -36,7 +42,9 @@ public class ClientDto {
         return ClientDto.builder()
                 .id(client.getId())
                 .accountId(client.getAccountId())
-                .clientName(client.getFirstName() + " " + client.getLastName())
+                .firstName(client.getFirstName())
+                .lastName(client.getLastName())
+//                .clientName(client.getFirstName() + " " + client.getLastName())
                 .country(client.getCountry())
                 .city(client.getCity())
                 .avatarImagePath(client.getAvatarImagePath())
