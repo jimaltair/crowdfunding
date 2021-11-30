@@ -30,13 +30,13 @@ public class SignUpForm {
     @NotBlank
     private String city;
 
-//    @NotBlank
-//    @Size(min = 7, max = 20)
-//    @ValidPassword
-//    private String password;
-//
-//    @Email
-//    @NotBlank
-//    private String email;
+    @NotBlank
+    @Size(min = 7, max = 20)
+    @ValidPassword
+    private String password;
+
+    @Email
+    @NotBlank
+    private String email;
 
 }
