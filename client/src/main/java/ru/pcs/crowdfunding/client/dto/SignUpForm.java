@@ -2,7 +2,8 @@ package ru.pcs.crowdfunding.client.dto;
 
 import lombok.*;
 import ru.pcs.crowdfunding.client.validation.NotSameNames;
-
+import ru.pcs.crowdfunding.client.validation.ValidPassword;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
