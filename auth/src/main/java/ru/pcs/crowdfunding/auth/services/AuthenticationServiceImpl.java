@@ -6,6 +6,8 @@ import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 
+import java.util.Locale;
+
 @Service
 @RequiredArgsConstructor
 class AuthenticationServiceImpl implements AuthenticationService {
@@ -13,17 +15,21 @@ class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationInfosRepository authenticationInfosRepository;
 
     @Override
-    public void signUpAuthentication(AuthenticationInfoDto client) {
+    public AuthenticationInfoDto signUpAuthentication(AuthenticationInfoDto client) {
 
-        AuthenticationInfo clientInfo = AuthenticationInfo.builder()
+        AuthenticationInfo newClientInfo = AuthenticationInfo.builder()
                 .email(client.getEmail().toLowerCase(Locale.ROOT))
                 .password(client.getPassword())
                 .userId(client.getUserId())
                 .isActive(true)
-//                .accessToken()
-//                .refreshToken()
                 .build();
+        authenticationInfosRepository.save(newClientInfo);
 
-        authenticationInfosRepository.save(clientInfo);
+        return AuthenticationInfoDto.from(newClientInfo);
+    }
+
+    @Override
+    public Boolean existEmailInDb(AuthenticationInfoDto client) {
+        return authenticationInfosRepository.findByEmail(client.getEmail());
     }
 }

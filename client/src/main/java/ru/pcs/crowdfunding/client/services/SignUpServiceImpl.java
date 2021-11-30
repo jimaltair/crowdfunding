@@ -13,14 +13,15 @@ public class SignUpServiceImpl implements SignUpService {
     private final ClientsRepository clientsRepository;
 
     @Override
-    public void signUp(SignUpForm form) {
-         Client client = Client.builder()
+    public SignUpForm signUp(SignUpForm form) {
+        Client newClient = Client.builder()
                 .firstName(form.getFirstName())
                 .lastName(form.getLastName())
                 .country(form.getCountry())
                 .city(form.getCity())
                 .build();
 
-        clientsRepository.save(client);
+        clientsRepository.save(newClient);
+        return SignUpForm.from(newClient);
     }
 }

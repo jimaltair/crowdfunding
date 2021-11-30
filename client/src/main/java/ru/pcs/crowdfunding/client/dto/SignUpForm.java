@@ -1,8 +1,10 @@
 package ru.pcs.crowdfunding.client.dto;
 
 import lombok.*;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.validation.NotSameNames;
 import ru.pcs.crowdfunding.client.validation.ValidPassword;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -39,5 +41,14 @@ public class SignUpForm {
     @Email
     @NotBlank
     private String email;
+
+    public static SignUpForm from(Client client) {
+        return SignUpForm.builder()
+                .city(client.getCity())
+                .firstName(client.getFirstName())
+                .lastName(client.getLastName())
+                .country(client.getCountry())
+                .build();
+    }
 
 }
