@@ -10,7 +10,6 @@ import ru.pcs.crowdfunding.client.dto.AuthSignUpRequest;
 
 @Component
 public class AuthorizationServiceRestTemplateClient implements AuthorizationServiceClient {
-    private static final String PING_URL = "/api/v0/ping";
     private static final String SIGNUP_URL = "/signUp";
 
     private final RestTemplate restTemplate;
@@ -22,11 +21,6 @@ public class AuthorizationServiceRestTemplateClient implements AuthorizationServ
             @Value("${clients.authorization-service.remote-address}") String remoteAddress) {
         this.restTemplate = restTemplateBuilder.build();
         this.remoteAddress = remoteAddress;
-    }
-
-    @Override
-    public ResponseEntity<String> ping() {
-        return restTemplate.getForEntity(remoteAddress + PING_URL, String.class);
     }
 
     @Override
