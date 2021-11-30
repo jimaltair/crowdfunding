@@ -16,7 +16,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
     public void signUpAuthentication(AuthenticationInfoDto client) {
 
         AuthenticationInfo clientInfo = AuthenticationInfo.builder()
-                .email(client.getEmail())
+                .email(client.getEmail().toLowerCase(Locale.ROOT))
                 .password(client.getPassword())
                 .userId(client.getUserId())
                 .isActive(true)
