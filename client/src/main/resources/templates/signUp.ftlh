@@ -7,7 +7,7 @@
 <body>
 <h1>Sign Up Page</h1>
 <h2>Please Enter your data:</h2>
-<form action="/api/v0/signUp" method="post">
+<form action="/signUp" method="post">
     <label for="firstName">Enter first name:</label>
     <input id="firstName" name="firstName" placeholder="Your first name">
     <br>
