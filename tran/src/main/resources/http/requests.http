@@ -1,0 +1,9 @@
+PUT localhost:8082/account/1
+Content-Type: application/json
+Authorization: Bearer b888b8cc-6421-4f99-89b5-daf4344f3fed
+
+{
+  "id":1,
+  "isActive":true,
+  "createdAt":"2021-12-01T13:45:29Z",
+  "modifiedAt":"2021-12-01T15:45:37Z"}
