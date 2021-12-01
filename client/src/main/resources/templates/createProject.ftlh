@@ -2,21 +2,27 @@
 <#import "spring.ftl" as spring/>
 <head>
     <meta charset="UTF-8">
-    <title>Create Project</title>
+    <title>Создание проэкта</title>
 </head>
 <body>
-<h1>Create your project</h1>
-<h2>Please enter your data:</h2>
+<h1>Создайте новый проект</h1>
+<h2>Пожалуйста, введи необходимые данные:</h2>
 <form action="/projects/create" method="post" enctype="multipart/form-data">
-    <label for="title">Enter title of your project</label>
-    <input id="title" name="title" placeholder="Title">
+    <label for="title">Введите название проекта:</label>
+    <input id="title" name="title" placeholder="Название">
     <br>
-    <label for="description">Enter description of your project:</label>
-    <input id="description" name="description" placeholder="Description">
-    <h3>Please download image of your project: </h3>
+    <label for="description">Введите описание проекта:</label>
+    <input id="description" name="description" placeholder="Описание">
+    <br>
+    <label for="moneyGoal">Введите необходимую сумму денег для сбора:</label>
+    <input id="moneyGoal" name="moneyGoal" placeholder="Цель">
+    <br>
+    <label for="finishDate">Введите дату завершения проекта:</label>
+    <input id="finishDate" type="datetime-local"  name="finishDate" placeholder="Дата">
+    <h3>Пожалуйста, загрузите изображение для проекта:</h3>
     <input type="file" name="file">
     <br>
-    <input type="submit" value="Create">
+    <input type="submit" value="Создать">
 </form>
 </body>
 </html>

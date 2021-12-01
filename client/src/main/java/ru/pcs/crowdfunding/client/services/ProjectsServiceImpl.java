@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
+import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
@@ -14,19 +15,22 @@ import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
+import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
+
+    private static final Long CLIENT_FOR_TEST = 2L;
 
     private final ProjectsRepository projectsRepository;
 
@@ -49,27 +53,15 @@ public class ProjectsServiceImpl implements ProjectsService {
     @Override
     public void createProject(ProjectForm form, MultipartFile file) {
 
-        Project project = Project.builder()
-                .author(clientsRepository.getById(2L))
-                .title(form.getTitle())
-                .description(form.getDescription())
-                .createdAt(Instant.now())
-                .finishDate(Instant.now())
-                .moneyGoal(BigDecimal.ZERO)
-                .status(projectStatusesRepository.getById(1L))
-                .build();
+        ProjectStatus projectStatus = getProjectStatus();
 
+        projectStatusesRepository.save(projectStatus);
 
-        ProjectImage image = ProjectImage.builder()
-                .project(project)
-                .path("C:\\Users\\isave\\Desktop\\ponomarev_nikolay_java_pcs_21_01_homeworks\\Crowdfunding\\client\\src\\main\\resources\\static\\upload"
-                        + UUID.randomUUID() + file.getOriginalFilename())
-                .build();
+        Project project = getProject(form, projectStatus);
 
+        ProjectImage image = getImage(file, project);
 
         try {
-            log.debug(image.getPath());
-            log.info(image.getPath());
             Files.copy(file.getInputStream(), Paths.get(image.getPath()));
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
@@ -77,5 +69,38 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         projectsRepository.save(project);
         projectImagesRepository.save(image);
+    }
+
+    private ProjectImage getImage(MultipartFile file, Project project) {
+        if (file == null || project == null) {
+            throw new IllegalArgumentException("Can't upload image");
+        }
+        return ProjectImage.builder()
+                .project(project)
+                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + file.getOriginalFilename())
+                .build();
+    }
+
+    private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
+        if (form == null || projectStatus == null) {
+            throw new IllegalArgumentException("Can't create project");
+        }
+        return  Project.builder()
+                //клиента забиваю в базу в ручную
+                .author(clientsRepository.getById(CLIENT_FOR_TEST))
+                .title(form.getTitle())
+                .description(form.getDescription())
+                .createdAt(Instant.now())
+                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
+                .moneyGoal(form.getMoneyGoal())
+                .status(projectStatus)
+                .build();
+    }
+
+    private ProjectStatus getProjectStatus() {
+        return ProjectStatus.builder()
+                .description("Simple description")
+                .status(ProjectStatus.Status.CONFIRMED)
+                .build();
     }
 }
