@@ -50,4 +50,16 @@ public class AccountServiceImpl implements AccountService {
 
         return Optional.of(AccountDto.from(account));
     }
+
+    @Override
+    public AccountDto createNewAccount(AccountDto accountDto) {
+        Account account = Account.builder()
+                .createdAt(accountDto.getCreatedAt())
+                .modifiedAt(accountDto.getModifiedAt())
+                .isActive(true)
+                .build();
+        accountsRepository.save(account);
+
+        return AccountDto.from(account);
+    }
 }

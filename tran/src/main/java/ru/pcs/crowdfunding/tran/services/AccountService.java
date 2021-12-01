@@ -13,4 +13,7 @@ public interface AccountService {
     Optional<AccountDto> findById(Long id);
 
     Optional<AccountDto> updateAccount(Long id, AccountDto accountDto);
+
+    AccountDto createNewAccount(AccountDto accountDto);
+
 }

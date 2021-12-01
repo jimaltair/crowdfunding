@@ -38,8 +38,19 @@ public class AccountController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @PostMapping
+    public ResponseEntity<ResponseDto> createAccount(@RequestBody AccountDto newAccountDto) {
+        AccountDto accountDto = accountService.createNewAccount(newAccountDto);
+
+        ResponseDto response = ResponseDto.buildResponse(true, HttpStatus.CREATED,
+                null, accountDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ResponseDto> updateAuthenticationInfo(@PathVariable("id") Long id,
+    public ResponseEntity<ResponseDto> updateAccount(@PathVariable("id") Long id,
                                                                 @RequestBody AccountDto updateAccountDto) {
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
