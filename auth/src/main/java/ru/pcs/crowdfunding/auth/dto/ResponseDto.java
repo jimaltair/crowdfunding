@@ -1,4 +1,4 @@
-package ru.pcs.crowdfunding.client.dto;
+package ru.pcs.crowdfunding.auth.dto;
 
 import lombok.*;
 
