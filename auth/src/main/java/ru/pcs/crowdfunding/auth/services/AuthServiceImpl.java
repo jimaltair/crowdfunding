@@ -18,7 +18,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthenticationInfoDto addAuthenticationInfo(AuthenticationInfoDto authenticationInfo) {
+    public AuthenticationInfoDto createAuthenticationInfo(AuthenticationInfoDto authenticationInfo) {
         return AuthenticationInfoDto.builder().build();
     }
 

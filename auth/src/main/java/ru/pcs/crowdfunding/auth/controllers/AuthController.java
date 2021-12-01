@@ -6,9 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
-import ru.pcs.crowdfunding.auth.dto.AuthenticationResponse;
+import ru.pcs.crowdfunding.auth.dto.ResponseDto;
 import ru.pcs.crowdfunding.auth.services.AuthService;
 
 import java.util.Arrays;
@@ -23,7 +22,7 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<AuthenticationResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ResponseDto> getById(@PathVariable("id") Long id) {
         log.info("get AuthenticationInfo by id {}", id);
 
         boolean success = true;
@@ -38,19 +37,20 @@ public class AuthController {
         }
         log.debug("result = {}", authenticationInfo.get());
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
+        ResponseDto response = ResponseDto.builder()
                 .success(success)
                 .error(success ? null : Arrays.asList(status.toString(), errorMessage))
                 .data(authenticationInfo)
                 .build();
+
         return ResponseEntity.status(status).body(response);
     }
 
     @PostMapping
-    public ResponseEntity<AuthenticationResponse> addAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
-        AuthenticationInfoDto authenticationInfoDto = authService.addAuthenticationInfo(authenticationInfo);
+    public ResponseEntity<ResponseDto> createAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
+        AuthenticationInfoDto authenticationInfoDto = authService.createAuthenticationInfo(authenticationInfo);
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
+        ResponseDto response = ResponseDto.builder()
                 .success(true)
                 .error(null)
                 .data(authenticationInfoDto)
@@ -60,7 +60,7 @@ public class AuthController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<AuthenticationResponse> updateAuthenticationInfo(@PathVariable("id") Long id,
+    public ResponseEntity<ResponseDto> updateAuthenticationInfo(@PathVariable("id") Long id,
                                                                            @RequestBody AuthenticationInfoDto authenticationInfo) {
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -73,7 +73,7 @@ public class AuthController {
             errorMessage = "Can't update. Client with id " + id + " not found";
         }
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
+        ResponseDto response = ResponseDto.builder()
                 .success(success)
                 .error(success ? null : Arrays.asList(status.toString(), errorMessage))
                 .data(authenticationInfoDto)
@@ -83,7 +83,7 @@ public class AuthController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<AuthenticationResponse> deleteAuthenticationInfo(@PathVariable("id") Long id) {
+    public ResponseEntity<ResponseDto> deleteAuthenticationInfo(@PathVariable("id") Long id) {
 
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -96,7 +96,7 @@ public class AuthController {
             errorMessage = "Can't delete. Client with id " + id + " not found";
         }
 
-        AuthenticationResponse response = AuthenticationResponse.builder()
+        ResponseDto response = ResponseDto.builder()
                 .success(success)
                 .error(success ? null : Arrays.asList(status.toString(), errorMessage))
                 .data(authenticationInfoDto)

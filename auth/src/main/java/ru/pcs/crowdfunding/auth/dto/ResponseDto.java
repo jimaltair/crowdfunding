@@ -9,8 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthenticationResponse {
-    private Boolean success;
-    private List<String> error;
-    private Object data;
+public class ResponseDto {
+    private boolean success = true;
+    private List<String> error = null;
+    private Object data = null;
 }

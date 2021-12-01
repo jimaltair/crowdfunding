@@ -8,7 +8,7 @@ public interface AuthService {
 
     Optional<AuthenticationInfoDto> findById(Long id);
 
-    AuthenticationInfoDto addAuthenticationInfo(AuthenticationInfoDto authenticationInfo);
+    AuthenticationInfoDto createAuthenticationInfo(AuthenticationInfoDto authenticationInfo);
 
     Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo);
 
