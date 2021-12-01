@@ -11,7 +11,7 @@ import ru.pcs.crowdfunding.client.dto.ResponseDto;
 
 @Component
 public class AuthorizationServiceRestTemplateClient implements AuthorizationServiceClient {
-    private static final String SIGNUP_URL = "/api/v0/signUp";
+    private static final String SIGNUP_URL = "/api/signUp";
 
     private final RestTemplate restTemplate;
     private final String remoteAddress;
