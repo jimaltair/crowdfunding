@@ -13,6 +13,7 @@ import ru.pcs.crowdfunding.client.dto.SignUpForm;
 import ru.pcs.crowdfunding.client.services.SignUpService;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Controller
@@ -29,11 +30,17 @@ public class SignUpController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ResponseDto> signUp(@Valid SignUpForm form) {
+        if (form == null) {
+            return ResponseEntity.badRequest().body(ResponseDto.builder()
+                    .data(form)
+                    .success(false)
+                    .error(Arrays.asList("Registration form is empty"))
+                    .build());
+        }
         signUpService.signUp(form);
         return ResponseEntity.ok(ResponseDto.builder()
-        .data(form)
-        .success(true)
-        .build());
+                .data(form)
+                .success(true)
+                .build());
     }
-
 }
