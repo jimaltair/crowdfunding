@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.pcs.crowdfunding.client.domain.Client;
 
 import java.time.Instant;
 
