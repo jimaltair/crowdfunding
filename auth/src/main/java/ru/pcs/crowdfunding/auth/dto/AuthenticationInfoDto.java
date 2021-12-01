@@ -1,27 +1,40 @@
 package ru.pcs.crowdfunding.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
+import ru.pcs.crowdfunding.auth.validation.ValidPassword;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Builder
 public class AuthenticationInfoDto {
 
+    @NotEmpty
     private Long userId;
+
+    @Email
+    @NotBlank
     private String email;
+
+    @NotBlank
+    @Size(min = 7, max = 20)
+    @ValidPassword
     private String password;
+
     private String accessToken;
     private String refreshToken;
     private Boolean isActive;
+
 
     public static AuthenticationInfoDto from(AuthenticationInfo authenticationInfo) {
         return AuthenticationInfoDto.builder()
@@ -39,4 +52,5 @@ public class AuthenticationInfoDto {
                 .map(AuthenticationInfoDto::from)
                 .collect(Collectors.toList());
     }
+
 }
