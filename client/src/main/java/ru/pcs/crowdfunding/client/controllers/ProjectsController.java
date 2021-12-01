@@ -5,13 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
+import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
@@ -35,5 +37,24 @@ public class ProjectsController {
 
         model.addAttribute("project", project.get());
         return "projectCard";
+    }
+
+    @GetMapping(value = "/create")
+    public String getProjectCreatePage(Model model) {
+        model.addAttribute("projectCreatedForm", new ProjectForm());
+        return "createProject";
+    }
+
+    @PostMapping(value = "/create")
+    public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
+                                @RequestParam("file") MultipartFile file) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("projectCreatedForm", form);
+            return "createProject";
+        }
+
+        projectsService.createProject(form, file);
+        return "createProject";
     }
 }
