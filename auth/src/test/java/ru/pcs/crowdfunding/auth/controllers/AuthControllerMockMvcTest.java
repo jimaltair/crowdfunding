@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.services.AuthService;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +41,10 @@ class AuthControllerMockMvcTest {
                 .refreshToken("refresh_test_token")
                 .isActive(true)
                 .build());
+        // имитируем возврат данных существующего пользователя
         when(authService.findById(1L)).thenReturn(testAuthInfo);
+        // имитируем возврат данных несуществующего пользователя
+        when(authService.findById(100L)).thenReturn(Optional.empty());
     }
 
 
@@ -50,12 +54,22 @@ class AuthControllerMockMvcTest {
                 .andDo(print())
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$['success']", is(true)))
-//                .andExpect(jsonPath("$['error']", is(null))); throws NPE
+//                .andExpect(jsonPath("$['error']", is(null))) throws NPE
                 .andExpect(jsonPath("$['data'].userId", is(1)))
                 .andExpect(jsonPath("$['data'].email", is("email@email.com")))
                 .andExpect(jsonPath("$['data'].password", is("test_pass")))
                 .andExpect(jsonPath("$['data'].accessToken", is("access_test_token")))
                 .andExpect(jsonPath("$['data'].refreshToken", is("refresh_test_token")))
                 .andExpect(jsonPath("$['data'].isActive", is(true)));
+    }
+
+    @Test
+    void when_getNotExistedUser_thenStatus404AndErrorMessageReturns() throws Exception {
+        mockMvc.perform(get("/auth/100"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$['success']", is(false)))
+                .andExpect(jsonPath("$['error']", is(Arrays.asList("404 NOT_FOUND", "Client with id 100 not found"))));
+//                .andExpect(jsonPath("$['data']", is(null))); throws NPE
     }
 }

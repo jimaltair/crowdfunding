@@ -16,7 +16,7 @@ public class ResponseDto {
     private List<String> error = null;
     private Object data = null;
 
-    public static ResponseDto buildSuccess(boolean success, HttpStatus status, String errorMessage, Object data){
+    public static ResponseDto buildResponse(boolean success, HttpStatus status, String errorMessage, Object data){
         return ResponseDto.builder()
                 .success(success)
                 .error(success ? null : Arrays.asList(status.toString(), errorMessage))

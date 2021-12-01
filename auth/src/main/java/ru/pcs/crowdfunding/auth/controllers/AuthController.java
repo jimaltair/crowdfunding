@@ -35,13 +35,8 @@ public class AuthController {
             status = HttpStatus.NOT_FOUND;
             errorMessage = "Client with id " + id + " not found";
         }
-        log.debug("result = {}", authenticationInfo.get());
 
-        ResponseDto response = ResponseDto.builder()
-                .success(success)
-                .error(success ? null : Arrays.asList(status.toString(), errorMessage))
-                .data(authenticationInfo)
-                .build();
+        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, authenticationInfo);
 
         return ResponseEntity.status(status).body(response);
     }
@@ -50,11 +45,8 @@ public class AuthController {
     public ResponseEntity<ResponseDto> createAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
         AuthenticationInfoDto authenticationInfoDto = authService.createAuthenticationInfo(authenticationInfo);
 
-        ResponseDto response = ResponseDto.builder()
-                .success(true)
-                .error(null)
-                .data(authenticationInfoDto)
-                .build();
+        ResponseDto response = ResponseDto.buildResponse(true, HttpStatus.CREATED,
+                null, authenticationInfoDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -73,11 +65,7 @@ public class AuthController {
             errorMessage = "Can't update. Client with id " + id + " not found";
         }
 
-        ResponseDto response = ResponseDto.builder()
-                .success(success)
-                .error(success ? null : Arrays.asList(status.toString(), errorMessage))
-                .data(authenticationInfoDto)
-                .build();
+        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, authenticationInfo);
 
         return ResponseEntity.status(status).body(response);
     }
@@ -96,11 +84,7 @@ public class AuthController {
             errorMessage = "Can't delete. Client with id " + id + " not found";
         }
 
-        ResponseDto response = ResponseDto.builder()
-                .success(success)
-                .error(success ? null : Arrays.asList(status.toString(), errorMessage))
-                .data(authenticationInfoDto)
-                .build();
+        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, authenticationInfoDto);
 
         return ResponseEntity.status(status).body(response);
     }
