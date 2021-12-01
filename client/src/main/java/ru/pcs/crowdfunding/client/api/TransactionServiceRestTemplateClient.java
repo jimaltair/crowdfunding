@@ -10,7 +10,7 @@ import ru.pcs.crowdfunding.client.dto.ResponseDto;
 
 @Component
 public class TransactionServiceRestTemplateClient implements TransactionServiceClient {
-    private static final String CREATE_ACCOUNT_URL = "/api/v0/createAccount";
+    private static final String CREATE_ACCOUNT_URL = "/api/createAccount";
 
     private final RestTemplate restTemplate;
     private final String remoteAddress;
