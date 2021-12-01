@@ -13,11 +13,7 @@ public class OperationDto {
     private Long id;
     private Long clientId;
     private Instant datetime;
-    private OperationType operationType;
-    private Account debitAccount;
-    private Account creditAccount;
     private BigDecimal sum;
-    private List<Payment> payments;
 }
 
 

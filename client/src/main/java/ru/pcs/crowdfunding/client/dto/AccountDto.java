@@ -12,10 +12,4 @@ import ru.pcs.crowdfunding.client.domain.Client;
 @Builder
 public class AccountDto {
     private Long accountId;
-
-    public static AccountDto from(Client client) {
-        return AccountDto.builder()
-                .accountId(client.getAccountId())
-                .build();
-    }
 }
