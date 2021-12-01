@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.Arrays;
 
 @RestController
-@RequestMapping("/api/v0/signUp")
+@RequestMapping("/api/signUp")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

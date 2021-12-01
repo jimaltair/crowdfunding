@@ -5,9 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.pcs.crowdfunding.client.dto.ResponseDto;
 import ru.pcs.crowdfunding.client.dto.SignUpForm;
 import ru.pcs.crowdfunding.client.services.SignUpService;
@@ -17,7 +15,7 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/api/v0/signUp")
+@RequestMapping("/signUp")
 public class SignUpController {
     private final SignUpService signUpService;
 
