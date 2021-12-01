@@ -30,6 +30,8 @@
     <br>
     <label for="password">Enter password:</label>
     <input type="password" id="password" name="password" placeholder="Your password">
+    <br>
+    <br>
     <input type="submit" value="Sign Up">
 </form>
 </body>

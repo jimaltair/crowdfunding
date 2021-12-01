@@ -1,9 +1,6 @@
 package ru.pcs.crowdfunding.client.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,9 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ResponseDto {
-    private boolean success;
-    private List<String> error;
-    private Object data;
+    private boolean success = true;
+    private List<String> error = null;
+    private Object data = null;
 
     public static ResponseDto buildSuccess(Object data) {
         return ResponseDto.builder()
