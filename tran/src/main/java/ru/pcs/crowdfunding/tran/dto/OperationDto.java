@@ -5,8 +5,8 @@ import ru.pcs.crowdfunding.tran.domain.Operation;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -33,7 +33,9 @@ public class OperationDto {
                 .build();
     }
 
-    public static List<OperationDto> from (){
-        return new ArrayList<>(); //временно
+    public static List<OperationDto> from (List<Operation> operations){
+        return operations.stream()
+                .map(OperationDto::from)
+                .collect(Collectors.toList());
     }
 }
