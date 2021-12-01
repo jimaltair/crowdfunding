@@ -16,10 +16,10 @@ public class ResponseDto {
     private List<String> error = null;
     private Object data = null;
 
-    public static ResponseDto buildResponse(boolean success, HttpStatus status, String errorMessage, Object data){
+    public static ResponseDto buildResponse(boolean success, String errorMessage, Object data){
         return ResponseDto.builder()
                 .success(success)
-                .error(success ? null : Arrays.asList(status.toString(), errorMessage))
+                .error(success ? null : Arrays.asList(errorMessage))
                 .data(data)
                 .build();
     }

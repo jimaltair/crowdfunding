@@ -4,17 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.dto.ResponseDto;
 import ru.pcs.crowdfunding.auth.services.AuthService;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/auth")
+@RestController
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
@@ -36,7 +34,7 @@ public class AuthController {
             errorMessage = "Client with id " + id + " not found";
         }
 
-        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, authenticationInfo);
+        ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfo);
 
         return ResponseEntity.status(status).body(response);
     }
@@ -45,8 +43,7 @@ public class AuthController {
     public ResponseEntity<ResponseDto> createAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
         AuthenticationInfoDto authenticationInfoDto = authService.createAuthenticationInfo(authenticationInfo);
 
-        ResponseDto response = ResponseDto.buildResponse(true, HttpStatus.CREATED,
-                null, authenticationInfoDto);
+        ResponseDto response = ResponseDto.buildResponse(true, null, authenticationInfoDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -65,7 +62,7 @@ public class AuthController {
             errorMessage = "Can't update. Client with id " + id + " not found";
         }
 
-        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, authenticationInfo);
+        ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfo);
 
         return ResponseEntity.status(status).body(response);
     }
@@ -84,7 +81,7 @@ public class AuthController {
             errorMessage = "Can't delete. Client with id " + id + " not found";
         }
 
-        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, authenticationInfoDto);
+        ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfoDto);
 
         return ResponseEntity.status(status).body(response);
     }
