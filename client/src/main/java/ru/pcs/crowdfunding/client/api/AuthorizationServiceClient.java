@@ -1,4 +1,4 @@
-package ru.pcs.crowdfunding.client.clients;
+package ru.pcs.crowdfunding.client.api;
 
 import org.springframework.http.ResponseEntity;
 import ru.pcs.crowdfunding.client.dto.AuthSignUpRequest;

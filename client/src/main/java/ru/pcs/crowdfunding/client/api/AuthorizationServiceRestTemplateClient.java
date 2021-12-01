@@ -1,4 +1,4 @@
-package ru.pcs.crowdfunding.client.clients;
+package ru.pcs.crowdfunding.client.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ public class AuthorizationServiceRestTemplateClient implements AuthorizationServ
     @Autowired
     public AuthorizationServiceRestTemplateClient(
             RestTemplateBuilder restTemplateBuilder,
-            @Value("${clients.authorization-service.remote-address}") String remoteAddress) {
+            @Value("${api.authorization-service.remote-address}") String remoteAddress) {
         this.restTemplate = restTemplateBuilder.build();
         this.remoteAddress = remoteAddress;
     }
