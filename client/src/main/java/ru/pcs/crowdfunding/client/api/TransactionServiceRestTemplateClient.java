@@ -10,6 +10,7 @@ import ru.pcs.crowdfunding.client.dto.ResponseDto;
 
 @Component
 public class TransactionServiceRestTemplateClient implements TransactionServiceClient {
+    // TODO: update url when server side controller is ready
     private static final String CREATE_ACCOUNT_URL = "/api/createAccount";
 
     private final RestTemplate restTemplate;
