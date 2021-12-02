@@ -9,6 +9,7 @@ import ru.pcs.crowdfunding.tran.dto.AccountDto;
 import ru.pcs.crowdfunding.tran.dto.ResponseDto;
 import ru.pcs.crowdfunding.tran.services.AccountService;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @RestController
@@ -23,18 +24,25 @@ public class AccountController {
     public ResponseEntity<ResponseDto> getById(@PathVariable("id") Long id) {
         log.info("get Account by id {}", id);
 
-        boolean success = true;
-        HttpStatus status = HttpStatus.ACCEPTED;
-        String errorMessage = null;
+        ResponseDto response;
+        HttpStatus status;
+
         Optional<AccountDto> accountDto = accountService.findById(id);
 
         if (!accountDto.isPresent()) {
-            success = false;
             status = HttpStatus.NOT_FOUND;
-            errorMessage = "Account with id " + id + " not found";
+            response = ResponseDto.builder()
+                    .success(false)
+                    .error(Arrays.asList("Account with id " + id + " not found"))
+                    .build();
+        } else {
+            status = HttpStatus.ACCEPTED;
+            response = ResponseDto.builder()
+                    .success(true)
+                    .data(accountDto.get())
+                    .build();
         }
 
-        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, accountDto);
         return ResponseEntity.status(status).body(response);
     }
 
@@ -42,8 +50,10 @@ public class AccountController {
     public ResponseEntity<ResponseDto> createAccount(@RequestBody AccountDto newAccountDto) {
         AccountDto accountDto = accountService.createNewAccount(newAccountDto);
 
-        ResponseDto response = ResponseDto.buildResponse(true, HttpStatus.CREATED,
-                null, accountDto);
+        ResponseDto response = ResponseDto.builder()
+                                        .success(true)
+                                        .data(accountDto)
+                                        .build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -52,18 +62,24 @@ public class AccountController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAccount(@PathVariable("id") Long id,
                                                                 @RequestBody AccountDto updateAccountDto) {
-        boolean success = true;
-        HttpStatus status = HttpStatus.ACCEPTED;
-        String errorMessage = null;
+        ResponseDto response;
+        HttpStatus status;
+
         Optional<AccountDto> accountDto = accountService.updateAccount(id, updateAccountDto);
 
         if (!accountDto.isPresent()) {
-            success = false;
             status = HttpStatus.NOT_FOUND;
-            errorMessage = "Can't update. Account with id " + id + " not found";
+            response = ResponseDto.builder()
+                    .success(false)
+                    .error(Arrays.asList("Can't update. Account with id " + id + " not found"))
+                    .build();
+        } else {
+            status = HttpStatus.ACCEPTED;
+            response = ResponseDto.builder()
+                    .success(true)
+                    .data(accountDto.get())
+                    .build();
         }
-
-        ResponseDto response = ResponseDto.buildResponse(success, status, errorMessage, accountDto);
 
         return ResponseEntity.status(status).body(response);
     }
