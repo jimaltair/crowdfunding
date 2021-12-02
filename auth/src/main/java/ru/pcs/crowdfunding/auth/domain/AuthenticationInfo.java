@@ -31,5 +31,5 @@ public class AuthenticationInfo {
     private String refreshToken;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive;
+    private Boolean isActive;
 }
