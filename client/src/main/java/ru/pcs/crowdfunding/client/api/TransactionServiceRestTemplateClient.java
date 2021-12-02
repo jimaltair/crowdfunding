@@ -6,12 +6,15 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import ru.pcs.crowdfunding.client.dto.AccountDto;
 import ru.pcs.crowdfunding.client.dto.ResponseDto;
+
+import java.time.Instant;
 
 @Component
 public class TransactionServiceRestTemplateClient implements TransactionServiceClient {
-    // TODO: update url when server side controller is ready
-    private static final String CREATE_ACCOUNT_URL = "/api/createAccount";
+
+    private static final String CREATE_ACCOUNT_URL = "/api/account";
 
     private final RestTemplate restTemplate;
     private final String remoteAddress;
@@ -26,6 +29,12 @@ public class TransactionServiceRestTemplateClient implements TransactionServiceC
 
     @Override
     public ResponseEntity<ResponseDto> createAccount() {
-        return restTemplate.postForEntity(remoteAddress + CREATE_ACCOUNT_URL, null, ResponseDto.class);
+        final Instant now = Instant.now();
+        AccountDto accountDto = AccountDto.builder()
+                .createdAt(now)
+                .modifiedAt(now)
+                .isActive(true)
+                .build();
+        return restTemplate.postForEntity(remoteAddress + CREATE_ACCOUNT_URL, accountDto, ResponseDto.class);
     }
 }
