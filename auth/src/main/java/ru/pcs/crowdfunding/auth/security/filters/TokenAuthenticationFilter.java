@@ -62,7 +62,7 @@ public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFil
                 .withSubject(authenticationInfo.getUserId().toString())
                 .withClaim("roles", authenticationInfo.getRoles())
                 .withClaim("status", authenticationInfo.getStatus().toString())
-                .withExpiresAt(new Date((System.currentTimeMillis()) + 20 * 60 * 1000))
+                .withExpiresAt(new Date((System.currentTimeMillis()) + 2629800000L))
                 .sign(Algorithm.HMAC256(JWT_SECRET_KEY));
         authorizationInfo.setAccessToken(accessToken);
 
