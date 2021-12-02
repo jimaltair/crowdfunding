@@ -169,5 +169,5 @@ public class AccountController {
 
         return ResponseEntity.status(status).body(response);
     }
-    
+
 }
