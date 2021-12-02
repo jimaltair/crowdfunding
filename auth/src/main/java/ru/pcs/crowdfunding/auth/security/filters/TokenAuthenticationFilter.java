@@ -26,9 +26,7 @@ import java.util.Date;
 @Slf4j
 public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public static final String ACCESS_TOKEN = "access_token";
-    public static final String REFRESH_TOKEN = "refresh_token";
-    private static final String JWT_SECRET_KEY = "jwt_secret";
+    private static final String JWT_SECRET_KEY = "jwt_secret_key";
 
     private final ObjectMapper objectMapper;
     private final AuthenticationInfosRepository authenticationInfosRepository;
@@ -55,24 +53,24 @@ public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFil
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
         AuthenticationInfo authenticationInfo = (AuthenticationInfo) authResult.getPrincipal();
-        AuthorizationInfo authorizationInfo = authorizationInfosRepository.getById(authenticationInfo.getUserId());
+        AuthorizationInfo authorizationInfo = authorizationInfosRepository.
+                getById(authenticationInfo.getUserId());
 
         String accessToken = JWT.create()
-                .withSubject(authorizationInfo.getUserId().toString())
-                .withClaim("role", authorizationInfo.getRole().toString())
-                .withClaim("state",authorizationInfo.getStatus().toString())
+                .withSubject(authenticationInfo.getUserId().toString())
+                .withClaim("roles", authenticationInfo.getRoles())
+                .withClaim("status", authenticationInfo.getStatus().toString())
                 .withExpiresAt(new Date((System.currentTimeMillis()) + 20 * 60 * 1000))
                 .sign(Algorithm.HMAC256(JWT_SECRET_KEY));
-        authenticationInfo.setAccessToken(accessToken);
+        authorizationInfo.setAccessToken(accessToken);
 
-        if (authenticationInfo.getRefreshToken() == null) {
-            String refreshToken = JWT.create()
-                    .withSubject(authenticationInfo.getUserId().toString())
-                    .sign(Algorithm.HMAC256(JWT_SECRET_KEY));
-            authenticationInfo.setRefreshToken(refreshToken);
-        }
+        String refreshToken = JWT.create()
+                .withSubject(authenticationInfo.getUserId().toString())
+                .sign(Algorithm.HMAC256(JWT_SECRET_KEY));
+        authenticationInfo.setRefreshToken(refreshToken);
+        log.info("Created access token {} and refresh token {} ", accessToken, refreshToken);
 
         authenticationInfosRepository.save(authenticationInfo);
         authorizationInfosRepository.save(authorizationInfo);
