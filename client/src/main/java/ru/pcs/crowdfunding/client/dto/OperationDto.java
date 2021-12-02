@@ -11,15 +11,8 @@ import java.time.Instant;
 public class OperationDto {
     private Long initiatorId;
     private Instant datetime;
-    private Type type;
+    private String typeOperation;
     private Long debitAccountId;
     private Long creditAccountId;
     private BigDecimal sum;
-
-    public enum Type {
-        PAYMENT,
-        REFUND,
-        TOP_UP,
-        WITHDRAW
-    }
 }
