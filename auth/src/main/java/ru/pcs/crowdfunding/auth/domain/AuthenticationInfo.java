@@ -36,7 +36,7 @@ public class AuthenticationInfo {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(fetch = FetchType.EAGER)
     private Status status;
 
 }
