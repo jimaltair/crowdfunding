@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;
+import ru.pcs.crowdfunding.auth.security.details.AuthenticationInfoDetailsService;
 import ru.pcs.crowdfunding.auth.security.filters.TokenAuthenticationFilter;
 import ru.pcs.crowdfunding.auth.security.filters.TokenAuthorizationFilter;
 
@@ -34,6 +36,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthorizationInfosRepository authorizationInfosRepository;
 
+    @Autowired
+    private AuthenticationInfoDetailsService infoDetailsService;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -43,6 +48,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(infoDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
