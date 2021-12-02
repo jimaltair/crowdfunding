@@ -8,12 +8,14 @@ import java.time.Instant;
 import java.util.Optional;
 
 public interface AccountService {
-    Long createAccount(Account account);
+
     BigDecimal getBalance(Account account, Instant dateTime);
+
     Optional<AccountDto> findById(Long id);
 
     Optional<AccountDto> updateAccount(Long id, AccountDto accountDto);
 
-    AccountDto createNewAccount(AccountDto accountDto);
+    AccountDto createAccount(AccountDto accountDto);
 
+    Optional<AccountDto> deleteAccount(Long accountId);
 }

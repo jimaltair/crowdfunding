@@ -18,11 +18,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountsRepository accountsRepository;
     private final PaymentsRepository paymentsRepository;
 
-    @Override
-    public Long createAccount(Account account) {
-        accountsRepository.save(account);
-        return account.getId();
-    }
 
     @Override
     public BigDecimal getBalance(Account account, Instant dateTime) {
@@ -52,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto createNewAccount(AccountDto accountDto) {
+    public AccountDto createAccount(AccountDto accountDto) {
         Account account = Account.builder()
                 .createdAt(accountDto.getCreatedAt())
                 .modifiedAt(accountDto.getModifiedAt())
@@ -61,5 +56,20 @@ public class AccountServiceImpl implements AccountService {
         accountsRepository.save(account);
 
         return AccountDto.from(account);
+    }
+
+    @Override
+    public Optional<AccountDto> deleteAccount(Long accountId) {
+        Optional<Account> optionalAccount = accountsRepository.findById(accountId);
+
+        if (!optionalAccount.isPresent()) {
+            return Optional.empty();
+        }
+        Account account = optionalAccount.get();
+        account.setIsActive(false);
+        account.setModifiedAt(Instant.now());
+        accountsRepository.save(account);
+
+        return Optional.of(AccountDto.from(account));
     }
 }
