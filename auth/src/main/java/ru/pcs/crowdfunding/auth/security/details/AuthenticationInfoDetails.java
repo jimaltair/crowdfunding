@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
+import ru.pcs.crowdfunding.auth.domain.Status;
 
 import java.util.Collection;
 
@@ -18,7 +19,7 @@ public class AuthenticationInfoDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return info.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+        return info.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
     }
 
     @Override
@@ -38,7 +39,7 @@ public class AuthenticationInfoDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !info.getStatus().getName().equals("BANNED");
+        return !info.getStatus().getName().equals(Status.StatusEnum.BANNED);
     }
 
     @Override

@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -21,5 +18,13 @@ public class Status {
     @Column(name = "status_id", nullable = false, unique = true)
     private Long statusId;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private StatusEnum name;
+
+    public enum StatusEnum {
+        NOT_CONFIRMED,
+        CONFIRMED,
+        BANNED,
+        DELETED
+    }
 }
