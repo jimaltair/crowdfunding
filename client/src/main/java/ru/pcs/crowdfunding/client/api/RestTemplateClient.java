@@ -53,7 +53,7 @@ public class RestTemplateClient {
                     MessageFormat.format("Request to {0} returned empty body", url));
         }
 
-        if (responseDto.isSuccess()) {
+        if (!responseDto.isSuccess()) {
             throw new IllegalStateException(
                     MessageFormat.format("Request to {0} failed with error: {1}", url, responseDto.getError()));
         }
