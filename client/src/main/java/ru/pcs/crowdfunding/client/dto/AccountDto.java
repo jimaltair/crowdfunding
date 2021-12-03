@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 public class AccountDto {
-    private Long accountId;
+    private Long id;
     private Boolean isActive;
     private Instant createdAt;
     private Instant modifiedAt;
