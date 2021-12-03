@@ -17,6 +17,8 @@ import javax.validation.constraints.Size;
 @NotSameNames
 public class SignUpForm {
 
+    private Long id;
+
     @Size(min = 4, max = 20)
     @NotBlank
     private String firstName;
@@ -44,6 +46,7 @@ public class SignUpForm {
 
     public static SignUpForm from(Client client) {
         return SignUpForm.builder()
+                .id(client.getId())
                 .city(client.getCity())
                 .firstName(client.getFirstName())
                 .lastName(client.getLastName())
