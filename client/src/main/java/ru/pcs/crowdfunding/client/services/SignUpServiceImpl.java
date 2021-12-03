@@ -1,17 +1,14 @@
 package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
-import ru.pcs.crowdfunding.client.dto.AuthSignUpRequest;
-import ru.pcs.crowdfunding.client.dto.ResponseDto;
-import ru.pcs.crowdfunding.client.dto.SignUpForm;
+import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
-import java.util.Map;
+import java.time.Instant;
 
 
 @Service
@@ -44,37 +41,28 @@ public class SignUpServiceImpl implements SignUpService {
     }
 
     private Client callAuthorizationService(SignUpForm form, Client client) {
-        AuthSignUpRequest authSignUpRequest = AuthSignUpRequest.builder()
+        AuthSignUpRequest request = AuthSignUpRequest.builder()
                 .userId(client.getId())
                 .email(form.getEmail())
                 .password(form.getPassword())
                 .build();
 
-        ResponseEntity<ResponseDto> responseEntity = authorizationServiceClient.signUp(authSignUpRequest);
-        ResponseDto responseDto = responseEntity.getBody();
-        if (responseEntity.getStatusCode().isError() || !responseDto.isSuccess()) {
-            // FIXME: handle this properly
-            throw new IllegalStateException("AuthorizationServiceClient.signUp() failed");
-        }
+        authorizationServiceClient.signUp(request);
 
         return client;
     }
 
     private Client callTransactionService(Client client) {
-        ResponseEntity<ResponseDto> responseEntity = transactionServiceClient.createAccount();
-        ResponseDto responseDto = responseEntity.getBody();
-        if (responseEntity.getStatusCode().isError() || !responseDto.isSuccess()) {
-            // FIXME: handle this properly
-            throw new IllegalStateException("TransactionServiceClient.signUp() failed");
-        }
+        final Instant now = Instant.now();
+        CreateAccountRequest request = CreateAccountRequest.builder()
+                .isActive(true)
+                .createdAt(now)
+                .modifiedAt(now)
+                .build();
 
-        client.setAccountId(extractAccountId(responseDto));
+        CreateAccountResponse response = transactionServiceClient.createAccount(request);
+
+        client.setAccountId(response.getId());
         return client;
-    }
-
-    private Long extractAccountId(ResponseDto responseDto) {
-        Map<?, ?> map = (Map<?, ?>) responseDto.getData();
-        Integer id = (Integer) map.get("id");
-        return id.longValue();
     }
 }
