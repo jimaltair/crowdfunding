@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
+import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.AuthSignUpRequest;
 import ru.pcs.crowdfunding.client.dto.ResponseDto;
 import ru.pcs.crowdfunding.client.dto.SignUpForm;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
+
+import java.util.Map;
 
 
 @Service
@@ -16,6 +19,7 @@ import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 public class SignUpServiceImpl implements SignUpService {
     private final ClientsRepository clientsRepository;
     private final AuthorizationServiceClient authorizationServiceClient;
+    private final TransactionServiceClient transactionServiceClient;
 
     @Override
     public SignUpForm signUp(SignUpForm form) {
@@ -47,13 +51,8 @@ public class SignUpServiceImpl implements SignUpService {
                 .build();
 
         ResponseEntity<ResponseDto> responseEntity = authorizationServiceClient.signUp(authSignUpRequest);
-        if (responseEntity.getStatusCode().isError()) {
-            // FIXME: handle this properly
-            throw new IllegalStateException("AuthorizationServiceClient.signUp() failed");
-        }
-
         ResponseDto responseDto = responseEntity.getBody();
-        if (!responseDto.isSuccess()) {
+        if (responseEntity.getStatusCode().isError() || !responseDto.isSuccess()) {
             // FIXME: handle this properly
             throw new IllegalStateException("AuthorizationServiceClient.signUp() failed");
         }
@@ -62,8 +61,20 @@ public class SignUpServiceImpl implements SignUpService {
     }
 
     private Client callTransactionService(Client client) {
-        // TODO: create account in transaction service
+        ResponseEntity<ResponseDto> responseEntity = transactionServiceClient.createAccount();
+        ResponseDto responseDto = responseEntity.getBody();
+        if (responseEntity.getStatusCode().isError() || !responseDto.isSuccess()) {
+            // FIXME: handle this properly
+            throw new IllegalStateException("TransactionServiceClient.signUp() failed");
+        }
 
+        client.setAccountId(extractAccountId(responseDto));
         return client;
+    }
+
+    private Long extractAccountId(ResponseDto responseDto) {
+        Map<?, ?> map = (Map<?, ?>) responseDto.getData();
+        Integer id = (Integer) map.get("id");
+        return id.longValue();
     }
 }
