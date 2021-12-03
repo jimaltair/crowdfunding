@@ -27,7 +27,7 @@ public class OperationServiceImpl implements OperationService {
                 operationDto.getOperationType().equals("TOP_UP")) {
 
             paymentsRepository.save(Payment.builder()
-                    .account(accountsRepository.getById(operationDto.getCreditAccountId()))
+                    .account(accountsRepository.getById(operationDto.getDebitAccountId()))
                     .sum(operationDto.getSum())
                     .operation(operationsRepository.getById(operationDto.getId()))
                     .datetime(operationDto.getDatetime())
@@ -40,7 +40,7 @@ public class OperationServiceImpl implements OperationService {
                 operationDto.getOperationType().equals("WITHDRAW")) {
 
             paymentsRepository.save(Payment.builder()
-                    .account(accountsRepository.getById(operationDto.getDebitAccountId()))
+                    .account(accountsRepository.getById(operationDto.getCreditAccountId()))
                     .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
                     .operation(operationsRepository.getById(operationDto.getId()))
                     .datetime(operationDto.getDatetime())
@@ -53,34 +53,34 @@ public class OperationServiceImpl implements OperationService {
     public boolean isValid(OperationDto operationDto) {
 
         if (operationDto == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Информация не передана");
         }
 
         if (!operationDto.getOperationType().equals("PAYMENT")
             || !operationDto.getOperationType().equals("REFUND")
             || !operationDto.getOperationType().equals("TOP_UP")
             || !operationDto.getOperationType().equals("WITHDRAW")) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Такого типа операции не существует");
         }
 
         if (!operationsRepository.findById(operationDto.getId()).isPresent()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Такой операции не существует");
         }
 
         if (!accountsRepository.findById(operationDto.getCreditAccountId()).isPresent()
             || !accountsRepository.findById(operationDto.getDebitAccountId()).isPresent()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Данного счета не существует");
         }
 
         if (operationDto.getSum().compareTo(BigDecimal.ZERO) < 1) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Сумма операции меньше или равна нулю");
         }
 
         if (paymentsRepository.findBalanceByAccountAndDatetime(
-                accountsRepository.getById(operationDto.getDebitAccountId()),
+                accountsRepository.getById(operationDto.getCreditAccountId()),
                 operationDto.getDatetime())
                 .subtract(operationDto.getSum()).compareTo(BigDecimal.ZERO) < 1) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Недостаточно средств на счете");
         }
 
         return true;
