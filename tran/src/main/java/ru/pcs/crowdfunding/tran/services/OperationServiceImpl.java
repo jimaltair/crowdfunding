@@ -2,16 +2,12 @@ package ru.pcs.crowdfunding.tran.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.pcs.crowdfunding.tran.domain.Account;
-import ru.pcs.crowdfunding.tran.domain.Operation;
 import ru.pcs.crowdfunding.tran.domain.Payment;
 import ru.pcs.crowdfunding.tran.dto.OperationDto;
 import ru.pcs.crowdfunding.tran.repositories.AccountsRepository;
 import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
-
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @RequiredArgsConstructor
 @Service
