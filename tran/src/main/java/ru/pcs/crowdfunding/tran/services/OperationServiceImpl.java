@@ -2,6 +2,8 @@ package ru.pcs.crowdfunding.tran.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.pcs.crowdfunding.tran.domain.Account;
+import ru.pcs.crowdfunding.tran.domain.Operation;
 import ru.pcs.crowdfunding.tran.domain.Payment;
 import ru.pcs.crowdfunding.tran.dto.OperationDto;
 import ru.pcs.crowdfunding.tran.repositories.AccountsRepository;
@@ -9,6 +11,7 @@ import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @RequiredArgsConstructor
 @Service
@@ -19,84 +22,69 @@ public class OperationServiceImpl implements OperationService {
     private final OperationsRepository operationsRepository;
 
     @Override
-    public void createOperation(OperationDto operationDto) {
+    public OperationDto createOperation(OperationDto operationDto) {
 
-        if (!this.isValid(operationDto)) {
-            return;
-        }
+        this.isValid(operationDto);
 
-        if (operationDto.getOperationType().equals("PAYMENT")
-            || operationDto.getOperationType().equals("REFUND")) {
-            /*
-            Сохраняем информацию о пополнении счета получателя
-            */
-            Payment recipientPayment = Payment.builder()
+        if (operationDto.getOperationType().equals("PAYMENT") ||
+                operationDto.getOperationType().equals("REFUND") ||
+                operationDto.getOperationType().equals("TOP_UP")) {
+
+            paymentsRepository.save(Payment.builder()
                     .account(accountsRepository.getById(operationDto.getCreditAccountId()))
                     .sum(operationDto.getSum())
                     .operation(operationsRepository.getById(operationDto.getId()))
                     .datetime(operationDto.getDatetime())
-                    .build();
-            paymentsRepository.save(recipientPayment);
-            /*
-            Сохраняем информацию о снятии средств со счета отправителя
-            */
-            Payment senderPayment = Payment.builder()
-                    .account(accountsRepository.getById(operationDto.getDebitAccountId()))
-                    .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
-                    .operation(operationsRepository.getById(operationDto.getId()))
-                    .datetime(operationDto.getDatetime())
-                    .build();
-            paymentsRepository.save(senderPayment);
+                    .build());
 
-        } else if (operationDto.getOperationType().equals("TOP_UP")) {
-            /*
-            Сохраняем информацию о пополнении счета
-             */
-            Payment recipientPayment = Payment.builder()
-                    .account(accountsRepository.getById(operationDto.getCreditAccountId()))
+        }
+
+        if (operationDto.getOperationType().equals("PAYMENT") ||
+                operationDto.getOperationType().equals("REFUND") ||
+                operationDto.getOperationType().equals("WITHDRAW")) {
+
+            paymentsRepository.save(Payment.builder()
+                    .account(accountsRepository.getById(operationDto.getDebitAccountId()))
                     .sum(operationDto.getSum())
                     .operation(operationsRepository.getById(operationDto.getId()))
                     .datetime(operationDto.getDatetime())
-                    .build();
-            paymentsRepository.save(recipientPayment);
-        } else if (operationDto.getOperationType().equals("WITHDRAW")) {
-            /*
-            Сохраняем информацию о снятии средств со счета
-             */
-            Payment senderPayment = Payment.builder()
-                    .account(accountsRepository.getById(operationDto.getDebitAccountId()))
-                    .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
-                    .operation(operationsRepository.getById(operationDto.getId()))
-                    .datetime(operationDto.getDatetime())
-                    .build();
-            paymentsRepository.save(senderPayment);
+                    .build());
+
         }
+        return operationDto;
     }
 
-    boolean isValid(OperationDto operationDto) {
+    public boolean isValid(OperationDto operationDto) {
 
         if (operationDto == null) {
-            return false;
+            throw new IllegalArgumentException();
         }
 
         if (!operationDto.getOperationType().equals("PAYMENT")
             || !operationDto.getOperationType().equals("REFUND")
             || !operationDto.getOperationType().equals("TOP_UP")
             || !operationDto.getOperationType().equals("WITHDRAW")) {
-            return false;
+            throw new IllegalArgumentException();
         }
 
         if (!operationsRepository.findById(operationDto.getId()).isPresent()) {
-            return false;
+            throw new IllegalArgumentException();
         }
 
         if (!accountsRepository.findById(operationDto.getCreditAccountId()).isPresent()
             || !accountsRepository.findById(operationDto.getDebitAccountId()).isPresent()) {
-            return false;
+            throw new IllegalArgumentException();
         }
 
         if (operationDto.getSum().compareTo(BigDecimal.ZERO) < 1) {
-            return false;
+            throw new IllegalArgumentException();
+        }
+
+        if (paymentsRepository.findBalanceByAccountAndDatetime(
+                accountsRepository.getById(operationDto.getDebitAccountId()),
+                operationDto.getDatetime())
+                .subtract(operationDto.getSum()).compareTo(BigDecimal.ZERO) < 1) {
+            throw new IllegalArgumentException();
         }
 
         return true;

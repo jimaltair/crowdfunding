@@ -1,7 +1,9 @@
 package ru.pcs.crowdfunding.tran.services;
 
+import ru.pcs.crowdfunding.tran.domain.Operation;
 import ru.pcs.crowdfunding.tran.dto.OperationDto;
 
 public interface OperationService {
-    void createOperation(OperationDto operationDto);
+    OperationDto createOperation(OperationDto operationDto);
+    boolean isValid(OperationDto operationDto);
 }
