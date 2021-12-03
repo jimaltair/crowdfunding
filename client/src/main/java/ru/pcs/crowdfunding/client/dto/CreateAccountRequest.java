@@ -11,8 +11,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AccountDto {
-    private Long id;
+public class CreateAccountRequest {
     private Boolean isActive;
     private Instant createdAt;
     private Instant modifiedAt;
