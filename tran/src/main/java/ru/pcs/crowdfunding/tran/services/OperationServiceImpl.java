@@ -2,6 +2,7 @@ package ru.pcs.crowdfunding.tran.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.pcs.crowdfunding.tran.domain.OperationType;
 import ru.pcs.crowdfunding.tran.domain.Payment;
 import ru.pcs.crowdfunding.tran.dto.OperationDto;
 import ru.pcs.crowdfunding.tran.repositories.AccountsRepository;
@@ -22,9 +23,9 @@ public class OperationServiceImpl implements OperationService {
 
         this.isValid(operationDto);
 
-        if (operationDto.getOperationType().equals("PAYMENT") ||
-                operationDto.getOperationType().equals("REFUND") ||
-                operationDto.getOperationType().equals("TOP_UP")) {
+        if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
+                operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) ||
+                operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString())) {
 
             paymentsRepository.save(Payment.builder()
                     .account(accountsRepository.getById(operationDto.getDebitAccountId()))
@@ -35,9 +36,9 @@ public class OperationServiceImpl implements OperationService {
 
         }
 
-        if (operationDto.getOperationType().equals("PAYMENT") ||
-                operationDto.getOperationType().equals("REFUND") ||
-                operationDto.getOperationType().equals("WITHDRAW")) {
+        if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
+                operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) ||
+                operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())) {
 
             paymentsRepository.save(Payment.builder()
                     .account(accountsRepository.getById(operationDto.getCreditAccountId()))
@@ -56,10 +57,10 @@ public class OperationServiceImpl implements OperationService {
             throw new IllegalArgumentException("Информация не передана");
         }
 
-        if (!operationDto.getOperationType().equals("PAYMENT")
-            || !operationDto.getOperationType().equals("REFUND")
-            || !operationDto.getOperationType().equals("TOP_UP")
-            || !operationDto.getOperationType().equals("WITHDRAW")) {
+        if (!operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString())
+            && !operationDto.getOperationType().equals(OperationType.Type.REFUND.toString())
+            && !operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString())
+            && !operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())) {
             throw new IllegalArgumentException("Такого типа операции не существует");
         }
 
@@ -68,7 +69,7 @@ public class OperationServiceImpl implements OperationService {
         }
 
         if (!accountsRepository.findById(operationDto.getCreditAccountId()).isPresent()
-            || !accountsRepository.findById(operationDto.getDebitAccountId()).isPresent()) {
+            && !accountsRepository.findById(operationDto.getDebitAccountId()).isPresent()) {
             throw new IllegalArgumentException("Данного счета не существует");
         }
 
