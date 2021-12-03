@@ -41,7 +41,7 @@ public class OperationServiceImpl implements OperationService {
 
             paymentsRepository.save(Payment.builder()
                     .account(accountsRepository.getById(operationDto.getDebitAccountId()))
-                    .sum(operationDto.getSum())
+                    .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
                     .operation(operationsRepository.getById(operationDto.getId()))
                     .datetime(operationDto.getDatetime())
                     .build());
