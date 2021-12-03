@@ -25,59 +25,51 @@ public class OperationServiceImpl implements OperationService {
             return;
         }
 
-        switch (operationDto.getOperationType()) {
-            case "PAYMENT":
-            case "REFUND": {
+        if (operationDto.getOperationType().equals("PAYMENT")
+            || operationDto.getOperationType().equals("REFUND")) {
             /*
             Сохраняем информацию о пополнении счета получателя
             */
-                Payment recipientPayment = Payment.builder()
-                        .account(accountsRepository.getById(operationDto.getCreditAccountId()))
-                        .sum(operationDto.getSum())
-                        .operation(operationsRepository.getById(operationDto.getId()))
-                        .datetime(operationDto.getDatetime())
-                        .build();
-                paymentsRepository.save(recipientPayment);
+            Payment recipientPayment = Payment.builder()
+                    .account(accountsRepository.getById(operationDto.getCreditAccountId()))
+                    .sum(operationDto.getSum())
+                    .operation(operationsRepository.getById(operationDto.getId()))
+                    .datetime(operationDto.getDatetime())
+                    .build();
+            paymentsRepository.save(recipientPayment);
             /*
             Сохраняем информацию о снятии средств со счета отправителя
             */
-                Payment senderPayment = Payment.builder()
-                        .account(accountsRepository.getById(operationDto.getDebitAccountId()))
-                        .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
-                        .operation(operationsRepository.getById(operationDto.getId()))
-                        .datetime(operationDto.getDatetime())
-                        .build();
-                paymentsRepository.save(senderPayment);
+            Payment senderPayment = Payment.builder()
+                    .account(accountsRepository.getById(operationDto.getDebitAccountId()))
+                    .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
+                    .operation(operationsRepository.getById(operationDto.getId()))
+                    .datetime(operationDto.getDatetime())
+                    .build();
+            paymentsRepository.save(senderPayment);
 
-                break;
-            }
-            case "TOP_UP": {
+        } else if (operationDto.getOperationType().equals("TOP_UP")) {
             /*
             Сохраняем информацию о пополнении счета
              */
-                Payment recipientPayment = Payment.builder()
-                        .account(accountsRepository.getById(operationDto.getCreditAccountId()))
-                        .sum(operationDto.getSum())
-                        .operation(operationsRepository.getById(operationDto.getId()))
-                        .datetime(operationDto.getDatetime())
-                        .build();
-                paymentsRepository.save(recipientPayment);
-
-                break;
-            }
-            case "WITHDRAW": {
+            Payment recipientPayment = Payment.builder()
+                    .account(accountsRepository.getById(operationDto.getCreditAccountId()))
+                    .sum(operationDto.getSum())
+                    .operation(operationsRepository.getById(operationDto.getId()))
+                    .datetime(operationDto.getDatetime())
+                    .build();
+            paymentsRepository.save(recipientPayment);
+        } else if (operationDto.getOperationType().equals("WITHDRAW")) {
             /*
             Сохраняем информацию о снятии средств со счета
              */
-                Payment senderPayment = Payment.builder()
-                        .account(accountsRepository.getById(operationDto.getDebitAccountId()))
-                        .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
-                        .operation(operationsRepository.getById(operationDto.getId()))
-                        .datetime(operationDto.getDatetime())
-                        .build();
-                paymentsRepository.save(senderPayment);
-                break;
-            }
+            Payment senderPayment = Payment.builder()
+                    .account(accountsRepository.getById(operationDto.getDebitAccountId()))
+                    .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
+                    .operation(operationsRepository.getById(operationDto.getId()))
+                    .datetime(operationDto.getDatetime())
+                    .build();
+            paymentsRepository.save(senderPayment);
         }
     }
 
