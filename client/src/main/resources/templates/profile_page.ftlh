@@ -114,7 +114,7 @@
                                     </tr>
                                     <tr>
                                         <td class="active">Город:</td>
-                                        <td>${clientDto.country}</td>
+                                        <td>${clientDto.city}</td>
                                     </tr>
                                     <tr>
                                         <td class="active">Почта:</td>

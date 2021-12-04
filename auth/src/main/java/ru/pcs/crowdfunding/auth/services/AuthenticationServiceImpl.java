@@ -31,7 +31,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public Boolean existEmailInDb(AuthenticationInfoDto client) {
-        return authenticationInfosRepository.findByEmail(client.getEmail());
+    public boolean existEmailInDb(AuthenticationInfoDto client) {
+        return authenticationInfosRepository.findByEmail(client.getEmail()).isPresent();
     }
 }
