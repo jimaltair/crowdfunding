@@ -15,6 +15,7 @@ import java.time.Instant;
 public class TransactionServiceRestTemplateClient implements TransactionServiceClient {
 
     private static final String CREATE_ACCOUNT_URL = "/api/account";
+    private static final String GET_BALANCE = "/balance";
 
     private final RestTemplate restTemplate;
     private final String remoteAddress;
@@ -36,5 +37,12 @@ public class TransactionServiceRestTemplateClient implements TransactionServiceC
                 .isActive(true)
                 .build();
         return restTemplate.postForEntity(remoteAddress + CREATE_ACCOUNT_URL, accountDto, ResponseDto.class);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDto> getBalance(Long accountId) {
+        ResponseEntity<ResponseDto> response = restTemplate.getForEntity(remoteAddress + CREATE_ACCOUNT_URL + "/" + accountId + GET_BALANCE, ResponseDto.class);
+        Object data = response.getBody().getData();
+
     }
 }

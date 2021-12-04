@@ -5,4 +5,8 @@ import ru.pcs.crowdfunding.client.dto.ResponseDto;
 
 public interface TransactionServiceClient {
     ResponseEntity<ResponseDto> createAccount();
+
+    ResponseEntity<ResponseDto> getBalance(Long accountId);
+
+
 }
