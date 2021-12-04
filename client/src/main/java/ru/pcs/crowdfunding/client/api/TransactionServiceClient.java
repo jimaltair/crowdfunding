@@ -1,12 +1,8 @@
 package ru.pcs.crowdfunding.client.api;
 
-import org.springframework.http.ResponseEntity;
-import ru.pcs.crowdfunding.client.dto.ResponseDto;
+import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
+import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 
 public interface TransactionServiceClient {
-    ResponseEntity<ResponseDto> createAccount();
-
-    ResponseEntity<ResponseDto> getBalance(Long accountId);
-
-
+    CreateAccountResponse createAccount(CreateAccountRequest request);
 }
