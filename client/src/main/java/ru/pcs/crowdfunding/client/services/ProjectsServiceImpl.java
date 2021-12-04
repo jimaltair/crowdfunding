@@ -69,23 +69,45 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         projectsRepository.save(project);
         projectImagesRepository.save(image);
+
+//        ProjectImage image;
+//        if ((image = getImage(file, project)) != null) {
+//            try {
+//                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
+//            } catch (IOException e) {
+//                throw new IllegalArgumentException(e);
+//            }
+//            projectImagesRepository.save(image);
+//        }
+//        projectsRepository.save(project);
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
         if (file == null || project == null) {
             throw new IllegalArgumentException("Can't upload image");
         }
+        createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
         return ProjectImage.builder()
                 .project(project)
                 .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + file.getOriginalFilename())
                 .build();
     }
 
+    private void createDirectoryIfNotExists(String path) {
+        if (Files.notExists(Paths.get(path))) {
+            try {
+                Files.createDirectory(Paths.get(path));
+            } catch (IOException e) {
+                throw new IllegalArgumentException(String.format("Can't create directory %s", path));
+            }
+        }
+    }
+
     private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
         if (form == null || projectStatus == null) {
             throw new IllegalArgumentException("Can't create project");
         }
-        return  Project.builder()
+        return Project.builder()
                 //клиента забиваю в базу в ручную
                 .author(clientsRepository.getById(CLIENT_FOR_TEST))
                 .title(form.getTitle())
