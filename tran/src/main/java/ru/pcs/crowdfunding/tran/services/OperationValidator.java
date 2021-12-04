@@ -38,7 +38,7 @@ public class OperationValidator {
     }
 
     // пока void, при вызове isValid последовательно вызываются эти методы,
-    // если нигде не выбрасывается исключение, возвращаем true
+    // если нигде не выбрасывается исключение, метод isValid отрабатывает до конца
     private void isOperationDtoNotNull(OperationDto operationDto) {
         if (operationDto == null) {
             throw new IllegalArgumentException("Операция не передана / получен null");
