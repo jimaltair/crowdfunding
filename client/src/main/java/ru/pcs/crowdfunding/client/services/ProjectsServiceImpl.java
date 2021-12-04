@@ -91,7 +91,7 @@ public class ProjectsServiceImpl implements ProjectsService {
         createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
         return ProjectImage.builder()
                 .project(project)
-                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + extension)
+                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + "." + extension)
                 .build();
     }
 
