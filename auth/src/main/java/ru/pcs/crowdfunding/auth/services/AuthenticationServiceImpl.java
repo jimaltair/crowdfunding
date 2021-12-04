@@ -1,6 +1,8 @@
 package ru.pcs.crowdfunding.auth.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
@@ -14,12 +16,15 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationInfosRepository authenticationInfosRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Override
     public AuthenticationInfoDto signUpAuthentication(AuthenticationInfoDto client) {
 
         AuthenticationInfo newClientInfo = AuthenticationInfo.builder()
                 .email(client.getEmail().toLowerCase(Locale.ROOT))
-                .password(client.getPassword())
+                .password(passwordEncoder.encode(client.getPassword()))
                 .userId(client.getUserId())
                 .accessToken(client.getAccessToken())
                 .refreshToken(client.getRefreshToken())
@@ -31,7 +36,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public Boolean existEmailInDb(AuthenticationInfoDto client) {
-        return authenticationInfosRepository.findByEmail(client.getEmail());
+    public boolean existEmailInDb(AuthenticationInfoDto client) {
+        return authenticationInfosRepository.findByEmail(client.getEmail()).isPresent();
     }
 }

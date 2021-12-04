@@ -6,7 +6,7 @@ import ru.pcs.crowdfunding.auth.validation.ValidPassword;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class AuthenticationInfoDto {
 
-    @NotEmpty
+    @NotNull
     private Long userId;
 
     @Email

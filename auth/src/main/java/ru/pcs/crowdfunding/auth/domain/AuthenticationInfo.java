@@ -24,7 +24,7 @@ public class AuthenticationInfo {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String password;
 
     @Column(name = "refresh_token", length = 4096)
