@@ -7,21 +7,21 @@ import ru.pcs.crowdfunding.tran.dto.OperationDto;
 import ru.pcs.crowdfunding.tran.repositories.AccountsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 @Service
-public class OperationValidator implements ConstraintValidator<ValidOperation, OperationDto> {
+public class OperationValidator {
 
     private final AccountsRepository accountsRepository;
     private final PaymentsRepository paymentsRepository;
 
-    @Override
-    public boolean isValid(OperationDto operationDto, ConstraintValidatorContext constraintValidatorContext) {
+    public void isValid(OperationDto operationDto) { // тут нет смысла в boolean,
+                                                     // если метод отработает без ошибок, программа продолжит работу
         this.isOperationDtoNotNull(operationDto);
         this.isOperationTypeExist(operationDto);
+
+        // добавила if, пока неясно, что будет сохраняться во втором счете при снятии средств или пополнении извне
         if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
             operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) ||
             operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString())) {
@@ -35,10 +35,10 @@ public class OperationValidator implements ConstraintValidator<ValidOperation, O
         }
         this.isSumGreaterThanZero(operationDto);
         this.isBalanceEnoughForOperation(operationDto);
-        return true;
     }
 
-
+    // пока void, при вызове isValid последовательно вызываются эти методы,
+    // если нигде не выбрасывается исключение, возвращаем true
     private void isOperationDtoNotNull(OperationDto operationDto) {
         if (operationDto == null) {
             throw new IllegalArgumentException("Операция не передана / получен null");

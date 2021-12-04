@@ -17,10 +17,14 @@ public class OperationServiceImpl implements OperationService {
     private final PaymentsRepository paymentsRepository;
     private final AccountsRepository accountsRepository;
     private final OperationsRepository operationsRepository;
+    private final OperationValidator operationValidator;
 
     @Override
-    @ValidOperation
     public OperationDto createOperation(OperationDto operationDto) {
+
+
+        operationValidator.isValid(operationDto); // пока просто вызываю, ничего не обрабатываю; исключение должно проброситься сюда
+
 
         if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
                 operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) ||
