@@ -8,10 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Constraint(validatedBy = OperationValidator.class)
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidOperation {
-//    String message() default "invalid password or password must contains !, # , @, $ or %.";
+    String message() default "";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default  {};
 }

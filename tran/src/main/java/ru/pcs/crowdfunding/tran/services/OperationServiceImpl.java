@@ -19,6 +19,7 @@ public class OperationServiceImpl implements OperationService {
     private final OperationsRepository operationsRepository;
 
     @Override
+    @ValidOperation
     public OperationDto createOperation(OperationDto operationDto) {
 
         if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
