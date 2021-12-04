@@ -2,6 +2,7 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.domain.Project;
@@ -86,10 +87,11 @@ public class ProjectsServiceImpl implements ProjectsService {
         if (file == null || project == null) {
             throw new IllegalArgumentException("Can't upload image");
         }
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
         return ProjectImage.builder()
                 .project(project)
-                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + file.getOriginalFilename())
+                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + extension)
                 .build();
     }
 
