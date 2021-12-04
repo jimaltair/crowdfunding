@@ -1,0 +1,33 @@
+### Получить данные о счете
+GET localhost:8082/api/account/1
+
+###Создать новый счет
+POST localhost:8082/api/account
+Content-Type: application/json
+
+{
+  "isActive":true,
+  "createdAt":"2021-12-01T13:45:29Z",
+  "modifiedAt":"2021-12-02T12:16:37Z"
+}
+
+
+### Изменить счет
+PUT localhost:8082/api/account/3
+Content-Type: application/json
+
+{
+  "isActive":true,
+  "createdAt":"2022-12-01T13:45:29Z",
+  "modifiedAt":"2022-12-02T12:16:37Z"
+}
+
+### Удалить счет
+DELETE localhost:8082/api/account/3
+
+
+### Получить остаток по счету  /{id}/balance?date=время в секундах после 01.01.1970
+GET localhost:8082/api/account/3/balance?date=1638452190
+###
+
+
