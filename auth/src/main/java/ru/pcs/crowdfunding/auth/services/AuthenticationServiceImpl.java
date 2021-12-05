@@ -1,7 +1,6 @@
 package ru.pcs.crowdfunding.auth.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 class AuthenticationServiceImpl implements AuthenticationService {
 
     private final static Duration DEFAULT_TOKEN_DURATION = Duration.ofDays(30);

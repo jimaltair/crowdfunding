@@ -35,7 +35,6 @@ public class AuthController {
             success = false;
             status = HttpStatus.NOT_FOUND;
             errorMessage = "Client with id " + id + " not found";
-
         }
 
         ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfo);
