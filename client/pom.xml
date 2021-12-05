@@ -74,12 +74,6 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>2.13.0</version>
 		</dependency>
-        <dependency>
-            <groupId>ru.pcs.crowdfunding</groupId>
-            <artifactId>tran</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 	<build>
