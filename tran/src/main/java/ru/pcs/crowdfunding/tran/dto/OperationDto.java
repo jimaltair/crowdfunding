@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 public class OperationDto {
+
     private Long id;
     private Long initiatorId;
     private Instant datetime;

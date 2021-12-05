@@ -27,7 +27,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ResponseDto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<ResponseDto> getAccount(@PathVariable("id") Long id) {
         log.info("get Account by id {}", id);
 
         ResponseDto response;
@@ -48,7 +48,6 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-
         return ResponseEntity.status(status).body(response);
     }
 
@@ -103,13 +102,12 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createAccount(@RequestBody AccountDto newAccountDto) {
+
         AccountDto accountDto = accountService.createAccount(newAccountDto);
-
         ResponseDto response = ResponseDto.builder()
-                                        .success(true)
-                                        .data(accountDto)
-                                        .build();
-
+            .success(true)
+            .data(accountDto)
+            .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
