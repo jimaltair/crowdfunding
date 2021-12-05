@@ -53,14 +53,13 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public void createProject(ProjectForm form, MultipartFile file) {
-
         log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = getProjectStatus();
         projectStatusesRepository.save(projectStatus);
         Project project = getProject(form, projectStatus);
         projectsRepository.save(project);
 
-        if (form.getImage() != null) {
+        if (!file.isEmpty()) {
             ProjectImage image = getImage(file, project);
             try {
                 log.info("Try to save project image {}", image.getPath());
