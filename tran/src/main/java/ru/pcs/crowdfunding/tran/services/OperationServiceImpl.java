@@ -97,13 +97,13 @@ public class OperationServiceImpl implements OperationService {
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
             build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            build.setCreditAccount(accountsRepository.getById(2L));
+            build.setCreditAccount(accountsRepository.getById(1L));
             operation = operationsRepository.save(build);
             topUp(operationDto, operation);
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
-            build.setDebitAccount(accountsRepository.getById(2L));
+            build.setDebitAccount(accountsRepository.getById(1L));
             build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
             operation = operationsRepository.save(build);
             withdraw(operationDto, operation);
