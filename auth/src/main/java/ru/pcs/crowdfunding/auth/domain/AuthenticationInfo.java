@@ -3,6 +3,9 @@ package ru.pcs.crowdfunding.auth.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -24,12 +27,16 @@ public class AuthenticationInfo {
     @Column(name = "password_hash", nullable = false)
     private String password;
 
-    @Column(name = "access_token", length = 4096)
-    private String accessToken;
-
     @Column(name = "refresh_token", length = 4096)
     private String refreshToken;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    private boolean isActive;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    private Status status;
+
 }

@@ -19,8 +19,6 @@ public class OperationServiceImpl implements OperationService {
     private final OperationsRepository operationsRepository;
     private final OperationValidator operationValidator;
 
-
-
     @Override
     public OperationDto createOperation(OperationDto operationDto) {
 
@@ -52,6 +50,34 @@ public class OperationServiceImpl implements OperationService {
                     .datetime(operationDto.getDatetime())
                     .build());
 
+        operationValidator.isValid(operationDto);
+        String operationType = operationDto.getOperationType();
+
+        Operation operationBuild =  operationBuilder(operationDto);
+        Operation operation;
+
+        if (operationType.equals(OperationType.Type.REFUND.toString()) ||
+            operationType.equals(OperationType.Type.PAYMENT.toString())
+        ) {
+            operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
+            operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
+            operation = operationsRepository.save(operationBuild);
+            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+        }
+
+        if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
+            operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
+            operationBuild.setCreditAccount(accountsRepository.getById(1L));
+            operation = operationsRepository.save(operationBuild);
+            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+        }
+
+        if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
+            operationBuild.setDebitAccount(accountsRepository.getById(1L));
+            operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
+            operation = operationsRepository.save(operationBuild);
+            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
         }
         return operationDto;
     }

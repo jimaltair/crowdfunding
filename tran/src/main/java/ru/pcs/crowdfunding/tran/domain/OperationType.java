@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "operation_type")
 public class OperationType {
+
     public enum Type {
         PAYMENT,
         REFUND,

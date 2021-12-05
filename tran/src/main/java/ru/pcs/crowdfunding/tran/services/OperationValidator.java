@@ -1,7 +1,9 @@
 package ru.pcs.crowdfunding.tran.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.pcs.crowdfunding.tran.domain.Account;
 import ru.pcs.crowdfunding.tran.domain.OperationType;
 import ru.pcs.crowdfunding.tran.dto.OperationDto;
 import ru.pcs.crowdfunding.tran.repositories.AccountsRepository;
@@ -11,34 +13,38 @@ import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class OperationValidator {
 
     private final AccountsRepository accountsRepository;
     private final PaymentsRepository paymentsRepository;
 
-    public void isValid(OperationDto operationDto) { // тут нет смысла в boolean,
-                                                     // если метод отработает без ошибок, программа продолжит работу
+    public void isValid(OperationDto operationDto) {
+        log.info("get OperationDto = {}", operationDto.toString());
+
         this.isOperationDtoNotNull(operationDto);
         this.isOperationTypeExist(operationDto);
+        this.isSumGreaterThanZero(operationDto);
 
-        // добавила if, пока неясно, что будет сохраняться во втором счете при снятии средств или пополнении извне
         if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
-            operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) ||
-            operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString())) {
+            operationDto.getOperationType().equals(OperationType.Type.REFUND.toString())
+        ) {
+            this.isDebitAccountIdExist(operationDto);
+            this.isCreditAccountIdExist(operationDto);
+            this.isBalanceEnoughForOperation(operationDto);
+            this.isCreditAccountEqualsDebitAccoun(operationDto);
+        }
+
+        if (operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString())) {
             this.isDebitAccountIdExist(operationDto);
         }
 
-        if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
-                operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) ||
-                operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())) {
+        if (operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())) {
             this.isCreditAccountIdExist(operationDto);
+            this.isBalanceEnoughForOperation(operationDto);
         }
-        this.isSumGreaterThanZero(operationDto);
-        this.isBalanceEnoughForOperation(operationDto);
     }
 
-    // пока void, при вызове isValid последовательно вызываются эти методы,
-    // если нигде не выбрасывается исключение, метод isValid отрабатывает до конца
     private void isOperationDtoNotNull(OperationDto operationDto) {
         if (operationDto == null) {
             throw new IllegalArgumentException("Операция не передана / получен null");
@@ -46,10 +52,11 @@ public class OperationValidator {
     }
 
     private void isOperationTypeExist(OperationDto operationDto) {
-        if (!operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString())
-                && !operationDto.getOperationType().equals(OperationType.Type.REFUND.toString())
-                && !operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString())
-                && !operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())) {
+        if (!operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) &&
+            !operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) &&
+            !operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString()) &&
+            !operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())
+        ) {
             throw new IllegalArgumentException("Типа операции " +  operationDto.getOperationType() + " не существует");
         }
     }
@@ -73,12 +80,19 @@ public class OperationValidator {
     }
 
     private void isBalanceEnoughForOperation(OperationDto operationDto) {
-        if (paymentsRepository.findBalanceByAccountAndDatetime(
-                        accountsRepository.getById(operationDto.getCreditAccountId()),
-                        operationDto.getDatetime())
-                .subtract(operationDto.getSum()).compareTo(BigDecimal.ZERO) < 1) {
+        Account account = accountsRepository.getById(operationDto.getCreditAccountId());
+        BigDecimal balance = paymentsRepository.findBalanceByAccountAndDatetime(account, operationDto.getDatetime()); //TODO может брать текущее время? зачем мы его тянем из DTO?
+        log.info("balance credit account = {}", balance.toString());
+        if (balance.compareTo(operationDto.getSum()) <= 0 & balance.compareTo(BigDecimal.ZERO) < 1) {
             throw new IllegalArgumentException("Для совершения операции на сумму " + operationDto.getSum() + " на счете недостаточно средств");
         }
     }
 
+    public void isCreditAccountEqualsDebitAccoun(OperationDto operationDto) {
+        Account creditAccount = accountsRepository.getById(operationDto.getCreditAccountId());
+        Account debitAccoun = accountsRepository.getById(operationDto.getDebitAccountId());
+        if (creditAccount.equals(debitAccoun)) {
+            throw new IllegalArgumentException("Осуществлять переводс с с кошелька на этот же кошелек запрещено");
+        }
+    }
 }
