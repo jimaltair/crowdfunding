@@ -54,33 +54,23 @@ public class ProjectsServiceImpl implements ProjectsService {
     @Override
     public void createProject(ProjectForm form, MultipartFile file) {
 
+        log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = getProjectStatus();
-
         projectStatusesRepository.save(projectStatus);
-
         Project project = getProject(form, projectStatus);
-
-        ProjectImage image = getImage(file, project);
-
-        try {
-            Files.copy(file.getInputStream(), Paths.get(image.getPath()));
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
-
         projectsRepository.save(project);
-        projectImagesRepository.save(image);
 
-//        ProjectImage image;
-//        if ((image = getImage(file, project)) != null) {
-//            try {
-//                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
-//            } catch (IOException e) {
-//                throw new IllegalArgumentException(e);
-//            }
-//            projectImagesRepository.save(image);
-//        }
-//        projectsRepository.save(project);
+        if (form.getImage() != null) {
+            ProjectImage image = getImage(file, project);
+            try {
+                log.info("Try to save project image {}", image.getPath());
+                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
+            } catch (IOException e) {
+                log.error("Can't save project image {}", image.getPath());
+                throw new IllegalArgumentException(e);
+            }
+            projectImagesRepository.save(image);
+        }
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
@@ -107,10 +97,12 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
         if (form == null || projectStatus == null) {
+            log.warn("Can't create project - ProjectForm is null or ProjectStatus is null");
             throw new IllegalArgumentException("Can't create project");
         }
         return Project.builder()
                 //клиента забиваю в базу в ручную
+                // TODO: сделать как-то чтобы тестовый клиент инсертился автоматом
                 .author(clientsRepository.getById(CLIENT_FOR_TEST))
                 .title(form.getTitle())
                 .description(form.getDescription())

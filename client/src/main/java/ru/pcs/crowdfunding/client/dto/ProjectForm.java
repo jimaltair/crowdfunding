@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ProjectForm {
 
-    public static final String PROJECT_IMAGE_PATH = "./src/main/resources/static/upload/";
+    public static final String PROJECT_IMAGE_PATH = "./src/main/resources/static/project_images/";
 
     @NotBlank
     private String title;
