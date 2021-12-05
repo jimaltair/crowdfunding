@@ -17,11 +17,14 @@ public class OperationServiceImpl implements OperationService {
     private final PaymentsRepository paymentsRepository;
     private final AccountsRepository accountsRepository;
     private final OperationsRepository operationsRepository;
+    private final OperationValidator operationValidator;
 
     @Override
     public OperationDto createOperation(OperationDto operationDto) {
 
-        this.isValid(operationDto);
+
+        operationValidator.isValid(operationDto); // пока просто вызываю, ничего не обрабатываю; исключение должно проброситься сюда
+
 
         if (operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString()) ||
                 operationDto.getOperationType().equals(OperationType.Type.REFUND.toString()) ||
@@ -49,41 +52,5 @@ public class OperationServiceImpl implements OperationService {
 
         }
         return operationDto;
-    }
-
-    public boolean isValid(OperationDto operationDto) {
-
-        if (operationDto == null) {
-            throw new IllegalArgumentException("Информация не передана");
-        }
-
-        if (!operationDto.getOperationType().equals(OperationType.Type.PAYMENT.toString())
-            && !operationDto.getOperationType().equals(OperationType.Type.REFUND.toString())
-            && !operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString())
-            && !operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())) {
-            throw new IllegalArgumentException("Такого типа операции не существует");
-        }
-
-        if (!operationsRepository.findById(operationDto.getId()).isPresent()) {
-            throw new IllegalArgumentException("Такой операции не существует");
-        }
-
-        if (!accountsRepository.findById(operationDto.getCreditAccountId()).isPresent()
-            && !accountsRepository.findById(operationDto.getDebitAccountId()).isPresent()) {
-            throw new IllegalArgumentException("Данного счета не существует");
-        }
-
-        if (operationDto.getSum().compareTo(BigDecimal.ZERO) < 1) {
-            throw new IllegalArgumentException("Сумма операции меньше или равна нулю");
-        }
-
-        if (paymentsRepository.findBalanceByAccountAndDatetime(
-                accountsRepository.getById(operationDto.getCreditAccountId()),
-                operationDto.getDatetime())
-                .subtract(operationDto.getSum()).compareTo(BigDecimal.ZERO) < 1) {
-            throw new IllegalArgumentException("Недостаточно средств на счете");
-        }
-
-        return true;
     }
 }

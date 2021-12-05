@@ -5,5 +5,4 @@ import ru.pcs.crowdfunding.tran.dto.OperationDto;
 
 public interface OperationService {
     OperationDto createOperation(OperationDto operationDto);
-    boolean isValid(OperationDto operationDto);
 }
