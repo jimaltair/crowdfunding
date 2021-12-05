@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
@@ -30,8 +31,6 @@ import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
-
-    private static final Long CLIENT_FOR_TEST = 2L;
 
     private final ProjectsRepository projectsRepository;
 
@@ -89,20 +88,25 @@ public class ProjectsServiceImpl implements ProjectsService {
             try {
                 Files.createDirectory(Paths.get(path));
             } catch (IOException e) {
-                throw new IllegalArgumentException(String.format("Can't create directory %s", path));
+                log.error("Can't create directory {}", path);
+                throw new IllegalArgumentException(e);
             }
         }
     }
 
     private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
         if (form == null || projectStatus == null) {
-            log.warn("Can't create project - ProjectForm is null or ProjectStatus is null");
+            log.error("Can't create project - ProjectForm is null or ProjectStatus is null");
             throw new IllegalArgumentException("Can't create project");
         }
+
+        // получаем автора проекта через временный метод, пока не работает функционал,
+        // позволяющий создать проект уже зарегистрированному пользователю
+        Client userForTesting = getUserForTesting();
+        log.info("Use the test {} to create project", userForTesting.toString());
+
         return Project.builder()
-                //клиента забиваю в базу в ручную
-                // TODO: сделать как-то чтобы тестовый клиент инсертился автоматом
-                .author(clientsRepository.getById(CLIENT_FOR_TEST))
+                .author(userForTesting) // временно используем тестового пользователя в качестве автора
                 .title(form.getTitle())
                 .description(form.getDescription())
                 .createdAt(Instant.now())
@@ -117,5 +121,25 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .description("Simple description")
                 .status(ProjectStatus.Status.CONFIRMED)
                 .build();
+    }
+
+    /**
+     * Временный метод, создающий пользователя в базе для последующего использования в качестве автора проекта,
+     * если в базе на данный момент пусто. В противном случае возвращает первого по порядку пользователя.
+     *
+     * @return Client - сущность, представляющую пользователя данного сервиса.
+     */
+    private Client getUserForTesting() {
+        List<Client> users = clientsRepository.findAll();
+        if (!users.isEmpty()) {
+            return users.get(0);
+        } else {
+            return clientsRepository.save(Client.builder()
+                    .firstName("Иван")
+                    .lastName("Иванов")
+                    .city("Москва")
+                    .country("Россия")
+                    .build());
+        }
     }
 }
