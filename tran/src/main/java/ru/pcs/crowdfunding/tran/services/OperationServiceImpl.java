@@ -35,7 +35,7 @@ public class OperationServiceImpl implements OperationService {
         return operation;
     }
 
-    private Payment enrollBuilder(OperationDto operationDto, Operation operation) {
+    private Payment replenishmentTransactionBuilder(OperationDto operationDto, Operation operation) {
         return Payment.builder()
             .account(accountsRepository.getById(operationDto.getDebitAccountId()))
             .sum(operationDto.getSum())
@@ -44,7 +44,7 @@ public class OperationServiceImpl implements OperationService {
             .build();
     }
 
-    private Payment writeOffBuilder(OperationDto operationDto, Operation operation) {
+    private Payment writeOffTransactionBuilder(OperationDto operationDto, Operation operation) {
         return Payment.builder()
             .account(accountsRepository.getById(operationDto.getCreditAccountId()))
             .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
@@ -61,38 +61,31 @@ public class OperationServiceImpl implements OperationService {
         operationValidator.isValid(operationDto);
         String operationType = operationDto.getOperationType();
 
-        Operation build =  operationBuilder(operationDto);
+        Operation operationBuild =  operationBuilder(operationDto);
         Operation operation;
 
-
-        if (operationType.equals(OperationType.Type.PAYMENT.toString())) {
-            build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            operation = operationsRepository.save(build);
-            paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
-            paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
-        }
-
-        if (operationType.equals(OperationType.Type.REFUND.toString())) {
-            build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            operation = operationsRepository.save(build);
-            paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
-             paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
+        if (operationType.equals(OperationType.Type.REFUND.toString()) ||
+            operationType.equals(OperationType.Type.PAYMENT.toString())
+        ) {
+            operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
+            operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
+            operation = operationsRepository.save(operationBuild);
+            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
         }
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
-            build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            build.setCreditAccount(accountsRepository.getById(1L));
-            operation = operationsRepository.save(build);
-            paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
+            operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
+            operationBuild.setCreditAccount(accountsRepository.getById(1L));
+            operation = operationsRepository.save(operationBuild);
+            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
-            build.setDebitAccount(accountsRepository.getById(1L));
-            build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            operation = operationsRepository.save(build);
-            paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
+            operationBuild.setDebitAccount(accountsRepository.getById(1L));
+            operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
+            operation = operationsRepository.save(operationBuild);
+            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
         }
             return operationDto;
     }

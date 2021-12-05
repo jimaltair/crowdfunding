@@ -29,7 +29,7 @@ public class OperationController {
     public ResponseEntity<ResponseDto> createOperation(@RequestBody OperationDto newOperationDto) {
         log.info("get newOperationDto {}", newOperationDto.toString());
 
-        OperationDto operationDto = null;
+        OperationDto operationDto;
         try {
             operationDto = operationService.createOperation(newOperationDto);
         } catch (IllegalArgumentException e) {
