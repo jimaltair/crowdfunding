@@ -39,7 +39,6 @@ public class ClientDto {
 
         return ClientDto.builder()
                 .id(client.getId())
-                .sumAccount(transactionServiceRestTemplateClient.getBalance(client.getAccountId()))
                 .firstName(client.getFirstName())
                 .lastName(client.getLastName())
                 .country(client.getCountry())

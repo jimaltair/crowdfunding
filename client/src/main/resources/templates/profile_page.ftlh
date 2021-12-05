@@ -121,20 +121,8 @@
                                         <td>${clientDto.email}</td>
                                     </tr>
                                     <tr>
-                                        <td class="active">Запасная почта:</td>
-                                        <td>${clientDto.secondEmail}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="active">Поле с данными:</td>
-                                        <td>данные пользователя</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="active">Поле с данными:</td>
-                                        <td>данные пользователя</td>
-                                    </tr>
-                                    <tr>
                                         <td class="active">Кошелёк:</td>
-                                        <td>300 p</td>
+                                        <td>${clientDto.sumAccount}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -154,7 +142,7 @@
                                     <thead>
                                     <tr>
                                         <td>Баланс</td>
-                                        <td class="active">300 ₽</td>
+                                        <td class="active">${clientDto.sumAccount}</td>
                                     </tr>
                                     </thead>
                                 </table>
@@ -203,13 +191,6 @@
                                         <label class="control-label col-sm-2">Почта</label>
                                         <div class="col-sm-10">
                                             <input name="email" type="email" class="form-control" placeholder="почта"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-2">Запасная почта</label>
-                                        <div class="col-sm-10">
-                                            <input name="reserve_email" type="email" class="form-control"
-                                                   placeholder="запасная почта"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
