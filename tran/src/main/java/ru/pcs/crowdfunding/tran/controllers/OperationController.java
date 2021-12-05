@@ -29,8 +29,18 @@ public class OperationController {
     public ResponseEntity<ResponseDto> createOperation(@RequestBody OperationDto newOperationDto) {
         log.info("get newOperationDto {}", newOperationDto.toString());
 
-        OperationDto operationDto = operationService.createOperation(newOperationDto);
+        OperationDto operationDto = null;
+        try {
+            operationDto = operationService.createOperation(newOperationDto);
+        } catch (IllegalArgumentException e) {
 
+            ResponseDto response = ResponseDto.builder()
+                .success(false)
+                .error(Arrays.asList(e.getMessage()))
+                .data(newOperationDto)
+                .build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }
         ResponseDto response = ResponseDto.builder()
             .success(true)
             .data(operationDto)

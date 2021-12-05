@@ -72,7 +72,7 @@ public class OperationServiceImpl implements OperationService {
     //endregion
 
     @Override
-    public OperationDto createOperation(OperationDto operationDto) { //TODO подумать над транзакционностью
+    public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException { //TODO подумать над транзакционностью
 
         operationValidator.isValid(operationDto);
         String operationType = operationDto.getOperationType();
