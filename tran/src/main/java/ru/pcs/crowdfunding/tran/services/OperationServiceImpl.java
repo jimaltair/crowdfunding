@@ -2,6 +2,7 @@ package ru.pcs.crowdfunding.tran.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pcs.crowdfunding.tran.domain.Operation;
 import ru.pcs.crowdfunding.tran.domain.OperationType;
 import ru.pcs.crowdfunding.tran.domain.Payment;
@@ -51,28 +52,11 @@ public class OperationServiceImpl implements OperationService {
             .datetime(operationDto.getDatetime())
             .build();
     }
-
-    private void payment(OperationDto operationDto, Operation operation) {
-        paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
-        paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
-    }
-
-    private void refund(OperationDto operationDto, Operation operation) {
-        paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
-        paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
-    }
-
-    private void topUp(OperationDto operationDto, Operation operation) {
-        paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
-    }
-
-    private void withdraw(OperationDto operationDto, Operation operation) {
-        paymentsRepository.save(writeOffBuilder(operationDto, operation)); //зачисление
-    }
     //endregion
 
     @Override
-    public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException { //TODO подумать над транзакционностью
+    @Transactional
+    public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException {
 
         operationValidator.isValid(operationDto);
         String operationType = operationDto.getOperationType();
@@ -85,28 +69,30 @@ public class OperationServiceImpl implements OperationService {
             build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
             operation = operationsRepository.save(build);
-            payment(operationDto, operation);
+            paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
+            paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
         }
 
         if (operationType.equals(OperationType.Type.REFUND.toString())) {
             build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
             operation = operationsRepository.save(build);
-            refund(operationDto, operation);
+            paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
+             paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
         }
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
             build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             build.setCreditAccount(accountsRepository.getById(1L));
             operation = operationsRepository.save(build);
-            topUp(operationDto, operation);
+            paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
             build.setDebitAccount(accountsRepository.getById(1L));
             build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
             operation = operationsRepository.save(build);
-            withdraw(operationDto, operation);
+            paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
         }
             return operationDto;
     }
