@@ -31,17 +31,14 @@ public class AuthenticationInfoDto {
     @ValidPassword
     private String password;
 
-    private String accessToken;
     private String refreshToken;
     private Boolean isActive;
-
 
     public static AuthenticationInfoDto from(AuthenticationInfo authenticationInfo) {
         return AuthenticationInfoDto.builder()
                 .userId(authenticationInfo.getUserId())
                 .email(authenticationInfo.getEmail())
                 .password(authenticationInfo.getPassword())
-                .accessToken(authenticationInfo.getAccessToken())
                 .refreshToken(authenticationInfo.getRefreshToken())
                 .isActive(true)
                 .build();
@@ -52,5 +49,4 @@ public class AuthenticationInfoDto {
                 .map(AuthenticationInfoDto::from)
                 .collect(Collectors.toList());
     }
-
 }

@@ -37,7 +37,6 @@ class AuthControllerMockMvcTest {
                 .userId(1L)
                 .email("email@email.com")
                 .password("test_pass")
-                .accessToken("access_test_token")
                 .refreshToken("refresh_test_token")
                 .isActive(true)
                 .build());
@@ -50,7 +49,7 @@ class AuthControllerMockMvcTest {
 
     @Test
     void when_getById_thenStatus202andCreatedReturns() throws Exception {
-        mockMvc.perform(get("/auth/1"))
+        mockMvc.perform(get("/api/auth/1"))
                 .andDo(print())
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$['success']", is(true)))
@@ -58,18 +57,17 @@ class AuthControllerMockMvcTest {
                 .andExpect(jsonPath("$['data'].userId", is(1)))
                 .andExpect(jsonPath("$['data'].email", is("email@email.com")))
                 .andExpect(jsonPath("$['data'].password", is("test_pass")))
-                .andExpect(jsonPath("$['data'].accessToken", is("access_test_token")))
                 .andExpect(jsonPath("$['data'].refreshToken", is("refresh_test_token")))
                 .andExpect(jsonPath("$['data'].isActive", is(true)));
     }
 
     @Test
     void when_getNotExistedUser_thenStatus404AndErrorMessageReturns() throws Exception {
-        mockMvc.perform(get("/auth/100"))
+        mockMvc.perform(get("/api/auth/100"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$['success']", is(false)))
-                .andExpect(jsonPath("$['error']", is(Arrays.asList("404 NOT_FOUND", "Client with id 100 not found"))));
+                .andExpect(jsonPath("$['error']", is(Arrays.asList("Client with id 100 not found"))));
 //                .andExpect(jsonPath("$['data']", is(null))); throws NPE
     }
 }

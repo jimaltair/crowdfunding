@@ -26,7 +26,6 @@ class AuthenticationServiceImpl implements AuthenticationService {
                 .email(client.getEmail().toLowerCase(Locale.ROOT))
                 .password(passwordEncoder.encode(client.getPassword()))
                 .userId(client.getUserId())
-                .accessToken(client.getAccessToken())
                 .refreshToken(client.getRefreshToken())
                 .isActive(true)
                 .build();

@@ -5,10 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.auth.domain.AuthorizationInfo;
+import ru.pcs.crowdfunding.auth.domain.Role;
+import ru.pcs.crowdfunding.auth.domain.Status;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,14 +20,16 @@ import java.util.stream.Collectors;
 public class AuthorizationInfoDto {
 
     private Long userId;
-    private AuthorizationInfo.Role role;
-    private AuthorizationInfo.Status status;
+    private Role.RoleEnum role;
+    private Status.StatusEnum status;
+    private String accessToken;
 
     public static AuthorizationInfoDto from(AuthorizationInfo authorizationInfo) {
         return AuthorizationInfoDto.builder()
                 .userId(authorizationInfo.getUserId())
-                .role(authorizationInfo.getRole())
-                .status(authorizationInfo.getStatus())
+                .role(Role.RoleEnum.USER)
+                .status(Status.StatusEnum.CONFIRMED)
+                .accessToken(authorizationInfo.getAccessToken())
                 .build();
     }
 

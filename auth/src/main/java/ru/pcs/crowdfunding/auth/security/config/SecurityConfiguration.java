@@ -58,8 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        TokenAuthenticationFilter tokenAuthenticationFilter = new TokenAuthenticationFilter(authenticationManagerBean(), objectMapper, authenticationInfosRepository, authorizationInfosRepository);
-        tokenAuthenticationFilter.setFilterProcessesUrl("api/SignIn");
+        TokenAuthenticationFilter tokenAuthenticationFilter = new TokenAuthenticationFilter(authenticationManagerBean(),
+                objectMapper, authenticationInfosRepository, authorizationInfosRepository);
+        tokenAuthenticationFilter.setFilterProcessesUrl("api/signIn");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
