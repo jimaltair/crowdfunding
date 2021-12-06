@@ -86,7 +86,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     private void createDirectoryIfNotExists(String path) {
         if (Files.notExists(Paths.get(path))) {
             try {
-                Files.createDirectory(Paths.get(path));
+                Files.createDirectory(Paths.get(path).toAbsolutePath().normalize());
             } catch (IOException e) {
                 log.error("Can't create directory {}", path);
                 throw new IllegalArgumentException(e);

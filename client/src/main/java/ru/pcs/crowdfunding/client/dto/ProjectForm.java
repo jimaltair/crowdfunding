@@ -7,12 +7,9 @@ import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDateTime;
 
 /**
  * 28.11.2021
@@ -27,7 +24,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ProjectForm {
 
-    public static final String PROJECT_IMAGE_PATH = "./src/main/resources/static/project_images/";
+    public static final String PROJECT_IMAGE_PATH = "./client/src/main/resources/static/project_images/";
 
     @NotBlank
     private String title;
