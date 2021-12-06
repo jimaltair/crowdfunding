@@ -24,39 +24,35 @@ public class AuthenticationController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid AuthenticationInfoDto authenticationInfoDto) {
-
-        log.info("Запускается метод 'signUp' с параметром 'AuthenticationInfoDto' - {}", authenticationInfoDto);
+        log.info("Запускается метод 'signUp' с параметром 'authenticationInfo' - {}", authenticationInfoDto);
 
         ResponseDto response;
-
         log.info("Проверка на 'authenticationService.existEmailInDb(authenticationInfoDto)' - {}"
                 , authenticationService.existEmailInDb(authenticationInfoDto));
 
         if (!authenticationService.existEmailInDb(authenticationInfoDto)) {
             authenticationInfoDto = authenticationService.signUpAuthentication(authenticationInfoDto);
-
             log.info("Получение измененного 'authenticationInfoDto' - {} с запуском 'authenticationService'"
                     , authenticationInfoDto);
-
             response = ResponseDto.builder()
                     .data(authenticationInfoDto)
                     .success(true)
                     .build();
-
-            log.info("Создан новый 'ResponseDto' - {}", response);
+            log.info("Создан новый 'ResponseDto c содержимым 'data' - {}, 'isSuccess' - {}"
+                    , response.getData(), response.isSuccess());
 
             return ResponseEntity.ok(response);
         }
 
         log.warn("Ошибка! Email - {} уже существует", authenticationInfoDto.getEmail());
-
         response = ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList("Email already exists","ERROR MESSAGE"))
                 .build();
+        log.warn("Создан новый 'ResponseDto c содержимым 'error' - {}, 'isSuccess' - {}"
+                , response.getError(), response.isSuccess());
 
-        log.info("Создан новый 'ResponseDto' - {}", response);
-
+        log.info("Завершается метод 'signUp' с параметром 'authenticationInfo' - {}", authenticationInfoDto);
         return ResponseEntity.badRequest().body(response);
     }
 }
