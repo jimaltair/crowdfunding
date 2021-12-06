@@ -11,6 +11,8 @@ public interface AccountService {
 
     BigDecimal getBalance(Account account, Instant dateTime);
 
+    Optional<Long> getContributorsCount(Long accountId, Instant dateTime);
+
     Optional<AccountDto> findById(Long id);
 
     Optional<AccountDto> updateAccount(Long id, AccountDto accountDto);
