@@ -17,9 +17,9 @@
 <br>
 <text>Цель: ${project.moneyGoal}</text>
 <br>
-<text>Собрано: TODO</text>
+<text>Собрано: ${project.moneyCollected}</text>
 <br>
-<text>Участников: TODO</text>
+<text>Участников: ${project.contributorsCount}</text>
 <br>
 </body>
 </html>
