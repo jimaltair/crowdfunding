@@ -2,8 +2,10 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
@@ -30,8 +32,6 @@ import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
 
-    private static final Long CLIENT_FOR_TEST = 2L;
-
     private final ProjectsRepository projectsRepository;
 
     private final ClientsRepository clientsRepository;
@@ -52,42 +52,61 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public void createProject(ProjectForm form, MultipartFile file) {
-
+        log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = getProjectStatus();
-
         projectStatusesRepository.save(projectStatus);
-
         Project project = getProject(form, projectStatus);
-
-        ProjectImage image = getImage(file, project);
-
-        try {
-            Files.copy(file.getInputStream(), Paths.get(image.getPath()));
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
-
         projectsRepository.save(project);
-        projectImagesRepository.save(image);
+
+        if (!file.isEmpty()) {
+            ProjectImage image = getImage(file, project);
+            try {
+                log.info("Try to save project image {}", image.getPath());
+                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
+            } catch (IOException e) {
+                log.error("Can't save project image {}", image.getPath());
+                throw new IllegalArgumentException(e);
+            }
+            projectImagesRepository.save(image);
+        }
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
         if (file == null || project == null) {
             throw new IllegalArgumentException("Can't upload image");
         }
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
         return ProjectImage.builder()
                 .project(project)
-                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + file.getOriginalFilename())
+                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + "." + extension)
                 .build();
+    }
+
+    private void createDirectoryIfNotExists(String path) {
+        if (Files.notExists(Paths.get(path))) {
+            try {
+                Files.createDirectory(Paths.get(path).toAbsolutePath().normalize());
+            } catch (IOException e) {
+                log.error("Can't create directory {}", path);
+                throw new IllegalArgumentException(e);
+            }
+        }
     }
 
     private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
         if (form == null || projectStatus == null) {
+            log.error("Can't create project - ProjectForm is null or ProjectStatus is null");
             throw new IllegalArgumentException("Can't create project");
         }
-        return  Project.builder()
-                //клиента забиваю в базу в ручную
-                .author(clientsRepository.getById(CLIENT_FOR_TEST))
+
+        // получаем автора проекта через временный метод, пока не работает функционал,
+        // позволяющий создать проект уже зарегистрированному пользователю
+        Client userForTesting = getUserForTesting();
+        log.info("Use the test {} to create project", userForTesting.toString());
+
+        return Project.builder()
+                .author(userForTesting) // временно используем тестового пользователя в качестве автора
                 .title(form.getTitle())
                 .description(form.getDescription())
                 .createdAt(Instant.now())
@@ -102,5 +121,25 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .description("Simple description")
                 .status(ProjectStatus.Status.CONFIRMED)
                 .build();
+    }
+
+    /**
+     * Временный метод, создающий пользователя в базе для последующего использования в качестве автора проекта,
+     * если в базе на данный момент пусто. В противном случае возвращает первого по порядку пользователя.
+     *
+     * @return Client - сущность, представляющую пользователя данного сервиса.
+     */
+    private Client getUserForTesting() {
+        List<Client> users = clientsRepository.findAll();
+        if (!users.isEmpty()) {
+            return users.get(0);
+        } else {
+            return clientsRepository.save(Client.builder()
+                    .firstName("Иван")
+                    .lastName("Иванов")
+                    .city("Москва")
+                    .country("Россия")
+                    .build());
+        }
     }
 }

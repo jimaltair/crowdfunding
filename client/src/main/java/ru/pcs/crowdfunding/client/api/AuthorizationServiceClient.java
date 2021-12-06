@@ -1,9 +1,8 @@
 package ru.pcs.crowdfunding.client.api;
 
-import org.springframework.http.ResponseEntity;
 import ru.pcs.crowdfunding.client.dto.AuthSignUpRequest;
-import ru.pcs.crowdfunding.client.dto.ResponseDto;
+import ru.pcs.crowdfunding.client.dto.AuthSignUpResponse;
 
 public interface AuthorizationServiceClient {
-    ResponseEntity<ResponseDto> signUp(AuthSignUpRequest request);
+    AuthSignUpResponse signUp(AuthSignUpRequest request);
 }

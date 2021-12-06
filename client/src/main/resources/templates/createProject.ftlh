@@ -2,7 +2,7 @@
 <#import "spring.ftl" as spring/>
 <head>
     <meta charset="UTF-8">
-    <title>Создание проэкта</title>
+    <title>Создание проекта</title>
 </head>
 <body>
 <h1>Создайте новый проект</h1>

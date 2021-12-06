@@ -1,5 +1,6 @@
 package ru.pcs.crowdfunding.client.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
 import java.util.Arrays;
@@ -14,6 +15,13 @@ public class ResponseDto {
     private List<String> error = null;
     private Object data = null;
 
+    public <T> T getDataAs(Class<T> cls, ObjectMapper mapper) {
+        if (data == null) {
+            return null;
+        }
+        return mapper.convertValue(data, cls);
+    }
+
     public static ResponseDto buildSuccess(Object data) {
         return ResponseDto.builder()
                 .success(true)
@@ -22,7 +30,7 @@ public class ResponseDto {
                 .build();
     }
 
-    public static ResponseDto buildError(String ... error) {
+    public static ResponseDto buildError(String... error) {
         return ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList(error))
