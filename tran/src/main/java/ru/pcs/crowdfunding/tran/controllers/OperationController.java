@@ -30,8 +30,8 @@ public class OperationController {
 
         log.info("Запускается метод 'createOperation' с параметром 'newOperationDto' - {}", newOperationDto);
 
-        OperationDto operationDto = null;
-        log.info("Создан новый 'OperationDto' - {}", operationDto);
+        OperationDto operationDto;
+        log.info("Создан новый пустой 'OperationDto'");
 
         try {
             operationDto = operationService.createOperation(newOperationDto);

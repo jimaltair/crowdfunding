@@ -3,6 +3,7 @@ package ru.pcs.crowdfunding.tran.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pcs.crowdfunding.tran.domain.Operation;
 import ru.pcs.crowdfunding.tran.domain.OperationType;
 import ru.pcs.crowdfunding.tran.domain.Payment;
@@ -27,140 +28,93 @@ public class OperationServiceImpl implements OperationService {
 
     //region private methods
     private Operation operationBuilder(OperationDto operationDto) {
-        log.info("Запущен 'operationBuilder' с параметром 'operationDto' - {}", operationDto);
+        log.info("Запускается метод 'operationBuilder' с параметром 'operationDto' - {}", operationDto);
         Operation operation = Operation.builder()
             .initiator(operationDto.getInitiatorId())
             .datetime(operationDto.getDatetime())
             .sum(operationDto.getSum())
             .operationType(operationTypesRepository.findOperationType(operationDto.getOperationType()))
             .build();
-        log.info("Результат выполнения 'operationBuilder' - {}", operation);
+        log.info("Результат 'operationBuilder' - {}", operation);
         return operation;
     }
 
-    private Payment enrollBuilder(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'enrollBuilder' с параметрами 'operationDto' - {} , 'operation' - {}"
+    private Payment replenishmentTransactionBuilder(OperationDto operationDto, Operation operation) {
+        log.info("Запускается метод 'replenishmentTransactionBuilder' с параметрами 'operationDto' - {} , 'operation' - {}"
                 , operationDto, operation);
-
         Payment result = Payment.builder()
                 .account(accountsRepository.getById(operationDto.getDebitAccountId()))
                 .sum(operationDto.getSum())
                 .operation(operation)
                 .datetime(operationDto.getDatetime())
                 .build();
-        log.info("Результат выполнения метода 'enrollBuilder' - {} с запуском 'accountsRepository.getById({})'"
-        , result, operationDto.getDebitAccountId());
-
+        log.info("Результат 'replenishmentTransactionBuilder' - {}", result);
         return result;
     }
 
-    private Payment writeOffBuilder(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'writeOffBuilder' с параметрами 'operationDto' - {} , 'operation' - {}"
+    private Payment writeOffTransactionBuilder(OperationDto operationDto, Operation operation) {
+        log.info("Запускается метод 'writeOffTransactionBuilder' с параметрами 'operationDto' - {}, 'operation' - {}"
                 , operationDto, operation);
-
         Payment result = Payment.builder()
                 .account(accountsRepository.getById(operationDto.getCreditAccountId()))
                 .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
                 .operation(operation)
                 .datetime(operationDto.getDatetime())
                 .build();
-        log.info("Результат выполнения метода 'writeOffBuilder' - {} с запуском 'accountsRepository.getById({})'"
-        , result, operationDto.getCreditAccountId());
-
+        log.info("Результат 'writeOffTransactionBuilder' - {}", result);
         return result;
-    }
-
-    private void payment(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'payment' с параметрами 'operationDto' - {} , 'operation' - {}"
-                , operationDto, operation);
-        log.info("Запускается метод 'save' в 'paymentsRepository' c параметром 'enrollBuilder(operationDto, operation)' - {}",
-                enrollBuilder(operationDto, operation));
-        paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
-
-        log.info("Запускается метод 'save' в 'paymentsRepository' c параметром 'writeOffBuilder(operationDto, operation)' - {}",
-                writeOffBuilder(operationDto, operation));
-        paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
-    }
-
-    private void refund(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'refund' с параметрами 'operationDto' - {} , 'operation' - {}"
-                , operationDto, operation);
-        log.info("Запускается метод 'save' в 'paymentsRepository' c параметром 'writeOffBuilder(operationDto, operation)' - {}",
-                writeOffBuilder(operationDto, operation));
-        paymentsRepository.save(writeOffBuilder(operationDto, operation)); //списание
-
-        log.info("Запускается метод 'save' в 'paymentsRepository' c параметром 'enrollBuilder(operationDto, operation)' - {}",
-                enrollBuilder(operationDto, operation));
-        paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
-    }
-
-    private void topUp(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'topUp' с параметрами 'operationDto' - {} , 'operation' - {}"
-                , operationDto, operation);
-        log.info("Запускается метод 'save' в 'paymentsRepository' c параметром 'enrollBuilder(operationDto, operation)' - {}",
-                enrollBuilder(operationDto, operation));
-        paymentsRepository.save(enrollBuilder(operationDto, operation)); //зачисление
-    }
-
-    private void withdraw(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'withdraw' с параметрами 'operationDto' - {} , 'operation' - {}"
-                , operationDto, operation);
-        log.info("Запускается метод 'save' в 'paymentsRepository' c параметром 'writeOffBuilder(operationDto, operation)' - {}",
-                writeOffBuilder(operationDto, operation));
-        paymentsRepository.save(writeOffBuilder(operationDto, operation)); //зачисление
     }
     //endregion
 
     @Override
-    public OperationDto createOperation(OperationDto operationDto) { //TODO подумать над транзакционностью
+    @Transactional
+    public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException {
         log.info("Запускается метод 'createOperation' с параметром 'operationDto' - {}", operationDto);
 
         operationValidator.isValid(operationDto);
         String operationType = operationDto.getOperationType();
 
-        Operation build =  operationBuilder(operationDto);
-        log.info("Создан 'build' - {}", build);
+        Operation operationBuild =  operationBuilder(operationDto);
         Operation operation;
+        log.info("Созданы 'operationBuild' - {} , пустой 'operation'", operationBuild);
 
-
-        if (operationType.equals(OperationType.Type.PAYMENT.toString())) {
-            log.info("Выполнено условие 'PAYMENT' для 'operationDto'");
-            build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            log.info("Заменены параметры 'debitAccount', 'creditAccount' в 'build' - {} с запуском 'accountsRepository'", build);
-            operation = operationsRepository.save(build);
-            log.info("Создан 'Operation'  - {} с запуском 'operationsRepository'", operation);
-            payment(operationDto, operation);
-        }
-
-        if (operationType.equals(OperationType.Type.REFUND.toString())) {
-            log.info("Выполнено условие 'REFUND' для 'operationDto'");
-            build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            log.info("Заменены параметры 'debitAccount', 'creditAccount' в 'build' - {} с запуском 'accountsRepository'", build);
-            operation = operationsRepository.save(build);
-            log.info("Создан 'Operation'  - {} с запуском 'operationsRepository'", operation);
-            refund(operationDto, operation);
+        if (operationType.equals(OperationType.Type.REFUND.toString()) ||
+            operationType.equals(OperationType.Type.PAYMENT.toString())
+        ) {
+            log.info("Выполнено условие 'REFUND' или 'PAYMENT' для 'operationDto'");
+            operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
+            operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
+            log.info("Изменены поля 'debitAccount', 'creditAccount' для 'operationBuild' - {}", operationBuild);
+            operation = operationsRepository.save(operationBuild);
+            log.info("Результат изменения 'operation' с вызвовом метода 'save' в 'operationsRepository' - {}", operation);
+            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+            log.info("Результат 'operationDto' - {}, 'operation' - {}" +
+                    " после вызовов методов 'writeOffTransactionBuilder', 'replenishmentTransactionBuilder'", operationDto, operation);
         }
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
             log.info("Выполнено условие 'TOP_UP' для 'operationDto'");
-            build.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            build.setCreditAccount(accountsRepository.getById(1L));
-            log.info("Заменены параметры 'debitAccount', 'creditAccount' в 'build' - {} с запуском 'accountsRepository'", build);
-            operation = operationsRepository.save(build);
-            log.info("Создан 'Operation'  - {} с запуском 'operationsRepository'", operation);
-            topUp(operationDto, operation);
+            operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
+            operationBuild.setCreditAccount(accountsRepository.getById(1L));
+            log.info("Изменены поля 'debitAccount', 'creditAccount' для 'operationBuild' - {}", operationBuild);
+            operation = operationsRepository.save(operationBuild);
+            log.info("Результат изменения 'operation' с вызвовом метода 'save' в 'operationsRepository' - {}", operation);
+            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+            log.info("Результат 'operationDto' - {}, 'operation' - {}" +
+                    " после вызовов методов 'replenishmentTransactionBuilder'", operationDto, operation);
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
-            log.info("Выполнено условие 'TOP_UP' для 'operationDto'");
-            build.setDebitAccount(accountsRepository.getById(1L));
-            build.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            log.info("Заменены параметры 'debitAccount', 'creditAccount' в 'build' - {} с запуском 'accountsRepository'", build);
-            operation = operationsRepository.save(build);
-            log.info("Создан 'Operation'  - {} с запуском 'operationsRepository'", operation);
-            withdraw(operationDto, operation);
+            log.info("Выполнено условие 'WITHDRAW' для 'operationDto'");
+            operationBuild.setDebitAccount(accountsRepository.getById(1L));
+            operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
+            log.info("Изменены поля 'debitAccount', 'creditAccount' для 'operationBuild' - {}", operationBuild);
+            operation = operationsRepository.save(operationBuild);
+            log.info("Результат изменения 'operation' с вызвовом метода 'save' в 'operationsRepository' - {}", operation);
+            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            log.info("Результат 'operationDto' - {}, 'operation' - {}" +
+                    " после вызовов методов 'writeOffTransactionBuilder'", operationDto, operation);
         }
             return operationDto;
     }
