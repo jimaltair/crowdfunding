@@ -25,6 +25,8 @@ public class ProjectDto {
     private Instant finishDate;
 
     private BigDecimal moneyGoal;
+    private BigDecimal moneyCollected;
+    private Long contributorsCount;
 
     private String status;
 
