@@ -5,13 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
+import ru.pcs.crowdfunding.client.dto.ClientForm;
+import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
@@ -37,5 +40,14 @@ public class ClientController {
         return "profile_page";
     }
 
+    @PutMapping(value = "/{id}/update")
+    public String update(@PathVariable Long id, @Valid ClientForm form, Model model,
+                             @RequestParam("file") MultipartFile file) {
+        clientsService.updateClient(id, form, file);
+
+        model.addAttribute("clientDto", form);
+
+        return "profile_page";
+    }
 
 }

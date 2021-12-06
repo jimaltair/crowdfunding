@@ -22,7 +22,7 @@ public class ClientDto {
     private String firstName;
     private String lastName;
 
-    private String about;
+//    private String about;
 
     private String country;
     private String city;
@@ -33,7 +33,7 @@ public class ClientDto {
     private List<Project> projects;
 
     private String email;
-    private String secondEmail;
+//    private String secondEmail;
 
     public static ClientDto from(Client client) {
 

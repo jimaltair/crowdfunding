@@ -72,7 +72,7 @@
                         <div class="text-center" id="author">
                             <img src="/img/avatar_vasiliy.jpg">
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
-                            <p>${clientDto.about}</p>
+                            <#--                            <p>${clientDto.about}</p>-->
                             <p class="sosmed-author">
                                 <a href="#"><i class="fa fa-facebook" title="Facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter" title="Twitter"></i></a>
@@ -96,7 +96,7 @@
                         <div id="myTabContent" class="tab-content">
                             <hr>
                             <div class="tab-pane fade active in" id="detail">
-<#----------------------->
+                                <#----------------------->
                                 <h4>Данные профиля</h4>
                                 <table class="table table-th-block">
                                     <tbody>
@@ -159,6 +159,7 @@
                             <br>
                             <div class="tab-pane fade" id="change_profile">
                                 <form role="form" class="form-horizontal">
+                                    <#--                                    <form action="/clients/{id}/update" method="put" enctype="multipart/form-data">-->
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Имя</label>
                                         <div class="col-sm-10">
@@ -194,10 +195,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <input type="submit" class="btn btn-info" value="Сохранить"/>
+                                        <label class="control-label col-sm-2">Фото профиля:</label>
+                                        <input type="file" name="file">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <br>
+                                                <input type="submit" class="btn btn-info" value="Сохранить"/>
+                                            </div>
                                         </div>
-                                    </div>
                                 </form>
                             </div>
                         </div>
