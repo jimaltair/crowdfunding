@@ -15,4 +15,12 @@ public class CreateAccountRequest {
     private Boolean isActive;
     private Instant createdAt;
     private Instant modifiedAt;
+
+    public static CreateAccountRequest requestToCreateNewAccount() {
+        return CreateAccountRequest.builder()
+                .isActive(true)
+                .createdAt(Instant.now())
+                .modifiedAt(Instant.now())
+                .build();
+    }
 }
