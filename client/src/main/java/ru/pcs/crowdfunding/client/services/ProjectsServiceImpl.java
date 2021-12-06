@@ -20,6 +20,7 @@ import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -27,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
 import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 
 @Service
@@ -52,7 +52,15 @@ public class ProjectsServiceImpl implements ProjectsService {
             log.warn("project with id = {} not found", id);
             return Optional.empty();
         }
-        return Optional.of(from(project.get()));
+
+        Long accountId = project.get().getAccountId();
+        BigDecimal balance = transactionServiceClient.getBalance(accountId);
+        Long donorsCount = transactionServiceClient.getContributorsCount(accountId);
+
+        ProjectDto projectDto = ProjectDto.from(project.get());
+        projectDto.setMoneyCollected(balance);
+        projectDto.setContributorsCount(donorsCount);
+        return Optional.of(projectDto);
     }
 
     @Override
@@ -83,6 +91,8 @@ public class ProjectsServiceImpl implements ProjectsService {
             }
             projectImagesRepository.save(image);
         }
+
+        return Optional.of(project.getId());
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
