@@ -16,7 +16,7 @@ public class ResponseDto {
     private Object data = null;
 
     public <T> T getDataAs(Class<T> cls, ObjectMapper mapper) {
-        if (data == null) {
+        if (data == null){
             return null;
         }
         return mapper.convertValue(data, cls);

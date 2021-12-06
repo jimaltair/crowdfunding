@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -28,16 +29,16 @@ public class ClientDto {
 
     private String avatarImagePath;
 
-    private Long accountId;
+    private BigDecimal sumAccount;
     private List<Project> projects;
 
     private String email;
     private String secondEmail;
 
     public static ClientDto from(Client client) {
+
         return ClientDto.builder()
                 .id(client.getId())
-                .accountId(client.getAccountId())
                 .firstName(client.getFirstName())
                 .lastName(client.getLastName())
                 .country(client.getCountry())

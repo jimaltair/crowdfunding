@@ -26,18 +26,16 @@ public class ClientController {
     public String getById(@PathVariable Long id, Model model) {
         log.info("get by id = {}", id);
 
-        Optional<ClientDto> client = clientsService.findById(id);
+        Optional<ClientDto> client = clientsService.getById(id);
         if (!client.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client with id " + id + " not found");
         }
         log.debug("result = {}", client.get());
 
-        client.get().setEmail("TODO: добавить email");
-        client.get().setSecondEmail("TODO: добавить второй email");
-        client.get().setAbout("TODO: добавить инфу о клиенте");
+        model.addAttribute("clientDto", client.get());
 
-        model.addAttribute("clientDto" , client.get());
         return "profile_page";
     }
+
 
 }
