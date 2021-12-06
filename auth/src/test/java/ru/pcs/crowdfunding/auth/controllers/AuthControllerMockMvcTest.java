@@ -37,7 +37,7 @@ class AuthControllerMockMvcTest {
                 .userId(1L)
                 .email("email@email.com")
                 .password("test_pass")
-//                .accessToken("access_test_token") реализация поменялась
+                .accessToken("access_test_token") 
                 .refreshToken("refresh_test_token")
                 .isActive(true)
                 .build());
