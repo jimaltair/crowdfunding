@@ -56,7 +56,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public void createProject(ProjectForm form, MultipartFile file) {
+    public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = getProjectStatus();
         projectStatusesRepository.save(projectStatus);
