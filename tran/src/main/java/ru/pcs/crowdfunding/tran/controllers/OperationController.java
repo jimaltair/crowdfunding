@@ -38,7 +38,7 @@ public class OperationController {
                 .success(false)
                 .error(Arrays.asList(e.getMessage()))
                 .build();
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         ResponseDto response = ResponseDto.builder()
             .success(true)
