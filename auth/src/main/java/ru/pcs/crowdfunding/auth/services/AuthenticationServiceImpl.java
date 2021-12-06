@@ -23,7 +23,6 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationInfoDto signUpAuthentication(AuthenticationInfoDto client) {
-
         log.info("Запускается метод 'signUpAuthentication' с параметрами 'AuthenticationInfoDto' - {}", client);
 
         AuthenticationInfo newClientInfo = AuthenticationInfo.builder()
@@ -34,11 +33,9 @@ class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(client.getRefreshToken())
                 .isActive(true)
                 .build();
-
         log.info("Создан новый 'AuthenticationInfo' - {}", newClientInfo);
 
         authenticationInfosRepository.save(newClientInfo);
-
         log.info("Завершен метод 'save' в 'authenticationInfosRepository' с параметром 'newClientInfo' - {}", newClientInfo);
 
         return AuthenticationInfoDto.from(newClientInfo);
@@ -48,7 +45,6 @@ class AuthenticationServiceImpl implements AuthenticationService {
     public boolean existEmailInDb(AuthenticationInfoDto client) {
 
         boolean isExistEmailInDb = authenticationInfosRepository.findByEmail(client.getEmail()).isPresent();
-
         log.info("Результат проверки существования email - {} в 'authenticationInfosRepository' = {}"
                 , client.getEmail(), isExistEmailInDb);
 

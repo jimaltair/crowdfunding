@@ -14,11 +14,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Optional<AuthenticationInfoDto> findById(Long id) {
-
         log.info("Запускается метод 'findById' с параметром 'id' - {}", id);
 
         Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.builder().build());
-
         log.info("Результат выполения метода 'findById' - {}", result.get());
 
         return result;
@@ -26,11 +24,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationInfoDto createAuthenticationInfo(AuthenticationInfoDto authenticationInfo) {
-
         log.info("Запускается метод 'createAuthenticationInfo' с параметром 'AuthenticationInfoDto' - {}", authenticationInfo);
 
         AuthenticationInfoDto result = AuthenticationInfoDto.builder().build();
-
         log.info("Результат выполнения метода 'createAuthenticationInfo' - {}", result);
 
         return result;
@@ -38,12 +34,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo) {
-
         log.info("Запускается метод 'updateAuthenticationInfo' с параметрами 'id' - {} и 'AuthenticationInfoDto' - {}"
                 , id, authenticationInfo);
 
         Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.builder().build());
-
         log.info("Результат выполнения метода 'updateAuthenticationInfo' - {}", result.get());
 
         return result;
@@ -51,11 +45,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Optional<AuthenticationInfoDto> deleteAuthenticationInfo(Long id) {
-
         log.info("Запускается метод 'deleteAuthenticationInfo' с параметром 'id' - {}", id);
 
         Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.builder().build());
-
         log.info("Результат выполнения метода 'deleteAuthenticationInfo' - {}", result.get());
 
         return result;
