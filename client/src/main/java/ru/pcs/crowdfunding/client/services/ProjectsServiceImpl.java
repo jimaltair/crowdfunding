@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
+import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
+import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
@@ -40,6 +43,8 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     private final ProjectImagesRepository projectImagesRepository;
 
+    private final TransactionServiceClient transactionServiceClient;
+
     @Override
     public Optional<ProjectDto> findById(Long id) {
         Optional<Project> project = projectsRepository.findById(id);
@@ -56,6 +61,15 @@ public class ProjectsServiceImpl implements ProjectsService {
         ProjectStatus projectStatus = getProjectStatus();
         projectStatusesRepository.save(projectStatus);
         Project project = getProject(form, projectStatus);
+
+        // создаём запрос в transaction-service на создание счёта для проекта
+        CreateAccountRequest requestToCreateAccount = CreateAccountRequest.requestToCreateNewAccount();
+        log.info("Try to create account for project with {}", requestToCreateAccount.toString());
+        CreateAccountResponse response = transactionServiceClient.createAccount(requestToCreateAccount);
+        Long projectAccountId = response.getId();
+        log.info("Was created new account for project with id={}", projectAccountId);
+        project.setAccountId(projectAccountId);
+
         projectsRepository.save(project);
 
         if (!file.isEmpty()) {
