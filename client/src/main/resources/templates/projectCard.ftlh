@@ -5,15 +5,22 @@
 </head>
 <body>
 <h2>${project.title}</h2>
+<#if project.imagesLinks??>
+    <#list project.imagesLinks as link>
+        <img src="${link}" alt="project image" />
+        <br>
+    </#list>
+    <br>
+</#if>
 <text>Описание: ${project.description}</text>
+<br>
 <br>
 <text>Автор: ${project.authorName}</text>
 <br>
-<br>
 <text>Создан: ${project.createdAt}</text>
 <br>
-<text>Дата окончания: ${project.finishDate}</text>
 <br>
+<text>Дата окончания: ${project.finishDate}</text>
 <br>
 <text>Цель: ${project.moneyGoal}</text>
 <br>

@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 
@@ -34,6 +35,8 @@ import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
+
+    private final static String PROJECT_IMAGES_PATH = "/project_images";
 
     private final ProjectsRepository projectsRepository;
 
@@ -56,10 +59,15 @@ public class ProjectsServiceImpl implements ProjectsService {
         Long accountId = project.get().getAccountId();
         BigDecimal balance = transactionServiceClient.getBalance(accountId);
         Long donorsCount = transactionServiceClient.getContributorsCount(accountId);
+        List<String> imagesLinks = project.get().getImages().stream()
+                .map(ProjectImage::getPath)
+                .map(path -> FilenameUtils.concat(PROJECT_IMAGES_PATH, FilenameUtils.getName(path)))
+                .collect(Collectors.toList());
 
         ProjectDto projectDto = ProjectDto.from(project.get());
         projectDto.setMoneyCollected(balance);
         projectDto.setContributorsCount(donorsCount);
+        projectDto.setImagesLinks(imagesLinks);
         return Optional.of(projectDto);
     }
 
