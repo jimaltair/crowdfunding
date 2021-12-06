@@ -27,49 +27,65 @@ public class OperationController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createOperation(@RequestBody OperationDto newOperationDto) {
-        log.info("get newOperationDto {}", newOperationDto.toString());
 
-        OperationDto operationDto;
+        log.info("Запускается метод 'createOperation' с параметром 'newOperationDto' - {}", newOperationDto);
+
+        OperationDto operationDto = null;
+        log.info("Создан новый 'OperationDto' - {}", operationDto);
+
         try {
             operationDto = operationService.createOperation(newOperationDto);
+            log.info("Получен измененный 'operationDto' - {} с вызовом 'operationService'", operationDto);
         } catch (IllegalArgumentException e) {
-
+            log.error("Не удалось изменить 'operationDto'", new IllegalArgumentException(e));
             ResponseDto response = ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList(e.getMessage()))
                 .data(newOperationDto)
                 .build();
+            log.warn("Создан новый 'ResponseDto' c содержимым - {} и 'isSuccess' - {}", response.getData(), response.isSuccess());
+            log.warn("Завершается метод 'createOperation' с параметром 'OperationDto' - {}", newOperationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
         ResponseDto response = ResponseDto.builder()
             .success(true)
             .data(operationDto)
             .build();
+        log.info("Создан новый 'ResponseDto' c содержимым - {} и 'isSuccess' - {}", response.getData(), response.isSuccess());
+        log.info("Завершается метод 'createOperation' с параметром 'OperationDto' - {}", newOperationDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getOperation(@PathVariable("id") Long id) {
 
-        log.info("get Operation by id {}", id);
+        log.info("Запускается метод 'getOperation' с параметром 'id' - {}", id);
 
         ResponseDto response;
         HttpStatus status;
 
         Optional<OperationDto> operationDto = operationService.findById(id);
 
+        log.info("Попытка получения 'OperationDto' - {} с вызвовом 'operationService'", operationDto);
+
         if (!operationDto.isPresent()) {
+            log.warn("Не удалось создать 'operationDto' потому что 'operation' с 'id' - {} не существует", id);
             status = HttpStatus.NOT_FOUND;
+            log.warn("Создан новый 'HttpStatus' - {}", status);
             response = ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList("Operation with id " + id + " not found"))
                 .build();
+            log.warn("Создан новый 'ResponseDto' c содержимым - {} и 'isSuccess' - {}", response.getError(), response.isSuccess());
         } else {
+            log.info("Успешно");
             status = HttpStatus.ACCEPTED;
+            log.info("Создан новый 'HttpStatus' - {}", status);
             response = ResponseDto.builder()
                 .success(true)
                 .data(operationDto.get())
                 .build();
+            log.info("Создан новый 'ResponseDto' c содержимым - {} и 'isSuccess' - {}", response.getData(), response.isSuccess());
         }
         return ResponseEntity.status(status).body(response);
     }
