@@ -1,9 +1,7 @@
 package ru.pcs.crowdfunding.client.api;
 
-import org.springframework.http.ResponseEntity;
 import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
-import ru.pcs.crowdfunding.client.dto.ResponseDto;
 
 import java.math.BigDecimal;
 
@@ -13,5 +11,5 @@ public interface TransactionServiceClient {
 
     BigDecimal getBalance(Long accountId);
 
-
+    Long getContributorsCount(Long accountId);
 }
