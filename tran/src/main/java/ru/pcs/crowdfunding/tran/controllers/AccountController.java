@@ -57,7 +57,6 @@ public class AccountController {
                                                       Long epochSecondTimeStamp) {
 
         Instant balanceDateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
-
         log.info("get balance by Account id {} at {}", id, balanceDateTime);
 
         ResponseDto response;
@@ -65,14 +64,12 @@ public class AccountController {
 
         Optional<AccountDto> optionalAccountDto = accountService.findById(id);
 
-
         if (!optionalAccountDto.isPresent()) {
             status = HttpStatus.NOT_FOUND;
             response = ResponseDto.builder()
                     .success(false)
                     .error(Arrays.asList("Account with id " + id + " not found"))
                     .build();
-
             return ResponseEntity.status(status).body(response);
         }
 
@@ -83,7 +80,6 @@ public class AccountController {
                 .createdAt(accountDto.getCreatedAt())
                 .modifiedAt(accountDto.getModifiedAt())
                 .build();
-
         BigDecimal balance = accountService.getBalance(account, balanceDateTime);
 
         BalanceDto balanceDto = BalanceDto.builder()
@@ -101,8 +97,8 @@ public class AccountController {
     }
 
     @GetMapping(value = "/{id}/contributorsCount")
-    public ResponseEntity<ResponseDto> getDonorsCount(@PathVariable("id") Long id,
-                                                      @RequestParam("date") Long epochSecondTimeStamp) {
+    public ResponseEntity<ResponseDto> getContributorsCount(@PathVariable("id") Long id,
+                                                            @RequestParam("date") Long epochSecondTimeStamp) {
         Instant dateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
 
         HttpStatus httpStatus;
@@ -120,10 +116,9 @@ public class AccountController {
         return ResponseEntity.status(httpStatus).body(responseDto);
     }
 
-    @PostMapping
-    public ResponseEntity<ResponseDto> createAccount(@RequestBody AccountDto newAccountDto) {
-
-        AccountDto accountDto = accountService.createAccount(newAccountDto);
+    @GetMapping
+    public ResponseEntity<ResponseDto> createAccount() {
+        AccountDto accountDto = accountService.createAccount();
         ResponseDto response = ResponseDto.builder()
             .success(true)
             .data(accountDto)
@@ -131,10 +126,9 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAccount(@PathVariable("id") Long id,
-                                                                @RequestBody AccountDto updateAccountDto) {
+                                                     @RequestBody AccountDto updateAccountDto) {
         ResponseDto response;
         HttpStatus status;
 
@@ -153,10 +147,8 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-
         return ResponseEntity.status(status).body(response);
     }
-
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> deleteAccount(@PathVariable("id") Long id) {
@@ -178,8 +170,6 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-
         return ResponseEntity.status(status).body(response);
     }
-
 }

@@ -54,14 +54,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto createAccount(AccountDto accountDto) {
+    public AccountDto createAccount() {
         Account account = Account.builder()
-                .createdAt(accountDto.getCreatedAt())
-                .modifiedAt(accountDto.getModifiedAt())
+                .createdAt(Instant.now())
+                .modifiedAt(Instant.now())
                 .isActive(true)
                 .build();
         accountsRepository.save(account);
-
         return AccountDto.from(account);
     }
 
