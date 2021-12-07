@@ -1,6 +1,7 @@
 package ru.pcs.crowdfunding.tran.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.tran.domain.Account;
 import ru.pcs.crowdfunding.tran.dto.AccountDto;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountServiceImpl implements AccountService {
 
     private final AccountsRepository accountsRepository;
@@ -22,7 +24,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public BigDecimal getBalance(Account account, Instant dateTime) {
-        return paymentsRepository.findBalanceByAccountAndDatetime(account, dateTime);
+        BigDecimal balance = paymentsRepository.findBalanceByAccountAndDatetime(account, dateTime);
+        log.info("for account = {} get balance = {} ", account.getId(), balance);
+        return balance;
     }
 
     @Override
@@ -34,7 +38,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<AccountDto> findById(Long id) {
         Optional<Account> optionalAccount = accountsRepository.findById(id);
-        return optionalAccount.map(AccountDto::from);
+        Optional<AccountDto> accountDto = optionalAccount.map(AccountDto::from);
+        log.info("find account = {}", accountDto);
+        return accountDto;
     }
 
     @Override
@@ -43,14 +49,15 @@ public class AccountServiceImpl implements AccountService {
         if (!optionalAccount.isPresent()) {
             return Optional.empty();
         }
-
         Account account = optionalAccount.get();
         account.setCreatedAt(accountDto.getCreatedAt());
         account.setModifiedAt(accountDto.getModifiedAt());
         account.setIsActive(accountDto.getIsActive());
-        accountsRepository.save(account);
+        account = accountsRepository.save(account);
 
-        return Optional.of(AccountDto.from(account));
+        Optional<AccountDto> updateAccount = Optional.of(AccountDto.from(account));
+        log.info("update account = {}", updateAccount);
+        return updateAccount;
     }
 
     @Override
@@ -60,8 +67,10 @@ public class AccountServiceImpl implements AccountService {
                 .modifiedAt(Instant.now())
                 .isActive(true)
                 .build();
-        accountsRepository.save(account);
-        return AccountDto.from(account);
+        account = accountsRepository.save(account);
+        AccountDto createAccount = AccountDto.from(account);
+        log.info("create account = {}", createAccount);
+        return createAccount;
     }
 
     @Override
@@ -74,8 +83,10 @@ public class AccountServiceImpl implements AccountService {
         Account account = optionalAccount.get();
         account.setIsActive(false);
         account.setModifiedAt(Instant.now());
-        accountsRepository.save(account);
+        account = accountsRepository.save(account);
 
-        return Optional.of(AccountDto.from(account));
+        Optional<AccountDto> deleteAccount = Optional.of(AccountDto.from(account));
+        log.info("delete account = {}", deleteAccount);
+        return deleteAccount;
     }
 }

@@ -28,7 +28,7 @@ public class AccountController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getAccount(@PathVariable("id") Long id) {
-        log.info("get Account by id {}", id);
+        log.info("get /api/account/{id}: id = {}", id);
 
         ResponseDto response;
         HttpStatus status;
@@ -48,7 +48,9 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("get /api/account/{id}: response: {}", responseBody);
+        return responseBody;
     }
 
     @GetMapping(value = "/{id}/balance")
@@ -57,7 +59,7 @@ public class AccountController {
                                                       Long epochSecondTimeStamp) {
 
         Instant balanceDateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
-        log.info("get balance by Account id {} at {}", id, balanceDateTime);
+        log.info("get /api/account/{id}/balance: id = {}, date = {}", id, balanceDateTime);
 
         ResponseDto response;
         HttpStatus status;
@@ -70,7 +72,9 @@ public class AccountController {
                     .success(false)
                     .error(Arrays.asList("Account with id " + id + " not found"))
                     .build();
-            return ResponseEntity.status(status).body(response);
+            ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+            log.info("get /api/account/{id}/balance: response: {}", responseBody);
+            return responseBody;
         }
 
         AccountDto accountDto = optionalAccountDto.get();
@@ -93,7 +97,9 @@ public class AccountController {
                 .data(balanceDto)
                 .build();
 
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("get /api/account/{id}/balance: response: {}", responseBody);
+        return responseBody;
     }
 
     @GetMapping(value = "/{id}/contributorsCount")
@@ -123,12 +129,15 @@ public class AccountController {
             .success(true)
             .data(accountDto)
             .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
+        log.info("get /api/account/: response: {}", responseBody);
+        return responseBody;
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAccount(@PathVariable("id") Long id,
                                                      @RequestBody AccountDto updateAccountDto) {
+        log.info("put /api/account/{id}: id = {}, updateAccountDto={}", id, updateAccountDto);
         ResponseDto response;
         HttpStatus status;
 
@@ -147,11 +156,15 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("put /api/account/{id}: response: {}", responseBody);
+        return responseBody;
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> deleteAccount(@PathVariable("id") Long id) {
+        log.info("delete /api/account/{id}: id = {}", id);
+
         ResponseDto response;
         HttpStatus status;
 
@@ -170,6 +183,8 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("put /api/account/{id}: response: {}", responseBody);
+        return responseBody;
     }
 }
