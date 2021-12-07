@@ -28,7 +28,6 @@
     <label for="country">Enter country:</label>
     <@spring.formInput 'signUpForm.country' 'id="country" class="text" placeholder="Your country"'/>
     <@spring.showErrors '<br>' 'error' />
-
     <br>
     <br>
     <label for="city">Enter city:</label>
