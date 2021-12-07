@@ -48,7 +48,6 @@ public class Project {
     @JoinColumn(name = "status", nullable = false)
     private ProjectStatus status;
 
-    @OneToMany
-    @JoinColumn(name = "image_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<Image> images;
 }

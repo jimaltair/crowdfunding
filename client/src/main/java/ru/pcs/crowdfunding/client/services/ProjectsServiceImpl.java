@@ -67,17 +67,18 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         if (!file.isEmpty()) {
             log.info("Try to save image with name={}", file.getOriginalFilename());
-            Image image = getImage(file);
+            Image image = getImage(file, project);
             Long id = imagesRepository.save(image).getId();
-            log.info("Image was saveddel with id={}", id);
+            log.info("Image was saved with id={}", id);
         }
     }
 
-    private Image getImage(MultipartFile file) {
+    private Image getImage(MultipartFile file, Project project) {
         try {
             return Image.builder()
                     .content(file.getBytes())
                     .name(file.getOriginalFilename())
+                    .project(project)
                     .build();
         } catch (IOException e) {
             log.error("Can't save image {}", file.getOriginalFilename());
@@ -85,7 +86,9 @@ public class ProjectsServiceImpl implements ProjectsService {
         }
     }
 
-    // в текущей реализации (сохранения картинки в базу) данный метод не используется
+    /**
+     * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется
+     */
     private void createDirectoryIfNotExists(String path) {
         if (Files.notExists(Paths.get(path))) {
             try {
