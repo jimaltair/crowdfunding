@@ -114,9 +114,7 @@ class SignUpServiceImplTest {
                         .refreshToken("Refresh token")
                         .build());
 
-        when(transactionServiceClient.createAccount(CreateAccountRequest.builder()
-                        .isActive(true)
-                        .build()))
+        when(transactionServiceClient.createAccount())
                 .thenReturn(CreateAccountResponse.builder()
                         .id(TEST_ACCOUNT_ID)
                         .isActive(true)
