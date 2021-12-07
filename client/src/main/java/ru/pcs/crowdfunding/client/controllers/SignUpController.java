@@ -16,13 +16,13 @@ import javax.validation.Valid;
 public class SignUpController {
     private final SignUpService signUpService;
 
-    @RequestMapping()
+    @GetMapping()
     public String getSignUpPage(Model model) {
         model.addAttribute("signUpForm", new SignUpForm());
         return "signUp";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public String signUp(@Valid SignUpForm form, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "signUp";

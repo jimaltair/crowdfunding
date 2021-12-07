@@ -27,7 +27,7 @@ public class TransactionServiceRestTemplateClient extends RestTemplateClient imp
     }
 
     @Override
-    public CreateAccountResponse createAccount(CreateAccountRequest request) {
+    public CreateAccountResponse createAccount() {
         return get(API_ACCOUNT_URL, CreateAccountResponse.class);
     }
 

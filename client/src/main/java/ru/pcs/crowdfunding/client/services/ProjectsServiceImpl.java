@@ -2,15 +2,22 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
-import ru.pcs.crowdfunding.client.domain.*;
+import ru.pcs.crowdfunding.client.domain.Client;
+import ru.pcs.crowdfunding.client.domain.Project;
+import ru.pcs.crowdfunding.client.domain.ProjectImage;
+import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.repositories.*;
+import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,6 +28,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
+import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 
 @Service
 @RequiredArgsConstructor
@@ -51,43 +59,43 @@ public class ProjectsServiceImpl implements ProjectsService {
     public void createProject(ProjectForm form, MultipartFile file) {
         log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = getProjectStatus();
+        projectStatusesRepository.save(projectStatus);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
-        CreateAccountRequest requestToCreateAccount = CreateAccountRequest.requestToCreateNewAccount();
-        log.info("Try to create account for project with {}", requestToCreateAccount.toString());
-        CreateAccountResponse response = transactionServiceClient.createAccount(requestToCreateAccount);
+        log.info("Try to create account for project");
+        CreateAccountResponse response = transactionServiceClient.createAccount();
         Long projectAccountId = response.getId();
         log.info("Was created new account for project with id={}", projectAccountId);
         project.setAccountId(projectAccountId);
 
-        projectStatusesRepository.save(projectStatus);
         projectsRepository.save(project);
 
         if (!file.isEmpty()) {
-            log.info("Try to save image with name={}", file.getOriginalFilename());
-            ProjectImage projectImage = getImage(file, project);
-            Long id = projectImagesRepository.save(projectImage).getId();
-            log.info("Image was saved with id={}", id);
+            ProjectImage image = getImage(file, project);
+            try {
+                log.info("Try to save project image {}", image.getPath());
+                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
+            } catch (IOException e) {
+                log.error("Can't save project image {}", image.getPath());
+                throw new IllegalArgumentException(e);
+            }
+            projectImagesRepository.save(image);
         }
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
-        try {
-            return ProjectImage.builder()
-                    .content(file.getBytes())
-                    .name(file.getOriginalFilename())
-                    .project(project)
-                    .build();
-        } catch (IOException e) {
-            log.error("Can't save image {}", file.getOriginalFilename());
-            throw new IllegalStateException(e);
+        if (file == null || project == null) {
+            throw new IllegalArgumentException("Can't upload image");
         }
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
+        return ProjectImage.builder()
+                .project(project)
+                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + "." + extension)
+                .build();
     }
 
-    /**
-     * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется
-     */
     private void createDirectoryIfNotExists(String path) {
         if (Files.notExists(Paths.get(path))) {
             try {
