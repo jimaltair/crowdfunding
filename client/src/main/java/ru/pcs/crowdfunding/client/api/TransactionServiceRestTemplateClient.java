@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
-import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.GetBalanceResponseDto;
 
@@ -27,8 +26,8 @@ public class TransactionServiceRestTemplateClient extends RestTemplateClient imp
     }
 
     @Override
-    public CreateAccountResponse createAccount(CreateAccountRequest request) {
-        return post(API_ACCOUNT_URL, request, CreateAccountResponse.class);
+    public CreateAccountResponse createAccount() {
+        return get(API_ACCOUNT_URL, CreateAccountResponse.class);
     }
 
     @Override
