@@ -31,28 +31,29 @@ public class SignUpServiceImpl implements SignUpService {
         newClient = clientsRepository.save(newClient);
 
         // ходим в остальные сервисы и обновляем поля клиента
-        newClient = callAuthorizationService(form, newClient);
-        newClient = callTransactionService(newClient);
+        String accessToken = callAuthorizationService(form, newClient);
+        callTransactionService(newClient);
 
         // сохраняем дополненного клиента
         newClient = clientsRepository.save(newClient);
 
-        return SignUpForm.from(newClient);
+        SignUpForm result = SignUpForm.from(newClient);
+        result.setAccessToken(accessToken);
+        return result;
     }
 
-    private Client callAuthorizationService(SignUpForm form, Client client) {
+    private String callAuthorizationService(SignUpForm form, Client client) {
         AuthSignUpRequest request = AuthSignUpRequest.builder()
                 .userId(client.getId())
                 .email(form.getEmail())
                 .password(form.getPassword())
                 .build();
 
-        authorizationServiceClient.signUp(request);
-
-        return client;
+        AuthSignUpResponse response = authorizationServiceClient.signUp(request);
+        return response.getAccessToken();
     }
 
-    private Client callTransactionService(Client client) {
+    private void callTransactionService(Client client) {
         final Instant now = Instant.now();
         CreateAccountRequest request = CreateAccountRequest.builder()
                 .isActive(true)
@@ -63,6 +64,5 @@ public class SignUpServiceImpl implements SignUpService {
         CreateAccountResponse response = transactionServiceClient.createAccount(request);
 
         client.setAccountId(response.getId());
-        return client;
     }
 }

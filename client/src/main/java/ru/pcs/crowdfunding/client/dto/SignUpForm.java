@@ -44,6 +44,11 @@ public class SignUpForm {
     @NotBlank
     private String email;
 
+    /**
+     * Токен для возврата на фронт из обработчика /signUp
+     */
+    private String accessToken;
+
     public static SignUpForm from(Client client) {
         return SignUpForm.builder()
                 .id(client.getId())
