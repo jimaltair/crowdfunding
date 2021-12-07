@@ -8,6 +8,7 @@ import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 
 
@@ -18,6 +19,7 @@ public class SignUpServiceImpl implements SignUpService {
     private final AuthorizationServiceClient authorizationServiceClient;
     private final TransactionServiceClient transactionServiceClient;
 
+    @Transactional
     @Override
     public SignUpForm signUp(SignUpForm form) {
         Client newClient = Client.builder()
