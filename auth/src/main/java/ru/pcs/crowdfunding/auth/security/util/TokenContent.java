@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TokenContent {
     private Long userId;
+    // TODO: add roles
 }
