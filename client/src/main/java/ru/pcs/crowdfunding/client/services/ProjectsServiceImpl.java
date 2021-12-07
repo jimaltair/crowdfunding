@@ -62,14 +62,14 @@ public class ProjectsServiceImpl implements ProjectsService {
         log.info("Was created new account for project with id={}", projectAccountId);
         project.setAccountId(projectAccountId);
 
-        projectsRepository.save(project);
         projectStatusesRepository.save(projectStatus);
+        projectsRepository.save(project);
 
         if (!file.isEmpty()) {
-            log.info("Try to save image {}", file.getOriginalFilename());
+            log.info("Try to save image with name={}", file.getOriginalFilename());
             Image image = getImage(file);
             Long id = imagesRepository.save(image).getId();
-            log.info("Image was save in ImageRepository with id ={}", id);
+            log.info("Image was saveddel with id={}", id);
         }
     }
 

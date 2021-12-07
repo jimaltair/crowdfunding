@@ -1,6 +1,7 @@
 package ru.pcs.crowdfunding.client.domain;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -18,7 +19,6 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
     private byte[] content;
 
     private String name;
