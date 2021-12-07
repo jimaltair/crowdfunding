@@ -12,7 +12,10 @@ import ru.pcs.crowdfunding.tran.repositories.OperationTypesRepository;
 import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
+
+import static ru.pcs.crowdfunding.tran.dto.OperationDto.from;
 
 @RequiredArgsConstructor
 @Service
@@ -58,11 +61,12 @@ public class OperationServiceImpl implements OperationService {
     @Transactional
     public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException {
 
+        operationDto.setDatetime(Instant.now());
         operationValidator.isValid(operationDto);
         String operationType = operationDto.getOperationType();
 
         Operation operationBuild =  operationBuilder(operationDto);
-        Operation operation;
+        Operation operation = null;
 
         if (operationType.equals(OperationType.Type.REFUND.toString()) ||
             operationType.equals(OperationType.Type.PAYMENT.toString())
@@ -87,7 +91,7 @@ public class OperationServiceImpl implements OperationService {
             operation = operationsRepository.save(operationBuild);
             paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
         }
-            return operationDto;
+            return from(operation);
     }
 
     @Override

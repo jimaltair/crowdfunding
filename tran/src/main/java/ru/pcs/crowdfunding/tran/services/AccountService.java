@@ -15,7 +15,7 @@ public interface AccountService {
 
     Optional<AccountDto> updateAccount(Long id, AccountDto accountDto);
 
-    AccountDto createAccount(AccountDto accountDto);
+    AccountDto createAccount();
 
     Optional<AccountDto> deleteAccount(Long accountId);
 }
