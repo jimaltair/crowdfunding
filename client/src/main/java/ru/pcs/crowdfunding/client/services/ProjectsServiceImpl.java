@@ -2,7 +2,6 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
@@ -34,7 +33,7 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     private final ProjectStatusesRepository projectStatusesRepository;
 
-    private final ImagesRepository imagesRepository;
+    private final ProjectImagesRepository projectImagesRepository;
 
     private final TransactionServiceClient transactionServiceClient;
 
@@ -67,15 +66,15 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         if (!file.isEmpty()) {
             log.info("Try to save image with name={}", file.getOriginalFilename());
-            Image image = getImage(file, project);
-            Long id = imagesRepository.save(image).getId();
+            ProjectImage projectImage = getImage(file, project);
+            Long id = projectImagesRepository.save(projectImage).getId();
             log.info("Image was saved with id={}", id);
         }
     }
 
-    private Image getImage(MultipartFile file, Project project) {
+    private ProjectImage getImage(MultipartFile file, Project project) {
         try {
-            return Image.builder()
+            return ProjectImage.builder()
                     .content(file.getBytes())
                     .name(file.getOriginalFilename())
                     .project(project)

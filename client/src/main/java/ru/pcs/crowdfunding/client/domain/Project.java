@@ -49,5 +49,5 @@ public class Project {
     private ProjectStatus status;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
-    private List<Image> images;
+    private List<ProjectImage> images;
 }

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @ToString()
 @EqualsAndHashCode()
 @Entity
-public class Image {
+public class ProjectImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
