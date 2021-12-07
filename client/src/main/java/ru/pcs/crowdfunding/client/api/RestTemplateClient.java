@@ -1,7 +1,6 @@
 package ru.pcs.crowdfunding.client.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.beans.binding.ObjectExpression;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
