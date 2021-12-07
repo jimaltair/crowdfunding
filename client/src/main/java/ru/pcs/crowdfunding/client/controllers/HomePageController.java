@@ -22,7 +22,7 @@ public class HomePageController {
     private final ProjectsService projectsService;
 
     @RequestMapping()
-    public String getSignUpPage(Model model) {
+    public String getHomePage(Model model) {
 
         List<Project> page = projectsService.getConfirmedProjects().stream().collect(Collectors.toList());
         model.addAttribute("ListProject", page);
