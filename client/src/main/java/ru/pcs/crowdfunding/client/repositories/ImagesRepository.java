@@ -12,5 +12,5 @@ import ru.pcs.crowdfunding.client.domain.Image;
  * @version v1.0
  */
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Long> {
+public interface ImagesRepository extends JpaRepository<Image, Long> {
 }

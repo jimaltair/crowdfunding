@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.pcs.crowdfunding.client.domain.ProjectImage;
+import ru.pcs.crowdfunding.client.domain.Image;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,8 +24,6 @@ import java.math.BigDecimal;
 @Builder
 public class ProjectForm {
 
-    public static final String PROJECT_IMAGE_PATH = "./client/src/main/resources/static/project_images/";
-
     @NotBlank
     private String title;
 
@@ -39,6 +37,6 @@ public class ProjectForm {
     @PositiveOrZero
     private BigDecimal moneyGoal;
 
-    private ProjectImage image;
+    private Image image;
 
 }

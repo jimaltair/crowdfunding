@@ -6,18 +6,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
-import ru.pcs.crowdfunding.client.domain.Client;
-import ru.pcs.crowdfunding.client.domain.Project;
-import ru.pcs.crowdfunding.client.domain.ProjectImage;
-import ru.pcs.crowdfunding.client.domain.ProjectStatus;
+import ru.pcs.crowdfunding.client.domain.*;
 import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
-import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
-import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
-import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
+import ru.pcs.crowdfunding.client.repositories.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +22,6 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
-import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +34,7 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     private final ProjectStatusesRepository projectStatusesRepository;
 
-    private final ProjectImagesRepository projectImagesRepository;
+    private final ImagesRepository imagesRepository;
 
     private final TransactionServiceClient transactionServiceClient;
 
@@ -59,7 +52,6 @@ public class ProjectsServiceImpl implements ProjectsService {
     public void createProject(ProjectForm form, MultipartFile file) {
         log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = getProjectStatus();
-        projectStatusesRepository.save(projectStatus);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
@@ -71,32 +63,29 @@ public class ProjectsServiceImpl implements ProjectsService {
         project.setAccountId(projectAccountId);
 
         projectsRepository.save(project);
+        projectStatusesRepository.save(projectStatus);
 
         if (!file.isEmpty()) {
-            ProjectImage image = getImage(file, project);
-            try {
-                log.info("Try to save project image {}", image.getPath());
-                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
-            } catch (IOException e) {
-                log.error("Can't save project image {}", image.getPath());
-                throw new IllegalArgumentException(e);
-            }
-            projectImagesRepository.save(image);
+            log.info("Try to save image {}", file.getOriginalFilename());
+            Image image = getImage(file);
+            Long id = imagesRepository.save(image).getId();
+            log.info("Image was save in ImageRepository with id ={}", id);
         }
     }
 
-    private ProjectImage getImage(MultipartFile file, Project project) {
-        if (file == null || project == null) {
-            throw new IllegalArgumentException("Can't upload image");
+    private Image getImage(MultipartFile file) {
+        try {
+            return Image.builder()
+                    .content(file.getBytes())
+                    .name(file.getOriginalFilename())
+                    .build();
+        } catch (IOException e) {
+            log.error("Can't save image {}", file.getOriginalFilename());
+            throw new IllegalStateException(e);
         }
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
-        return ProjectImage.builder()
-                .project(project)
-                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + "." + extension)
-                .build();
     }
 
+    // в текущей реализации (сохранения картинки в базу) данный метод не используется
     private void createDirectoryIfNotExists(String path) {
         if (Files.notExists(Paths.get(path))) {
             try {

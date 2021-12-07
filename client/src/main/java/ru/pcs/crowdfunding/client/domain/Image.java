@@ -16,8 +16,10 @@ public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Lob
-    byte[] content;
+    private byte[] content;
+
+    private String name;
 }
