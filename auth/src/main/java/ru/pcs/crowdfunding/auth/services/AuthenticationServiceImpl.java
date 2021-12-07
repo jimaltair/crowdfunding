@@ -1,6 +1,7 @@
 package ru.pcs.crowdfunding.auth.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 class AuthenticationServiceImpl implements AuthenticationService {
 
     private final static Duration DEFAULT_TOKEN_DURATION = Duration.ofDays(30);
@@ -33,6 +35,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthenticationInfoDto signUpAuthentication(AuthenticationInfoDto client) {
+        log.info("Запускается метод 'signUpAuthentication' с параметрами 'AuthenticationInfoDto' - {}", client);
 
         AuthenticationInfo newClientInfo = AuthenticationInfo.builder()
                 .email(client.getEmail().toLowerCase(Locale.ROOT))
@@ -41,7 +44,10 @@ class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(client.getRefreshToken())
                 .isActive(true)
                 .build();
+        log.info("Создан новый 'AuthenticationInfo' - {}", newClientInfo);
+
         authenticationInfosRepository.save(newClientInfo);
+        log.info("Завершен метод 'save' в 'authenticationInfosRepository' с параметром 'newClientInfo' - {}", newClientInfo);
 
         AuthorizationInfo authorizationInfo = AuthorizationInfo.builder()
                 .userId(client.getUserId())
@@ -56,7 +62,12 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean existEmailInDb(AuthenticationInfoDto client) {
-        return authenticationInfosRepository.findByEmail(client.getEmail()).isPresent();
+
+        boolean isExistEmailInDb = authenticationInfosRepository.findByEmail(client.getEmail()).isPresent();
+        log.info("Результат проверки существования email - {} в 'authenticationInfosRepository' = {}"
+                , client.getEmail(), isExistEmailInDb);
+
+        return isExistEmailInDb;
     }
 
     private String generateAccessToken(Long userId) {

@@ -24,28 +24,35 @@ public class AuthenticationController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid AuthenticationInfoDto authenticationInfoDto) {
-        log.info("Starting 'post /api/signUp/': post 'authenticationInfoDto' - {}", authenticationInfoDto.toString());
+        log.info("Запускается метод 'signUp' с параметром 'authenticationInfo' - {}", authenticationInfoDto);
+
         ResponseDto response;
+        log.info("Проверка на 'authenticationService.existEmailInDb(authenticationInfoDto)' - {}"
+                , authenticationService.existEmailInDb(authenticationInfoDto));
 
         if (!authenticationService.existEmailInDb(authenticationInfoDto)) {
             authenticationInfoDto = authenticationService.signUpAuthentication(authenticationInfoDto);
+            log.info("Получение измененного 'authenticationInfoDto' - {} с запуском 'authenticationService'"
+                    , authenticationInfoDto);
             response = ResponseDto.builder()
                     .data(authenticationInfoDto)
                     .success(true)
                     .build();
-            ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
-            log.info("Finishing 'post /api/signUp/': 'responseBody' - 'status':{}, 'body': {} "
-                    , responseBody.getStatusCode(), responseBody.getBody().getData());
-            return responseBody;
+            log.info("Создан новый 'ResponseDto c содержимым 'data' - {}, 'isSuccess' - {}"
+                    , response.getData(), response.isSuccess());
+
+            return ResponseEntity.ok(response);
         }
 
-        log.error("Error 'email' - {} already exists", authenticationInfoDto.getEmail());
+        log.warn("Ошибка! Email - {} уже существует", authenticationInfoDto.getEmail());
         response = ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList("Email already exists","ERROR MESSAGE"))
                 .build();
-        ResponseEntity<ResponseDto> responseBody = ResponseEntity.badRequest().body(response);
-        log.info("Finishing 'post /api/signUp/': 'responseBody' - {} , {} ", responseBody.getStatusCode(), responseBody.getBody().getError());
-        return responseBody;
+        log.warn("Создан новый 'ResponseDto c содержимым 'error' - {}, 'isSuccess' - {}"
+                , response.getError(), response.isSuccess());
+
+        log.info("Завершается метод 'signUp' с параметром 'authenticationInfo' - {}", authenticationInfoDto);
+        return ResponseEntity.badRequest().body(response);
     }
 }
