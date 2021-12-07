@@ -24,7 +24,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public BigDecimal getBalance(Account account, Instant dateTime) {
         BigDecimal balance = paymentsRepository.findBalanceByAccountAndDatetime(account, dateTime);
-        log.info("for account = {} get balance = {} ", account.getId(), balance);
+        log.info("Result of method 'getBalance' for 'account' = {} is 'get balance' = {} ", account.getId(), balance);
         return balance;
     }
 
@@ -32,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
     public Optional<AccountDto> findById(Long id) {
         Optional<Account> optionalAccount = accountsRepository.findById(id);
         Optional<AccountDto> accountDto = optionalAccount.map(AccountDto::from);
-        log.info("find account = {}", accountDto);
+        log.info("Result of method 'findById' is 'account' = {}", accountDto);
         return accountDto;
     }
 
@@ -49,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
         account = accountsRepository.save(account);
 
         Optional<AccountDto> updateAccount = Optional.of(AccountDto.from(account));
-        log.info("update account = {}", updateAccount);
+        log.info("Result of method 'updateAccount' is 'account' = {}", updateAccount);
         return updateAccount;
     }
 
@@ -62,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
                 .build();
         account = accountsRepository.save(account);
         AccountDto createAccount = AccountDto.from(account);
-        log.info("create account = {}", createAccount);
+        log.info("Result of method 'createAccount' is 'account' = {}", createAccount);
         return createAccount;
     }
 
@@ -79,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
         account = accountsRepository.save(account);
 
         Optional<AccountDto> deleteAccount = Optional.of(AccountDto.from(account));
-        log.info("delete account = {}", deleteAccount);
+        log.info("Result of method deleteAccount' is 'account' = {}", deleteAccount);
         return deleteAccount;
     }
 }
