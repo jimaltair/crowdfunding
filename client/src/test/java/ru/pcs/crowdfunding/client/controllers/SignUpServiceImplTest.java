@@ -52,13 +52,13 @@ class SignUpServiceImplTest {
 
     @BeforeEach
     public void beforeEach(){
+
+        //Mock the repository for case "Save client first time without account_id"
         when(clientsRepository.save(Client.builder()
-                                        .id(TEST_CLIENT_ID)
                                         .firstName(TEST_CLIENT_FIRST_NAME)
                                         .lastName(TEST_CLIENT_LAST_NAME)
                                         .country(TEST_CLIENT_COUNTRY)
                                         .city(TEST_CLIENT_CITY)
-                                        .accountId(TEST_ACCOUNT_ID)
                                         .build()))
                 .thenReturn(Client.builder()
                                     .id(TEST_CLIENT_ID)
@@ -66,9 +66,28 @@ class SignUpServiceImplTest {
                                     .lastName(TEST_CLIENT_LAST_NAME)
                                     .country(TEST_CLIENT_COUNTRY)
                                     .city(TEST_CLIENT_CITY)
-                                    .accountId(TEST_ACCOUNT_ID)
                             .build());
 
+        //Mock the repository for case "Save client when hi has account_id"
+        when(clientsRepository.save(Client.builder()
+                .id(TEST_CLIENT_ID)
+                .firstName(TEST_CLIENT_FIRST_NAME)
+                .lastName(TEST_CLIENT_LAST_NAME)
+                .country(TEST_CLIENT_COUNTRY)
+                .city(TEST_CLIENT_CITY)
+                .accountId(TEST_ACCOUNT_ID)
+                .build()))
+                .thenReturn(Client.builder()
+                        .id(TEST_CLIENT_ID)
+                        .firstName(TEST_CLIENT_FIRST_NAME)
+                        .lastName(TEST_CLIENT_LAST_NAME)
+                        .country(TEST_CLIENT_COUNTRY)
+                        .city(TEST_CLIENT_CITY)
+                        .accountId(TEST_ACCOUNT_ID)
+                        .build());
+
+
+        //Mock the repository, getting client by client_id
         when(clientsRepository.findById(TEST_CLIENT_ID))
                 .thenReturn(Optional.of(
                         Client.builder()
@@ -80,6 +99,7 @@ class SignUpServiceImplTest {
                                 .accountId(TEST_ACCOUNT_ID)
                                 .build()));
 
+        //Mock the authorisationService
         when(authorizationServiceClient.signUp(AuthSignUpRequest.builder()
                 .userId(TEST_CLIENT_ID)
                 .email(TEST_CLIENT_EMAIL)
@@ -96,13 +116,9 @@ class SignUpServiceImplTest {
 
         when(transactionServiceClient.createAccount(CreateAccountRequest.builder()
                         .isActive(true)
-                        .createdAt(Instant.ofEpochSecond(100000L))
-                        .modifiedAt(Instant.ofEpochSecond(100000L))
                         .build()))
                 .thenReturn(CreateAccountResponse.builder()
                         .id(TEST_ACCOUNT_ID)
-                        .createdAt(Instant.ofEpochSecond(100000L))
-                        .modifiedAt(Instant.ofEpochSecond(100000L))
                         .isActive(true)
                         .build());
 
@@ -120,15 +136,14 @@ class SignUpServiceImplTest {
                         .password(TEST_CLIENT_PASSWORD)
                         .build());
 
-        assertEquals(form.getFirstName(),TEST_CLIENT_FIRST_NAME);
-        assertEquals(form.getLastName(), TEST_CLIENT_LAST_NAME);
-        assertEquals(form.getCountry(), TEST_CLIENT_COUNTRY);
-        assertEquals(form.getCity(), TEST_CLIENT_CITY);
-        assertEquals(form.getEmail(), TEST_CLIENT_EMAIL);
+        assertEquals(TEST_CLIENT_FIRST_NAME, form.getFirstName());
+        assertEquals(TEST_CLIENT_LAST_NAME, form.getLastName());
+        assertEquals(TEST_CLIENT_COUNTRY, form.getCountry());
+        assertEquals(TEST_CLIENT_CITY, form.getCity());
 
         Client client = clientsRepository.findById(TEST_CLIENT_ID).get();
 
-        assertEquals(client.getAccountId(), TEST_ACCOUNT_ID);
+        assertEquals(TEST_ACCOUNT_ID, client.getAccountId());
 
     }
 }
