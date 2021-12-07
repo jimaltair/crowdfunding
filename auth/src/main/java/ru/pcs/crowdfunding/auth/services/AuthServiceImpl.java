@@ -4,14 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
-import ru.pcs.crowdfunding.auth.domain.Role;
-import ru.pcs.crowdfunding.auth.domain.Status;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.repositories.RoleRepository;
 import ru.pcs.crowdfunding.auth.repositories.StatusRepository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -58,7 +55,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo) {
-        return Optional.of(AuthenticationInfoDto.builder().build());
+        Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.builder().build());
+        log.info("Result of 'updateAuthenticationInfo' - {}", result);
+        return result;
     }
 
     @Override
