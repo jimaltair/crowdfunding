@@ -35,7 +35,6 @@ class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthenticationInfoDto signUpAuthentication(AuthenticationInfoDto client) {
-        log.info("Запускается метод 'signUpAuthentication' с параметрами 'AuthenticationInfoDto' - {}", client);
 
         AuthenticationInfo newClientInfo = AuthenticationInfo.builder()
                 .email(client.getEmail().toLowerCase(Locale.ROOT))
@@ -44,19 +43,20 @@ class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(client.getRefreshToken())
                 .isActive(true)
                 .build();
-        log.info("Создан новый 'AuthenticationInfo' - {}", newClientInfo);
 
+        log.info("Saving 'newClientInfo' - {} in 'authenticationInfosRepository'", newClientInfo);
         authenticationInfosRepository.save(newClientInfo);
-        log.info("Завершен метод 'save' в 'authenticationInfosRepository' с параметром 'newClientInfo' - {}", newClientInfo);
 
         AuthorizationInfo authorizationInfo = AuthorizationInfo.builder()
                 .userId(client.getUserId())
                 .accessToken(generateAccessToken(client.getUserId()))
                 .build();
+        log.info("Saving 'authorizationInfo' - {} in 'authorizationInfosRepostiory'", authorizationInfo);
         authorizationInfosRepository.save(authorizationInfo);
 
         AuthenticationInfoDto result = AuthenticationInfoDto.from(newClientInfo);
         result.setAccessToken(authorizationInfo.getAccessToken());
+        log.info("Result of 'signUpAuthentication' - {}", result);
         return result;
     }
 
@@ -64,7 +64,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
     public boolean existEmailInDb(AuthenticationInfoDto client) {
 
         boolean isExistEmailInDb = authenticationInfosRepository.findByEmail(client.getEmail()).isPresent();
-        log.info("Результат проверки существования email - {} в 'authenticationInfosRepository' = {}"
+        log.info("Result of checking 'email' - {} in 'authenticationInfosRepository' = {}"
                 , client.getEmail(), isExistEmailInDb);
 
         return isExistEmailInDb;
@@ -74,6 +74,8 @@ class AuthenticationServiceImpl implements AuthenticationService {
         TokenContent tokenContent = TokenContent.builder()
                 .userId(userId)
                 .build();
-        return tokenProvider.generate(tokenContent, DEFAULT_TOKEN_DURATION);
+        String result = tokenProvider.generate(tokenContent, DEFAULT_TOKEN_DURATION);
+        log.info("Result of 'generateAccessToken' - {}", result);
+        return result;
     }
 }
