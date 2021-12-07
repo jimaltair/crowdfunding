@@ -29,12 +29,14 @@ public class SignUpServiceImpl implements SignUpService {
                 .city(form.getCity())
                 .build();
 
-        // сохраняем заготовку клиента локально
+        // сохраняем заготовку клиента локально, чтобы для него уже создался id.
+        // id понадобится для походов в другие сервисы.
         newClient = clientsRepository.save(newClient);
 
         // ходим в остальные сервисы и обновляем поля клиента
-        String accessToken = callAuthorizationService(form, newClient);
-        callTransactionService(newClient);
+        String accessToken = createAuthenticationAndGetAccessToken(
+                newClient.getId(), form.getEmail(), form.getPassword());
+        newClient.setAccountId(createAccount());
 
         // сохраняем дополненного клиента
         newClient = clientsRepository.save(newClient);
@@ -44,18 +46,18 @@ public class SignUpServiceImpl implements SignUpService {
         return result;
     }
 
-    private String callAuthorizationService(SignUpForm form, Client client) {
+    private String createAuthenticationAndGetAccessToken(Long userId, String email, String password) {
         AuthSignUpRequest request = AuthSignUpRequest.builder()
-                .userId(client.getId())
-                .email(form.getEmail())
-                .password(form.getPassword())
+                .userId(userId)
+                .email(email)
+                .password(password)
                 .build();
 
         AuthSignUpResponse response = authorizationServiceClient.signUp(request);
         return response.getAccessToken();
     }
 
-    private void callTransactionService(Client client) {
+    private Long createAccount() {
         final Instant now = Instant.now();
         CreateAccountRequest request = CreateAccountRequest.builder()
                 .isActive(true)
@@ -64,7 +66,6 @@ public class SignUpServiceImpl implements SignUpService {
                 .build();
 
         CreateAccountResponse response = transactionServiceClient.createAccount(request);
-
-        client.setAccountId(response.getId());
+        return response.getId();
     }
 }
