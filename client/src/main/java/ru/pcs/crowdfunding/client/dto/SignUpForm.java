@@ -42,7 +42,7 @@ public class SignUpForm {
 
     @Email
     @NotBlank
-    @Size(min = 4, max = 45)
+    @Size(min = 7, max = 45)
     private String email;
 
     public static SignUpForm from(Client client) {
