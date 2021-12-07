@@ -3,6 +3,7 @@ package ru.pcs.crowdfunding.auth.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 
 import java.util.Optional;
@@ -24,12 +25,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationInfoDto createAuthenticationInfo(AuthenticationInfoDto authenticationInfo) {
-        log.info("Запускается метод 'createAuthenticationInfo' с параметром 'AuthenticationInfoDto' - {}", authenticationInfo);
-
-        AuthenticationInfoDto result = AuthenticationInfoDto.builder().build();
-        log.info("Результат выполнения метода 'createAuthenticationInfo' - {}", result);
-
-        return result;
+        Optional<AuthenticationInfo> authInfo = authenticationInfosRepository.findByEmail(authenticationInfo.getEmail());
+        if (authInfo.isPresent()) {
+            return AuthenticationInfoDto.builder()
+                    .userId(authInfo.get().getUserId())
+                    .email(authInfo.get().getEmail())
+                    .password(authInfo.get().getPassword())
+                    .isActive(authInfo.get().isActive())
+                    .refreshToken(authInfo.get().getRefreshToken())
+                    .build();
+        } else {
+            return AuthenticationInfoDto.builder().build();
+        }
     }
 
     @Override
