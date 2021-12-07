@@ -47,8 +47,7 @@ public class AuthController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
-
-        log.info("Запускается метод 'createAuthenticationInfo' с параметром 'AuthenticationInfoDto' - {} ", authenticationInfo);
+        log.info("Starting 'post /api/auth': post 'authenticationInfo' - {} ", authenticationInfo.toString());
         Optional<AuthenticationInfo> authenticationInfoDto;
 
         try {

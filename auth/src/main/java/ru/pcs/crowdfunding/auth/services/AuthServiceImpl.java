@@ -25,6 +25,7 @@ public class AuthServiceImpl implements AuthService {
     public Optional<AuthenticationInfoDto> findById(Long id) {
         Optional<AuthenticationInfoDto> authenticationInfoDto = authenticationInfosRepository.findById(id)
             .map(AuthenticationInfoDto::from);
+        log.info("Result of 'findById' -  {} with 'authenticationInfoRepository'", authenticationInfoDto);
         return authenticationInfoDto;
     }
 
@@ -45,9 +46,6 @@ public class AuthServiceImpl implements AuthService {
                 .roles(Arrays.asList(roleRepository.getRoleByName("USER")))
                 .status(statusRepository.getStatusByName("CONFIRMED"))
                 .build();
-
-            System.out.println("AuthenticationInfo: "+ build);
-
             AuthenticationInfo info = authenticationInfosRepository.save(build);
             return Optional.of(info);
         }
