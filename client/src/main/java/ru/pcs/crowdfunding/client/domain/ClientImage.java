@@ -12,6 +12,7 @@ import javax.persistence.*;
 @ToString()
 @EqualsAndHashCode()
 @Entity
+@Table(name = "client_image")
 public class ClientImage {
 
     @Id
@@ -22,10 +23,8 @@ public class ClientImage {
 
     private String name;
 
-//    @OneToOne(mappedBy = "i/", fetch = FetchType.LAZY)
-//    @JoinColumn(name = "client_id", nullable = false)
-    @MapsId
-    @JoinColumn(name = "id")
-    private Client client;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
 }

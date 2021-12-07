@@ -159,7 +159,7 @@
                             <br>
                             <div class="tab-pane fade" id="change_profile">
                                 <form role="form" class="form-horizontal">
-                                    <#--                                    <form action="/clients/{id}/update" method="put" enctype="multipart/form-data">-->
+<#--                              <form action="/clients/{id}/update" method="put" enctype="multipart/form-data">-->
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Имя</label>
                                         <div class="col-sm-10">

@@ -41,7 +41,7 @@ public class ClientDto {
                 .lastName(client.getLastName())
                 .country(client.getCountry())
                 .city(client.getCity())
-//                .image(client.getImage())
+                .image(client.getImage())
                 .projects(client.getProjects())
                 .build();
     }

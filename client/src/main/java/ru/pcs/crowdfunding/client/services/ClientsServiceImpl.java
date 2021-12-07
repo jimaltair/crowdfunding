@@ -82,7 +82,7 @@ public class ClientsServiceImpl implements ClientsService {
             log.info("Image was saved with id={}", id);
         }
         //надо вернуть снова ClientForm, как из Client сделать ClientForm??
-        return client;
+        return null;
     }
 
     private ClientImage getImage(MultipartFile file, Client client) {

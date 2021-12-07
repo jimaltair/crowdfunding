@@ -1,13 +1,13 @@
-//package ru.pcs.crowdfunding.client;
-//
-//import org.junit.jupiter.api.Test;
-//import org.springframework.boot.test.context.SpringBootTest;
-//
-//@SpringBootTest
-//class ClientServiceApplicationTests {
-//
-//	@Test
-//	void contextLoads() {
-//	}
-//
-//}
+package ru.pcs.crowdfunding.client;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class ClientServiceApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

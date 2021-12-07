@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/clients")
+@RequestMapping("/client")
 @RequiredArgsConstructor
 @Slf4j
 public class ClientController {
@@ -43,6 +43,7 @@ public class ClientController {
     public String update(@PathVariable Long id, @Valid ClientForm form,
                          BindingResult result, Model model,
                          @RequestParam("file") MultipartFile file) {
+        log.info("update by id = {}", id);
 //        if (result.hasErrors()) {
 //            model.addAttribute("");
 //
