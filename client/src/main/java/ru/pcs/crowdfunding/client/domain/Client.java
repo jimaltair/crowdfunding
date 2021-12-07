@@ -32,8 +32,9 @@ public class Client {
     @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "avatar_image_path")
-    private String avatarImagePath;
+//    @Column(name = "client_image", nullable = false)
+////    @OneToOne(mappedBy = "client")
+    private ClientImage image;
 
     @Column(name = "account_id", unique = true)
     private Long accountId;

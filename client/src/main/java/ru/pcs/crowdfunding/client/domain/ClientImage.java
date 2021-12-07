@@ -12,17 +12,20 @@ import javax.persistence.*;
 @ToString()
 @EqualsAndHashCode()
 @Entity
-@Table(name = "client_image")
 public class ClientImage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false)
-    private Long clientId;
+    private byte[] content;
 
-    @Column(name = "path", nullable = false)
-    private String path;
+    private String name;
+
+//    @OneToOne(mappedBy = "i/", fetch = FetchType.LAZY)
+//    @JoinColumn(name = "client_id", nullable = false)
+    @MapsId
+    @JoinColumn(name = "id")
+    private Client client;
+
 }

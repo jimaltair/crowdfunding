@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.client.domain.Client;
+import ru.pcs.crowdfunding.client.domain.ClientImage;
 import ru.pcs.crowdfunding.client.domain.Project;
 
 import java.math.BigDecimal;
@@ -22,18 +23,15 @@ public class ClientDto {
     private String firstName;
     private String lastName;
 
-//    private String about;
-
     private String country;
     private String city;
 
-    private String avatarImagePath;
+    private ClientImage image;
 
     private BigDecimal sumAccount;
     private List<Project> projects;
 
     private String email;
-//    private String secondEmail;
 
     public static ClientDto from(Client client) {
 
@@ -43,7 +41,7 @@ public class ClientDto {
                 .lastName(client.getLastName())
                 .country(client.getCountry())
                 .city(client.getCity())
-                .avatarImagePath(client.getAvatarImagePath())
+//                .image(client.getImage())
                 .projects(client.getProjects())
                 .build();
     }
