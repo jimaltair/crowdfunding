@@ -9,7 +9,6 @@ import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
 import javax.transaction.Transactional;
-import java.time.Instant;
 
 
 @Service
@@ -58,14 +57,7 @@ public class SignUpServiceImpl implements SignUpService {
     }
 
     private Long createAccount() {
-        final Instant now = Instant.now();
-        CreateAccountRequest request = CreateAccountRequest.builder()
-                .isActive(true)
-                .createdAt(now)
-                .modifiedAt(now)
-                .build();
-
-        CreateAccountResponse response = transactionServiceClient.createAccount(request);
+        CreateAccountResponse response = transactionServiceClient.createAccount();
         return response.getId();
     }
 }

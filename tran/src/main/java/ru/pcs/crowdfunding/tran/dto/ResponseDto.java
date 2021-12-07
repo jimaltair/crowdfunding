@@ -8,10 +8,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class ResponseDto {
     private boolean success = true;
     private List<String> error = null;
     private Object data = null;
-
-
 }
