@@ -138,7 +138,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     private ProjectStatus getProjectStatus() {
         return ProjectStatus.builder()
                 .description("Simple description")
-                .status(CONFIRMED)
+                .status(ProjectStatus.Status.CONFIRMED)
                 .build();
     }
 
