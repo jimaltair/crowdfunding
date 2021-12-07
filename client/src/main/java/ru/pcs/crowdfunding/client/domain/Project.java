@@ -48,7 +48,7 @@ public class Project {
     @JoinColumn(name = "status", nullable = false)
     private ProjectStatus status;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @OneToMany
+    @JoinColumn(name = "image_id")
     private List<Image> images;
 }
