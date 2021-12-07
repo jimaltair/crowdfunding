@@ -3,6 +3,10 @@ package ru.pcs.crowdfunding.client.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
@@ -27,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
+import static ru.pcs.crowdfunding.client.domain.ProjectStatus.Status.CONFIRMED;
 import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
 import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 
@@ -133,8 +138,15 @@ public class ProjectsServiceImpl implements ProjectsService {
     private ProjectStatus getProjectStatus() {
         return ProjectStatus.builder()
                 .description("Simple description")
-                .status(ProjectStatus.Status.CONFIRMED)
+                .status(CONFIRMED)
                 .build();
+    }
+
+    @Override
+    public Page<Project> getConfirmedProjects() {
+        Pageable page = PageRequest.of(0, 10);
+        return projectsRepository.findProjectsByStatusEquals(ProjectStatus.builder()
+                .id(1L).status(CONFIRMED).build(),page);
     }
 
     /**
