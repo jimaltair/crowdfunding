@@ -11,6 +11,7 @@ import ru.pcs.crowdfunding.tran.repositories.AccountsRepository;
 import ru.pcs.crowdfunding.tran.repositories.OperationTypesRepository;
 import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
+import ru.pcs.crowdfunding.tran.validator.OperationValidator;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
@@ -25,6 +26,8 @@ public class OperationServiceImpl implements OperationService {
     private final AccountsRepository accountsRepository;
     private final OperationsRepository operationsRepository;
     private final OperationTypesRepository operationTypesRepository;
+    private final WithdrawalFromPlatformService withdrawalFromPlatformService;
+    private final DepositingOnPlatformService depositingOnPlatformService;
     private final OperationValidator operationValidator;
 
     //region private methods
@@ -79,19 +82,27 @@ public class OperationServiceImpl implements OperationService {
         }
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
-            operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
-            operationBuild.setCreditAccount(accountsRepository.getById(1L));
-            operation = operationsRepository.save(operationBuild);
-            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+
+            if (depositingOnPlatformService.createDepositOnPlatform()) {
+                operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
+                operationBuild.setCreditAccount(accountsRepository.getById(1L));
+                operation = operationsRepository.save(operationBuild);
+                paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+            } else
+                throw new IllegalArgumentException("An error occurred during the deposit operation");
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
-            operationBuild.setDebitAccount(accountsRepository.getById(1L));
-            operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            operation = operationsRepository.save(operationBuild);
-            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+
+            if (withdrawalFromPlatformService.createWithdrowalFromPlatform()) {
+                operationBuild.setDebitAccount(accountsRepository.getById(1L));
+                operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
+                operation = operationsRepository.save(operationBuild);
+                paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            } else
+                throw new IllegalArgumentException("an error occurred during the withdrawal operation from the platform");
         }
-            return from(operation);
+        return from(operation);
     }
 
     @Override
