@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -18,6 +17,8 @@ import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;
 import ru.pcs.crowdfunding.auth.security.details.AuthenticationInfoDetailsService;
 import ru.pcs.crowdfunding.auth.security.filters.TokenAuthenticationFilter;
 import ru.pcs.crowdfunding.auth.security.filters.TokenAuthorizationFilter;
+import ru.pcs.crowdfunding.auth.security.util.JwtTokenProvider;
+import ru.pcs.crowdfunding.auth.security.util.TokenProvider;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -39,6 +40,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationInfoDetailsService infoDetailsService;
+
+    @Bean
+    public TokenProvider tokenProvider() {
+        return new JwtTokenProvider();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
