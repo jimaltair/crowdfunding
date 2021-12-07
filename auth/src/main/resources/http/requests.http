@@ -1,4 +1,4 @@
-###Создать нового пользователя (вертуть accessToken ?)
+###Создать нового пользователя и вертуть accessToken (технический токен: содержит только userId)
 POST localhost:8081/api/signUp
 Content-Type: application/json
 
@@ -12,7 +12,7 @@ Content-Type: application/json
 ###Вернуть данные пользователя
 GET localhost:8081/api/auth/1
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlVTRVIiLCJleHAiOjE2NDEzNjY2MTIsInN0YXR1cyI6IkNPTkZJUk1FRCJ9.x9okR-CK47NdzH22gqf6EiA136u19idusikCXWWkquI
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNjQxNDk1MjgzfQ.xasDKDZDhQAQQDSYeL6b9h8-rhCWKDy6ViXJmIrpc90
 
 
 ###Вернуть данные пользователя
