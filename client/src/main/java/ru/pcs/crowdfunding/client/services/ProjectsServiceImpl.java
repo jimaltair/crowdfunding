@@ -10,7 +10,7 @@ import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
-import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
+//import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
@@ -73,13 +73,13 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         if (!file.isEmpty()) {
             ProjectImage image = getImage(file, project);
-            try {
-                log.info("Try to save project image {}", image.getPath());
-                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
-            } catch (IOException e) {
-                log.error("Can't save project image {}", image.getPath());
-                throw new IllegalArgumentException(e);
-            }
+//            try {
+//                log.info("Try to save project image {}", image.getPath());
+//                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
+//            } catch (IOException e) {
+//                log.error("Can't save project image {}", image.getPath());
+//                throw new IllegalArgumentException(e);
+//            }
             projectImagesRepository.save(image);
         }
     }
@@ -92,7 +92,7 @@ public class ProjectsServiceImpl implements ProjectsService {
         createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
         return ProjectImage.builder()
                 .project(project)
-                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + "." + extension)
+//                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + "." + extension)
                 .build();
     }
 

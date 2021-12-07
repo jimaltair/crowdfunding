@@ -158,40 +158,40 @@
                             </div>
                             <br>
                             <div class="tab-pane fade" id="change_profile">
-                                <form role="form" class="form-horizontal">
-<#--                              <form action="/clients/{id}/update" method="put" enctype="multipart/form-data">-->
+                                <form role="form" class="form-horizontal" action="/client/${clientDto.id}" method="post" enctype="multipart/form-data">
+<#--                              <form action="/client/${clientDto.id}" method="put" enctype="multipart/form-data">-->
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Имя</label>
                                         <div class="col-sm-10">
-                                            <input name="first_name" type="text" class="form-control"
-                                                   placeholder="имя"/>
+                                            <input name="firstName" type="text" class="form-control"
+                                                   value="${clientDto.firstName}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Фамилия</label>
                                         <div class="col-sm-10">
-                                            <input name="last_name" type="text" class="form-control"
-                                                   placeholder="фамилия"/>
+                                            <input name="lastName" type="text" class="form-control"
+                                                   value="${clientDto.lastName}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Страна</label>
                                         <div class="col-sm-10">
                                             <input name="country" type="text" class="form-control"
-                                                   placeholder="страна"/>
+                                                   value="${clientDto.country}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Город</label>
                                         <div class="col-sm-10">
                                             <input name="city" type="text" class="form-control"
-                                                   placeholder="город"/>
+                                                   value="${clientDto.city}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Почта</label>
                                         <div class="col-sm-10">
-                                            <input name="email" type="email" class="form-control" placeholder="почта"/>
+                                            <input name="email" type="email" class="form-control" value="${clientDto.email}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -203,6 +203,8 @@
                                                 <input type="submit" class="btn btn-info" value="Сохранить"/>
                                             </div>
                                         </div>
+                                    </div>
+<#--                                </form>-->
                                 </form>
                             </div>
                         </div>

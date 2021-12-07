@@ -2,7 +2,6 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
@@ -17,10 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.UUID;
 
 import static ru.pcs.crowdfunding.client.dto.ClientDto.from;
-import static ru.pcs.crowdfunding.client.dto.ClientForm.CLIENTS_IMAGE_PATH;
 
 @Service
 @RequiredArgsConstructor
@@ -71,21 +68,34 @@ public class ClientsServiceImpl implements ClientsService {
         client.setLastName(form.getLastName());
         client.setCountry(form.getCountry());
         client.setCity(form.getCity());
-        client.setImage(form.getImage()); // не уверена в корректности
+//        client.setImage(form.getImage());
 
         clientsRepository.save(client);
 
         if (!file.isEmpty()) {
             log.info("Try to save image with name={}", file.getOriginalFilename());
-            ClientImage clientImage = getImage(file, client);
+            ClientImage clientImage = createClientImage(file, client);
             Long id = clientImagesRepository.save(clientImage).getId();
             log.info("Image was saved with id={}", id);
+//            client.setImage(clientImage);
         }
-        //надо вернуть снова ClientForm, как из Client сделать ClientForm??
-        return null;
+
+        ClientForm clientForm = ClientForm.from(client);
+        clientForm.setEmail(getEmail(clientId));
+//        clientForm.setImage(getImage(file, clientId));
+
+
+//        clientForm.setImage(findImage(file,client));
+        return clientForm;
     }
 
-    private ClientImage getImage(MultipartFile file, Client client) {
+//    @Override
+//    public ClientImage getImage(MultipartFile file, Long clientId) {
+//        return clientImagesRepository.getById(clientId);
+//    }
+
+
+    private ClientImage createClientImage(MultipartFile file, Client client) {
         try {
             return ClientImage.builder()
                     .name(file.getOriginalFilename())
@@ -96,5 +106,9 @@ public class ClientsServiceImpl implements ClientsService {
             log.error("Can't save image {}", file.getOriginalFilename());
             throw new IllegalStateException(e);
         }
+    }
+
+    private String getEmail(Long idClient){
+        return authorizationServiceClient.getAuthInfo(idClient).getEmail();
     }
 }

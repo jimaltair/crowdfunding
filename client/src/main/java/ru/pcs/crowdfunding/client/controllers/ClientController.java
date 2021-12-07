@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.domain.ClientImage;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.services.ClientsService;
@@ -39,7 +40,7 @@ public class ClientController {
         return "profile_page";
     }
 
-    @PutMapping(value = "/{id}/update")
+    @PostMapping(value = "/{id}")
     public String update(@PathVariable Long id, @Valid ClientForm form,
                          BindingResult result, Model model,
                          @RequestParam("file") MultipartFile file) {
@@ -53,7 +54,17 @@ public class ClientController {
 
         model.addAttribute("clientDto", newForm);
 
-        return "profile_page";
+        return "redirect:/client/" + id;
     }
 
+//
+//    @GetMapping(value = "/{id}/image")
+//    public String getClientImage(@PathVariable Long id, Model model,
+//                                 @RequestParam("file") MultipartFile file ) {
+//        log.info("get clients image by clientId = {}", id);
+//
+//        ClientImage clientImage = clientsService.getImage(file, id);
+//
+//        model.addAttribute();
+//    }
 }

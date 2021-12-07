@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.ClientImage;
 
 import javax.validation.constraints.NotBlank;
@@ -17,24 +18,34 @@ public class ClientForm {
 
     public static final String CLIENTS_IMAGE_PATH = "./client/src/main/resources/static/clients_images/";
 
-    @NotBlank
+//    @NotBlank
     private String firstName;
 
-    @NotBlank
+//    @NotBlank
     private String lastName;
 
-    @NotBlank
+//    @NotBlank
     private String country;
 
-    @NotBlank
+//    @NotBlank
     private String city;
 
-    @NotBlank
+//    @NotBlank
     private String email;
 
-    @NotBlank
+//    @NotBlank
     private BigDecimal sumAccount;
 
     private ClientImage image;
 
+
+    public static ClientForm from(Client client) {
+        return ClientForm.builder()
+                .firstName(client.getFirstName())
+                .lastName(client.getLastName())
+                .country(client.getCountry())
+                .city(client.getCity())
+                .image(client.getImage())
+                .build();
+    }
 }
