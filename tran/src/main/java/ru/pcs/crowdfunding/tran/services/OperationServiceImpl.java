@@ -1,6 +1,7 @@
 package ru.pcs.crowdfunding.tran.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pcs.crowdfunding.tran.domain.Operation;
@@ -20,6 +21,7 @@ import static ru.pcs.crowdfunding.tran.dto.OperationDto.from;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class OperationServiceImpl implements OperationService {
 
     private final PaymentsRepository paymentsRepository;
@@ -77,8 +79,11 @@ public class OperationServiceImpl implements OperationService {
             operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
             operation = operationsRepository.save(operationBuild);
-            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
-            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+            log.info("saved the operation in the database: {}", operation);
+            Payment writeOff = paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            log.info("saved the payment in the database: {}", writeOff);
+            Payment replenishment = paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+            log.info("saved the payment in the database: {}", replenishment);
         }
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
@@ -87,8 +92,11 @@ public class OperationServiceImpl implements OperationService {
                 operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
                 operationBuild.setCreditAccount(accountsRepository.getById(1L));
                 operation = operationsRepository.save(operationBuild);
-                paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+                log.info("saved the operation in the database: {}", operation);
+                Payment replenishment = paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+                log.info("saved the payment in the database: {}", replenishment);
             } else
+                log.error("Operation error", new IllegalArgumentException("An error occurred during the deposit operation"));
                 throw new IllegalArgumentException("An error occurred during the deposit operation");
         }
 
@@ -98,9 +106,12 @@ public class OperationServiceImpl implements OperationService {
                 operationBuild.setDebitAccount(accountsRepository.getById(1L));
                 operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
                 operation = operationsRepository.save(operationBuild);
-                paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+                log.info("saved the operation in the database: {}", operation);
+                Payment writeOff = paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+                log.info("saved the payment in the database: {}", writeOff);
             } else
-                throw new IllegalArgumentException("an error occurred during the withdrawal operation from the platform");
+                log.error("Operation error", new IllegalArgumentException("An error occurred during the withdrawal operation from the platform"));
+                throw new IllegalArgumentException("An error occurred during the withdrawal operation from the platform");
         }
         return from(operation);
     }

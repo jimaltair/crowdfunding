@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
-import ru.pcs.crowdfunding.client.domain.*;
-import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
+import ru.pcs.crowdfunding.client.domain.Client;
+import ru.pcs.crowdfunding.client.domain.Project;
+import ru.pcs.crowdfunding.client.domain.ProjectImage;
+import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
@@ -54,9 +56,8 @@ public class ProjectsServiceImpl implements ProjectsService {
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
-        CreateAccountRequest requestToCreateAccount = CreateAccountRequest.requestToCreateNewAccount();
-        log.info("Try to create account for project with {}", requestToCreateAccount.toString());
-        CreateAccountResponse response = transactionServiceClient.createAccount(requestToCreateAccount);
+        log.info("Try to create account for project");
+        CreateAccountResponse response = transactionServiceClient.createAccount();
         Long projectAccountId = response.getId();
         log.info("Was created new account for project with id={}", projectAccountId);
         project.setAccountId(projectAccountId);

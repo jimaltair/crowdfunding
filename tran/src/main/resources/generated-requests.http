@@ -1,16 +1,5 @@
 ### Account
 
-POST http://localhost:8082/api/account
-Content-Type: application/json
-
-{
-  "isActive":true,
-  "createdAt":"2021-12-01T13:45:29Z",
-  "modifiedAt":"2021-12-02T12:16:37Z"
-}
-
-### предлагаю верхний заменить на нижний запрос
-
 GET http://localhost:8082/api/account
 
 ###
@@ -18,8 +7,6 @@ GET http://localhost:8082/api/account/2
 
 ###
 GET http://localhost:8082/api/account/3/balance?date=1638806337
-
-
 
 
 ### Operation
