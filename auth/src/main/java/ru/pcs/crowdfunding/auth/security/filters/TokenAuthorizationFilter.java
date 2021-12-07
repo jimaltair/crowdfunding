@@ -14,7 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.pcs.crowdfunding.auth.domain.Role;
-import ru.pcs.crowdfunding.auth.domain.Status;
+import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;
 import ru.pcs.crowdfunding.auth.security.config.SecurityConfiguration;
 
@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -34,17 +33,18 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
-    private static final String JWT_SECRET_KEY = "jwt_secret";
+    private static final String JWT_SECRET_KEY = "jwt_secret_key";
 
+    private final AuthenticationInfosRepository authenticationInfosRepository;
     private final AuthorizationInfosRepository authorizationInfosRepository;
     private final ObjectMapper objectMapper;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         if (isForAll(request)) {
             filterChain.doFilter(request, response);
-        }
-        else {
+        } else {
             String tokenHeader = request.getHeader(AUTHORIZATION);
             if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
                 String token = tokenHeader.substring("Bearer ".length());
@@ -52,14 +52,12 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                     JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET_KEY)).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
 
-                    List<Role> roles = decodedJWT.getClaim("roles").asList(Role.class);
-                    String status =  decodedJWT.getClaim("status").asString();
+                    String roles = Role.RoleEnum.valueOf(decodedJWT.getClaim("roles").asString()).toString();
+                    String status = decodedJWT.getClaim("status").asString();
                     log.info("Get {} token within authorization with roles {} and status: {}", token, roles, status);
 
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    roles.forEach(role -> {
-                        authorities.add(new SimpleGrantedAuthority(role.toString()));
-                    });
+                    authorities.add(new SimpleGrantedAuthority(roles));
 
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(token, null, authorities);
@@ -73,8 +71,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                     objectMapper.writeValue(response.getWriter(),
                             Collections.singletonMap("error", "User not found with token"));
                 }
-            }
-            else {
+            } else {
                 logger.warn("Token is missing");
                 filterChain.doFilter(request, response);
             }

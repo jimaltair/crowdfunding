@@ -31,7 +31,7 @@ public class AuthenticationController {
         }
         return ResponseEntity.badRequest().body(ResponseDto.builder()
                 .success(false)
-                .error(Arrays.asList("Email already exists","ERROR MESSAGE"))
+                .error(Arrays.asList("Email already exists", "ERROR MESSAGE"))
                 .build());
     }
 }

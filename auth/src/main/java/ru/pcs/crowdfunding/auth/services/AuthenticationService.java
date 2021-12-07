@@ -4,5 +4,6 @@ import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 
 public interface AuthenticationService {
     AuthenticationInfoDto signUpAuthentication(AuthenticationInfoDto client);
+
     boolean existEmailInDb(AuthenticationInfoDto client);
 }

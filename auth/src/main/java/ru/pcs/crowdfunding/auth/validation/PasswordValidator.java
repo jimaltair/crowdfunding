@@ -7,6 +7,6 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         return value.contains("!") || value.contains("@") || value.contains("#")
-                ||value.contains("$")||value.contains("%");
+                || value.contains("$") || value.contains("%");
     }
 }

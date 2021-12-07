@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SignInForm {
 
+    private Long userId;
     private String password;
     private String email;
+    private String role;
+    private String status;
 }

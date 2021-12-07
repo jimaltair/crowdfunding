@@ -50,7 +50,7 @@ public class AuthController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAuthenticationInfo(@PathVariable("id") Long id,
-                                                                           @RequestBody AuthenticationInfoDto authenticationInfo) {
+                                                                @RequestBody AuthenticationInfoDto authenticationInfo) {
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
         String errorMessage = null;

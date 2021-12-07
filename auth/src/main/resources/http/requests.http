@@ -1,0 +1,27 @@
+###Создать нового пользователя и вертуть accessToken
+POST localhost:8081/api/signUp
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "email": "sidikov.marsel@gmail.com",
+  "password": "qwerty007!",
+  "role": "USER",
+  "status": "CONFIRMED"
+}
+
+###Вернуть данные пользователя
+GET localhost:8081/api/auth/1
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOiJBRE1JTiIsImV4cCI6MTY0MTQ2MjMxOCwic3RhdHVzIjoiQ09ORklSTUVEIn0.zDZolwjTkmdRJKagjNIUzvtX0lJuYcoZ8LMu5JMPNn8
+
+
+###Вернуть данные пользователя
+POST localhost:8081/api/auth
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "email": "sidikov.marsel@gmail.com",
+  "password": "qwerty007!"
+}

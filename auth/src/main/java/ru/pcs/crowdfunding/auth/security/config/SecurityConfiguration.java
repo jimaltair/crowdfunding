@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -24,9 +23,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static final String API = "/api";
     public static final String API_PING = API + "/ping";
 
+    public static final String AUTH_FILTER_PROCESSES_URL = API + "/auth";
     public static final String SIGN_UP_FILTER_PROCESSES_URL = API + "/signUp";
     public static final String SIGN_IN_FILTER_PROCESSES_URL = API + "/signIn";
     public static final String REFRESH_FILTER_PROCESSES_URL = API + "/refresh";
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -59,18 +62,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         TokenAuthenticationFilter tokenAuthenticationFilter = new TokenAuthenticationFilter(authenticationManagerBean(),
-                objectMapper, authenticationInfosRepository, authorizationInfosRepository);
-        tokenAuthenticationFilter.setFilterProcessesUrl("api/signIn");
+                objectMapper, authenticationInfosRepository, authorizationInfosRepository, passwordEncoder);
+        tokenAuthenticationFilter.setFilterProcessesUrl(SIGN_UP_FILTER_PROCESSES_URL);
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilter(tokenAuthenticationFilter);
+        http.addFilterBefore(new TokenAuthorizationFilter(authenticationInfosRepository, authorizationInfosRepository,
+                        objectMapper),
+                UsernamePasswordAuthenticationFilter.class);
+
         http.authorizeRequests()
                 .antMatchers(API_PING).permitAll()
+                .antMatchers(AUTH_FILTER_PROCESSES_URL).permitAll()
                 .antMatchers(SIGN_UP_FILTER_PROCESSES_URL).permitAll()
                 .antMatchers(SIGN_IN_FILTER_PROCESSES_URL).permitAll()
                 .antMatchers(REFRESH_FILTER_PROCESSES_URL).permitAll();
 
-        http.addFilter(tokenAuthenticationFilter);
-        http.addFilterBefore(new TokenAuthorizationFilter(authorizationInfosRepository, objectMapper),
-                UsernamePasswordAuthenticationFilter.class);
     }
 }

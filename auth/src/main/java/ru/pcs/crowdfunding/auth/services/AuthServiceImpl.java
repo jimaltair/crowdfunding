@@ -23,7 +23,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationInfoDto createAuthenticationInfo(AuthenticationInfoDto authenticationInfo) {
-        return AuthenticationInfoDto.builder().build();
+        return AuthenticationInfoDto.builder()
+                .userId(authenticationInfo.getUserId())
+                .refreshToken(authenticationInfo.getRefreshToken())
+                .password(authenticationInfo.getPassword())
+                .isActive(authenticationInfo.getIsActive())
+                .email(authenticationInfo.getEmail())
+                .build();
     }
 
     @Override
