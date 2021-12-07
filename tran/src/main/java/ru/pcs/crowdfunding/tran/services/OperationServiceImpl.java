@@ -13,7 +13,10 @@ import ru.pcs.crowdfunding.tran.repositories.OperationTypesRepository;
 import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
+
+import static ru.pcs.crowdfunding.tran.dto.OperationDto.from;
 
 @RequiredArgsConstructor
 @Service
@@ -28,102 +31,81 @@ public class OperationServiceImpl implements OperationService {
 
     //region private methods
     private Operation operationBuilder(OperationDto operationDto) {
-        log.info("Запускается метод 'operationBuilder' с параметром 'operationDto' - {}", operationDto);
         Operation operation = Operation.builder()
             .initiator(operationDto.getInitiatorId())
             .datetime(operationDto.getDatetime())
             .sum(operationDto.getSum())
             .operationType(operationTypesRepository.findOperationType(operationDto.getOperationType()))
             .build();
-        log.info("Результат 'operationBuilder' - {}", operation);
         return operation;
     }
 
     private Payment replenishmentTransactionBuilder(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'replenishmentTransactionBuilder' с параметрами 'operationDto' - {} , 'operation' - {}"
-                , operationDto, operation);
-        Payment result = Payment.builder()
-                .account(accountsRepository.getById(operationDto.getDebitAccountId()))
-                .sum(operationDto.getSum())
-                .operation(operation)
-                .datetime(operationDto.getDatetime())
-                .build();
-        log.info("Результат 'replenishmentTransactionBuilder' - {}", result);
-        return result;
+        return Payment.builder()
+            .account(accountsRepository.getById(operationDto.getDebitAccountId()))
+            .sum(operationDto.getSum())
+            .operation(operation)
+            .datetime(operationDto.getDatetime())
+            .build();
     }
 
     private Payment writeOffTransactionBuilder(OperationDto operationDto, Operation operation) {
-        log.info("Запускается метод 'writeOffTransactionBuilder' с параметрами 'operationDto' - {}, 'operation' - {}"
-                , operationDto, operation);
-        Payment result = Payment.builder()
-                .account(accountsRepository.getById(operationDto.getCreditAccountId()))
-                .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
-                .operation(operation)
-                .datetime(operationDto.getDatetime())
-                .build();
-        log.info("Результат 'writeOffTransactionBuilder' - {}", result);
-        return result;
+        return Payment.builder()
+            .account(accountsRepository.getById(operationDto.getCreditAccountId()))
+            .sum(operationDto.getSum().multiply(BigDecimal.valueOf(-1)))
+            .operation(operation)
+            .datetime(operationDto.getDatetime())
+            .build();
     }
     //endregion
 
     @Override
     @Transactional
     public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException {
-        log.info("Запускается метод 'createOperation' с параметром 'operationDto' - {}", operationDto);
 
+        operationDto.setDatetime(Instant.now());
         operationValidator.isValid(operationDto);
         String operationType = operationDto.getOperationType();
 
         Operation operationBuild =  operationBuilder(operationDto);
-        Operation operation;
-        log.info("Созданы 'operationBuild' - {} , пустой 'operation'", operationBuild);
+        Operation operation = null;
 
         if (operationType.equals(OperationType.Type.REFUND.toString()) ||
             operationType.equals(OperationType.Type.PAYMENT.toString())
         ) {
-            log.info("Выполнено условие 'REFUND' или 'PAYMENT' для 'operationDto'");
             operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            log.info("Изменены поля 'debitAccount', 'creditAccount' для 'operationBuild' - {}", operationBuild);
             operation = operationsRepository.save(operationBuild);
-            log.info("Результат изменения 'operation' с вызвовом метода 'save' в 'operationsRepository' - {}", operation);
-            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
-            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
-            log.info("Результат 'operationDto' - {}, 'operation' - {}" +
-                    " после вызовов методов 'writeOffTransactionBuilder', 'replenishmentTransactionBuilder'", operationDto, operation);
+            log.info("saved the operation in the database: {}", operation);
+            Payment writeOff = paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            log.info("saved the payment in the database: {}", writeOff);
+            Payment replenishment = paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+            log.info("saved the payment in the database: {}", replenishment);
         }
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
-            log.info("Выполнено условие 'TOP_UP' для 'operationDto'");
             operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             operationBuild.setCreditAccount(accountsRepository.getById(1L));
-            log.info("Изменены поля 'debitAccount', 'creditAccount' для 'operationBuild' - {}", operationBuild);
             operation = operationsRepository.save(operationBuild);
-            log.info("Результат изменения 'operation' с вызвовом метода 'save' в 'operationsRepository' - {}", operation);
-            paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
-            log.info("Результат 'operationDto' - {}, 'operation' - {}" +
-                    " после вызовов методов 'replenishmentTransactionBuilder'", operationDto, operation);
+            log.info("saved the operation in the database: {}", operation);
+            Payment replenishment = paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
+            log.info("saved the payment in the database: {}", replenishment);
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
-            log.info("Выполнено условие 'WITHDRAW' для 'operationDto'");
             operationBuild.setDebitAccount(accountsRepository.getById(1L));
             operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
-            log.info("Изменены поля 'debitAccount', 'creditAccount' для 'operationBuild' - {}", operationBuild);
             operation = operationsRepository.save(operationBuild);
-            log.info("Результат изменения 'operation' с вызвовом метода 'save' в 'operationsRepository' - {}", operation);
-            paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
-            log.info("Результат 'operationDto' - {}, 'operation' - {}" +
-                    " после вызовов методов 'writeOffTransactionBuilder'", operationDto, operation);
+            log.info("saved the operation in the database: {}", operation);
+            Payment writeOff = paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
+            log.info("saved the payment in the database: {}", writeOff);
         }
-            return operationDto;
+            return from(operation);
     }
 
     @Override
     public Optional<OperationDto> findById(Long id) {
-        log.info("Запускается метод 'findById' с параметром 'id' - {}", id);
         Optional<Operation> optionalOperation = operationsRepository.findById(id);
-        log.info("Результат выполнения метода 'findById' - {}", optionalOperation.map(OperationDto::from));
         return optionalOperation.map(OperationDto::from);
     }
 }
