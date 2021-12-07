@@ -53,15 +53,7 @@ public class SignUpServiceImpl implements SignUpService {
     }
 
     private Client callTransactionService(Client client) {
-        final Instant now = Instant.now();
-        CreateAccountRequest request = CreateAccountRequest.builder()
-                .isActive(true)
-                .createdAt(now)
-                .modifiedAt(now)
-                .build();
-
-        CreateAccountResponse response = transactionServiceClient.createAccount(request);
-
+        CreateAccountResponse response = transactionServiceClient.createAccount();
         client.setAccountId(response.getId());
         return client;
     }
