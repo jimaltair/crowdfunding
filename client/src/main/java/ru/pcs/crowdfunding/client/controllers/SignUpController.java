@@ -25,6 +25,7 @@ public class SignUpController {
     @PostMapping
     public String signUp(@Valid SignUpForm form, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("signUpForm", form);
             return "signUp";
         }
 
