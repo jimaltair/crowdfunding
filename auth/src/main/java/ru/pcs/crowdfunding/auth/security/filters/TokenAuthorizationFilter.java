@@ -34,7 +34,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
-    private static final String JWT_SECRET_KEY = "jwt_secret";
+    private static final String JWT_SECRET_KEY = "jwt_secret_key";
 
     private final AuthorizationInfosRepository authorizationInfosRepository;
     private final ObjectMapper objectMapper;

@@ -18,7 +18,7 @@ Content-Type: application/json
   "initiatorId": 1,
   "operationType": "TOP_UP",
   "debitAccountId": 3,
-  "sum": 5.00
+  "sum": 10.00
 }
 
 <> 2021-12-06T173218.201.json
@@ -32,7 +32,7 @@ Content-Type: application/json
 {
   "initiatorId": 1,
   "operationType": "WITHDRAW",
-  "creditAccountId": 4,
+  "creditAccountId": 3,
   "sum": 5.00
 }
 
@@ -49,7 +49,7 @@ Content-Type: application/json
   "operationType": "PAYMENT",
   "debitAccountId": 4,
   "creditAccountId": 3,
-  "sum": 10.00
+  "sum": 5.00
 }
 
 <> 2021-12-06T173259.201.json
@@ -64,9 +64,9 @@ Content-Type: application/json
 {
   "initiatorId": 1,
   "operationType": "REFUND",
-  "debitAccountId": 4,
-  "creditAccountId": 99,
-  "sum": 10.00
+  "debitAccountId": 3,
+  "creditAccountId": 4,
+  "sum": 5.00
 }
 
 <> 2021-12-05T222529.201.json

@@ -1,4 +1,4 @@
-package ru.pcs.crowdfunding.tran.services;
+package ru.pcs.crowdfunding.tran.validator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
