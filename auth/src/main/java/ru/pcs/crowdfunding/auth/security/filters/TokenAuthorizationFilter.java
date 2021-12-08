@@ -47,43 +47,38 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        if (isForAll(request)) {
-//            filterChain.doFilter(request, response);
-//        }
-//        else {
-            String tokenHeader = request.getHeader(AUTHORIZATION);
-            if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
-                String token = tokenHeader.substring("Bearer ".length());
-                try {
-                    JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET_KEY)).build();
-                    DecodedJWT decodedJWT = verifier.verify(token);
+        String tokenHeader = request.getHeader(AUTHORIZATION);
+        if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
+            String token = tokenHeader.substring("Bearer ".length());
+            try {
+                JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET_KEY)).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
 
-                    String roles = decodedJWT.getClaim("roles").asString();
-                    String status =  decodedJWT.getClaim("status").asString();
-                    log.info("Get {} token within authorization with roles {} and status: {}", token, roles, status);
+                String roles = decodedJWT.getClaim("roles").asString();
+                String status =  decodedJWT.getClaim("status").asString();
+                log.info("Get {} token within authorization with roles {} and status: {}", token, roles, status);
 
-                    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    authorities.add(new SimpleGrantedAuthority(roles));
+                Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority(roles));
 
 
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(token, null, authorities);
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    filterChain.doFilter(request, response);
-
-                } catch (JWTVerificationException e) {
-                    logger.warn("Wrong token");
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    objectMapper.writeValue(response.getWriter(),
-                            Collections.singletonMap("error", "User not found with token"));
-                }
-            }
-            else {
-                logger.warn("Token is missing");
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(token, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 filterChain.doFilter(request, response);
+
+            } catch (JWTVerificationException e) {
+                logger.warn("Wrong token");
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                objectMapper.writeValue(response.getWriter(),
+                        Collections.singletonMap("error", "User not found with token"));
             }
-       // }
+        }
+        else {
+            logger.warn("Token is missing");
+            filterChain.doFilter(request, response);
+        }
     }
 
     private boolean isForAll(HttpServletRequest request) {
