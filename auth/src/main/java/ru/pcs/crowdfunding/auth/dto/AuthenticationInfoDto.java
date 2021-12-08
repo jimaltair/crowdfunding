@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class AuthenticationInfoDto {
 
     @NotNull
@@ -41,7 +42,7 @@ public class AuthenticationInfoDto {
                 .email(authenticationInfo.getEmail())
                 .password(authenticationInfo.getPassword())
                 .refreshToken(authenticationInfo.getRefreshToken())
-                .isActive(true)
+                .isActive(authenticationInfo.isActive())
                 .build();
     }
 

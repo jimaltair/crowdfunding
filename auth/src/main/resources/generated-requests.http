@@ -1,0 +1,28 @@
+
+
+###
+GET http://localhost:8081/api/auth/1
+
+###
+POST http://localhost:8081/api/auth
+Content-Type: application/json
+
+{
+  "userId": 4,
+  "email": "email@email.com",
+  "password": "111!"
+}
+
+###
+PUT http://localhost:8081/api/auth/2
+Content-Type: application/json
+
+{
+  "userId": 4,
+  "email": "email@email.com",
+  "password": "111!"
+}
+
+
+###
+DELETE http://localhost:8081/api/auth/3

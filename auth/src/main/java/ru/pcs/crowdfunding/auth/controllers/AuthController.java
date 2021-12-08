@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.dto.ResponseDto;
 import ru.pcs.crowdfunding.auth.services.AuthService;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @RestController
@@ -41,16 +43,28 @@ public class AuthController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
-        AuthenticationInfoDto authenticationInfoDto = authService.createAuthenticationInfo(authenticationInfo);
 
+        Optional<AuthenticationInfo> authenticationInfoDto;
+
+        try {
+            authenticationInfoDto = authService.createAuthenticationInfo(authenticationInfo);
+        } catch (IllegalArgumentException e) {
+
+            ResponseDto response = ResponseDto.builder()
+                .success(false)
+                .error(Arrays.asList(e.getMessage()))
+                .build();
+
+            ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return responseBody;
+        }
         ResponseDto response = ResponseDto.buildResponse(true, null, authenticationInfoDto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAuthenticationInfo(@PathVariable("id") Long id,
-                                                                           @RequestBody AuthenticationInfoDto authenticationInfo) {
+                                                                @RequestBody AuthenticationInfoDto authenticationInfo) {
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
         String errorMessage = null;
@@ -74,15 +88,12 @@ public class AuthController {
         HttpStatus status = HttpStatus.ACCEPTED;
         String errorMessage = null;
         Optional<AuthenticationInfoDto> authenticationInfoDto = authService.deleteAuthenticationInfo(id);
-
         if (!authenticationInfoDto.isPresent()) {
             success = false;
             status = HttpStatus.NOT_FOUND;
             errorMessage = "Can't delete. Client with id " + id + " not found";
         }
-
         ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfoDto);
-
         return ResponseEntity.status(status).body(response);
     }
 }
