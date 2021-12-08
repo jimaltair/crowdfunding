@@ -14,7 +14,6 @@ import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.services.SignUpService;
 
-import java.time.Instant;
 
 import java.util.Optional;
 
@@ -24,8 +23,6 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-@AutoConfigureWebTestClient
 class SignUpServiceImplTest {
 
     static final Long TEST_CLIENT_ID = 10L;
@@ -49,6 +46,7 @@ class SignUpServiceImplTest {
 
     @Autowired
     private SignUpService signUpService;
+
 
     @BeforeEach
     public void beforeEach(){
