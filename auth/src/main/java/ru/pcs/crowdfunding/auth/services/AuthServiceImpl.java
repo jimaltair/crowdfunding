@@ -26,9 +26,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Optional<AuthenticationInfoDto> findById(Long id) {
-        Optional<AuthenticationInfoDto> authenticationInfoDto = authenticationInfosRepository.findById(id)
-            .map(AuthenticationInfoDto::from);
-        return authenticationInfoDto;
+        Optional<AuthenticationInfoDto> result = authenticationInfosRepository.findById(id)
+                .map(AuthenticationInfoDto::from);
+        log.info("Result of 'findById' -  {} with 'authenticationInfoRepository'", result);
+        return result;
     }
 
     @Override
@@ -37,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<AuthenticationInfo> authInfo = authenticationInfosRepository.findByEmail(authenticationInfo.getEmail());
 
         if (authInfo.isPresent()) {
+            log.error("An account with email: \"+ authenticationInfo.getEmail() + \" already exists");
             throw new IllegalArgumentException("An account with email: "+ authenticationInfo.getEmail() + " already exists.");
         } else {
             AuthenticationInfo build = AuthenticationInfo.builder()
@@ -48,17 +50,17 @@ public class AuthServiceImpl implements AuthService {
                 .roles(Arrays.asList(roleRepository.getRoleByName("USER")))
                 .status(statusRepository.getStatusByName("CONFIRMED"))
                 .build();
-
-            System.out.println("AuthenticationInfo: "+ build);
-
-            AuthenticationInfo info = authenticationInfosRepository.save(build);
-            return Optional.of(info);
+            AuthenticationInfo result = authenticationInfosRepository.save(build);
+            log.info("Result of 'createAuthenticationInfo' with 'authenticationInfosRepository' -  {}", result);
+            return Optional.of(result);
         }
     }
 
     @Override
     public Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo) {
-        return Optional.of(AuthenticationInfoDto.builder().build());
+        Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.builder().build());
+        log.info("Result of 'updateAuthenticationInfo' - {}", result);
+        return result;
     }
 
     @Override
@@ -75,8 +77,11 @@ public class AuthServiceImpl implements AuthService {
                 .status(aut.get().getStatus())
                 .build();
             authenticationInfosRepository.save(byId);
-            return Optional.of(AuthenticationInfoDto.from(byId));
+            Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.from(byId));
+            log.info("Result of 'deleteAuthenticationInfo' - {}", result);
+            return result;
         }
-        return Optional.empty();
+        Optional<AuthenticationInfoDto> result = Optional.empty();
+        return result;
     }
 }

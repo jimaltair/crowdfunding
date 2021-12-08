@@ -2,6 +2,7 @@ package ru.pcs.crowdfunding.auth.controllers;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/api/signUp")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -22,16 +24,28 @@ public class AuthenticationController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid AuthenticationInfoDto authenticationInfoDto) {
+        log.info("Starting 'post /api/signUp/': post 'authenticationInfoDto' - {}", authenticationInfoDto.toString());
+        ResponseDto response;
+
         if (!authenticationService.existEmailInDb(authenticationInfoDto)) {
             authenticationInfoDto = authenticationService.signUpAuthentication(authenticationInfoDto);
-            return ResponseEntity.ok(ResponseDto.builder()
+            response = ResponseDto.builder()
                     .data(authenticationInfoDto)
                     .success(true)
-                    .build());
+                    .build();
+            ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
+            log.info("Finishing 'post /api/signUp/': 'responseBody' - 'status':{}, 'body': {} "
+                    , responseBody.getStatusCode(), responseBody.getBody().getData());
+            return responseBody;
         }
-        return ResponseEntity.badRequest().body(ResponseDto.builder()
+
+        log.error("Error 'email' - {} already exists", authenticationInfoDto.getEmail());
+        response = ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList("Email already exists","ERROR MESSAGE"))
-                .build());
+                .build();
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.badRequest().body(response);
+        log.info("Finishing 'post /api/signUp/': 'responseBody' - {} , {} ", responseBody.getStatusCode(), responseBody.getBody().getError());
+        return responseBody;
     }
 }
