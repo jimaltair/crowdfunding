@@ -23,7 +23,6 @@ import ru.pcs.crowdfunding.auth.security.util.TokenProvider;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static final String API = "/api";
-    public static final String API_PING = API + "/ping";
 
     public static final String SIGN_UP_FILTER_PROCESSES_URL = API + "/signUp";
     public static final String SIGN_IN_FILTER_PROCESSES_URL = API + "/signIn";
@@ -66,14 +65,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         TokenAuthenticationFilter tokenAuthenticationFilter = new TokenAuthenticationFilter(authenticationManagerBean(),
                 objectMapper, authenticationInfosRepository, authorizationInfosRepository);
+
         tokenAuthenticationFilter.setFilterProcessesUrl("api/signIn");
+
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
-                .antMatchers(API_PING).permitAll()
-                .antMatchers(SIGN_UP_FILTER_PROCESSES_URL).permitAll()
-                .antMatchers(SIGN_IN_FILTER_PROCESSES_URL).permitAll()
-                .antMatchers(REFRESH_FILTER_PROCESSES_URL).permitAll();
+                .antMatchers("**").hasAuthority("MS_CLIENT");
 
         http.addFilter(tokenAuthenticationFilter);
         http.addFilterBefore(new TokenAuthorizationFilter(authorizationInfosRepository, objectMapper),

@@ -1,6 +1,7 @@
 ###Создать нового пользователя (вертуть accessToken ?)
 POST localhost:8081/api/signUp
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI
 
 {
   "userId": 1,
@@ -10,14 +11,15 @@ Content-Type: application/json
 
 
 ###Вернуть данные пользователя
-GET localhost:8081/api/auth/1
+GET localhost:8081/api/auth/2
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlVTRVIiLCJleHAiOjE2NDEzNjY2MTIsInN0YXR1cyI6IkNPTkZJUk1FRCJ9.x9okR-CK47NdzH22gqf6EiA136u19idusikCXWWkquI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI
 
 
 ###Вернуть данные пользователя
 POST localhost:8081/api/auth
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI
 
 {
   "userId": 1,
