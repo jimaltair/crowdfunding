@@ -2,6 +2,7 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
@@ -12,7 +13,10 @@ import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.repositories.*;
+import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,7 +56,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     @Override
     public void createProject(ProjectForm form, MultipartFile file) {
         log.info("Try to create project from {}", form.toString());
-        ProjectStatus projectStatus = getProjectStatus();
+        ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
@@ -62,7 +66,6 @@ public class ProjectsServiceImpl implements ProjectsService {
         log.info("Was created new account for project with id={}", projectAccountId);
         project.setAccountId(projectAccountId);
 
-        projectStatusesRepository.save(projectStatus);
         projectsRepository.save(project);
 
         if (!file.isEmpty()) {
@@ -119,13 +122,6 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
                 .moneyGoal(form.getMoneyGoal())
                 .status(projectStatus)
-                .build();
-    }
-
-    private ProjectStatus getProjectStatus() {
-        return ProjectStatus.builder()
-                .description("Simple description")
-                .status(ProjectStatus.Status.CONFIRMED)
                 .build();
     }
 
