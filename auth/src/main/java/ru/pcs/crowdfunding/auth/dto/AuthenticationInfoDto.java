@@ -31,6 +31,7 @@ public class AuthenticationInfoDto {
     @ValidPassword
     private String password;
 
+    private String accessToken;
     private String refreshToken;
     private Boolean isActive;
 

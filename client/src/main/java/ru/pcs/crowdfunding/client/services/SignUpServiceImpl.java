@@ -8,7 +8,7 @@ import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
-import java.time.Instant;
+import javax.transaction.Transactional;
 
 
 @Service
@@ -18,6 +18,7 @@ public class SignUpServiceImpl implements SignUpService {
     private final AuthorizationServiceClient authorizationServiceClient;
     private final TransactionServiceClient transactionServiceClient;
 
+    @Transactional
     @Override
     public SignUpForm signUp(SignUpForm form) {
         Client newClient = Client.builder()
@@ -27,34 +28,36 @@ public class SignUpServiceImpl implements SignUpService {
                 .city(form.getCity())
                 .build();
 
-        // сохраняем заготовку клиента локально
+        // сохраняем заготовку клиента локально, чтобы для него уже создался id.
+        // id понадобится для походов в другие сервисы.
         newClient = clientsRepository.save(newClient);
 
         // ходим в остальные сервисы и обновляем поля клиента
-        newClient = callAuthorizationService(form, newClient);
-        newClient = callTransactionService(newClient);
+        String accessToken = createAuthenticationAndGetAccessToken(
+                newClient.getId(), form.getEmail(), form.getPassword());
+        newClient.setAccountId(createAccount());
 
         // сохраняем дополненного клиента
         newClient = clientsRepository.save(newClient);
 
-        return SignUpForm.from(newClient);
+        SignUpForm result = SignUpForm.from(newClient);
+        result.setAccessToken(accessToken);
+        return result;
     }
 
-    private Client callAuthorizationService(SignUpForm form, Client client) {
+    private String createAuthenticationAndGetAccessToken(Long userId, String email, String password) {
         AuthSignUpRequest request = AuthSignUpRequest.builder()
-                .userId(client.getId())
-                .email(form.getEmail())
-                .password(form.getPassword())
+                .userId(userId)
+                .email(email)
+                .password(password)
                 .build();
 
-        authorizationServiceClient.signUp(request);
-
-        return client;
+        AuthSignUpResponse response = authorizationServiceClient.signUp(request);
+        return response.getAccessToken();
     }
 
-    private Client callTransactionService(Client client) {
+    private Long createAccount() {
         CreateAccountResponse response = transactionServiceClient.createAccount();
-        client.setAccountId(response.getId());
-        return client;
+        return response.getId();
     }
 }

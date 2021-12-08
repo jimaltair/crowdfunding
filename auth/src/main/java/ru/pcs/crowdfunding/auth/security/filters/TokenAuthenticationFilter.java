@@ -24,6 +24,7 @@ import java.util.Date;
 
 
 @Slf4j
+@Deprecated
 public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final String JWT_SECRET_KEY = "jwt_secret_key";
@@ -32,7 +33,9 @@ public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFil
     private final AuthenticationInfosRepository authenticationInfosRepository;
     private final AuthorizationInfosRepository authorizationInfosRepository;
 
-    public TokenAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, AuthenticationInfosRepository authenticationInfosRepository, AuthorizationInfosRepository authorizationInfosRepository) {
+    public TokenAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper,
+                                     AuthenticationInfosRepository authenticationInfosRepository,
+                                     AuthorizationInfosRepository authorizationInfosRepository) {
         super(authenticationManager);
         this.objectMapper = objectMapper;
         this.authenticationInfosRepository = authenticationInfosRepository;
@@ -40,7 +43,8 @@ public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFil
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
         try {
             SignInForm form = objectMapper.readValue(request.getReader(), SignInForm.class);
             log.info("Attempt authentication by email {} and password {}", form.getEmail(), form.getPassword());

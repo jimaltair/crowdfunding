@@ -40,7 +40,8 @@ public class OperationController {
                 .build();
 
             ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            log.info("post /api/operation: response: {}", responseBody);
+            log.info("Finishing 'post /api/operation': 'response': 'status' - {}, 'body' - {}"
+                    , responseBody.getStatusCode(), responseBody.getBody().getData());
             return responseBody;
         }
         ResponseDto response = ResponseDto.builder()
@@ -48,7 +49,8 @@ public class OperationController {
             .data(operationDto)
             .build();
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
-        log.info("post /api/operation: response: {}", responseBody);
+        log.info("Finishing 'post /api/operation': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
@@ -75,7 +77,8 @@ public class OperationController {
                 .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("get /api/operation/{id}: response: {}", responseBody);
+        log.info("Finishing 'get /api/operation/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 }
