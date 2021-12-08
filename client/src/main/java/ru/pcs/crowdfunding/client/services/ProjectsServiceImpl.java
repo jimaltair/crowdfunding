@@ -48,17 +48,18 @@ public class ProjectsServiceImpl implements ProjectsService {
     public Optional<ProjectDto> findById(Long id) {
         Optional<Project> project = projectsRepository.findById(id);
         if (!project.isPresent()) {
-            log.warn("project with id = {} not found", id);
+            log.warn("Project with 'id' = {} not found", id);
             return Optional.empty();
         }
+        log.info("Result of method 'findById': 'project' - {}", project.get());
         return Optional.of(from(project.get()));
     }
 
     @Override
     public void createProject(ProjectForm form, MultipartFile file) {
-        log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = getProjectStatus();
         projectStatusesRepository.save(projectStatus);
+        log.info("Saved 'projectStatus' - {} into 'projectStatusesRepository'", projectStatus);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
@@ -73,19 +74,20 @@ public class ProjectsServiceImpl implements ProjectsService {
         if (!file.isEmpty()) {
             ProjectImage image = getImage(file, project);
             try {
-                log.info("Try to save project image {}", image.getPath());
                 Files.copy(file.getInputStream(), Paths.get(image.getPath()));
             } catch (IOException e) {
-                log.error("Can't save project image {}", image.getPath());
+                log.error("Can't save project image {}", image.getPath(), e);
                 throw new IllegalArgumentException(e);
             }
             projectImagesRepository.save(image);
+            log.info("Saved 'image' into 'projectImagesRepository' - {}", image);
         }
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
         if (file == null || project == null) {
-            throw new IllegalArgumentException("Can't upload image");
+            log.error("Can't upload image. File or project is 'null'");
+            throw new IllegalArgumentException("Can't upload image. File or project is 'null'");
         }
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
@@ -100,7 +102,7 @@ public class ProjectsServiceImpl implements ProjectsService {
             try {
                 Files.createDirectory(Paths.get(path).toAbsolutePath().normalize());
             } catch (IOException e) {
-                log.error("Can't create directory {}", path);
+                log.error("Can't create directory {}", path, e);
                 throw new IllegalArgumentException(e);
             }
         }

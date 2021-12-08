@@ -29,15 +29,17 @@ public class ClientsServiceImpl implements ClientsService {
 
         Optional<Client> client = clientsRepository.findById(id);
         if (!client.isPresent()) {
-            log.warn("client with id = {} not found", id);
+            log.warn("Client with 'id' = {} not found", id);
             return Optional.empty();
         }
-
+        log.debug("Created 'client' - {} with 'clientsRepository'", client);
         ClientDto clientDto = from(client.get());
 
         clientDto.setEmail(authorizationServiceClient.getAuthInfo(client.get().getId()).getEmail());
         clientDto.setSumAccount(transactionServiceClient.getBalance(client.get().getAccountId()));
-
+        log.info("Result of method 'getById':" +
+                        " created 'clientDto' - {} with 'clientsRepository', 'authorizationServiceClient', 'transactionServiceClient'"
+        , clientDto);
         return Optional.of(clientDto);
     }
 }
