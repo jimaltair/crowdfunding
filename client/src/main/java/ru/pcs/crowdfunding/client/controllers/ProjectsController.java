@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
@@ -61,12 +62,18 @@ public class ProjectsController {
     @GetMapping(value = "/update/{id}")
     public String getProjectUpdatePage(@PathVariable("id") Long id, Model model) {
         model.addAttribute("projectUpdatedForm", new ProjectForm());
-        // если по запрошенному id-шнику ничего нет, то возвращаю страницу создания проекта -
-        // пока ничего лучше в голову не пришло
-        if(!projectsService.findById(id).isPresent()){
+        Optional<ProjectDto> currentProject = projectsService.findById(id);
+        if(!currentProject.isPresent()){
+            // если по запрошенному id-шнику ничего нет, то возвращаю страницу создания проекта -
+            // пока ничего лучше в голову не пришло
             return "createProject";
         }
+        ProjectDto project = currentProject.get();
         model.addAttribute("id", id);
+        model.addAttribute("project_title", project.getTitle());
+        model.addAttribute("project_description", project.getDescription());
+        model.addAttribute("project_money_goal", project.getMoneyGoal().toString());
+        model.addAttribute("finish_date", project.getFinishDate().toString());
         return "updateProject";
     }
 
