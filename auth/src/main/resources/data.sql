@@ -12,5 +12,5 @@ VALUES
     (1, 'NOT_CONFIRMED'),
     (2, 'CONFIRMED'),
     (3, 'BANNED'),
-    (3, 'DELETED')
+    (4, 'DELETED')
 ON CONFLICT (status_id) DO NOTHING;
