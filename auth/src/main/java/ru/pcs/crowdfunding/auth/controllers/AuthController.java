@@ -21,54 +21,63 @@ public class AuthController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getById(@PathVariable("id") Long id) {
-        log.info("get AuthenticationInfo by id {}", id);
 
+        log.info("Starting 'get /api/auth/{id}: get 'id' - {}", id);
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
         String errorMessage = null;
         Optional<AuthenticationInfoDto> authenticationInfo = authService.findById(id);
 
         if (!authenticationInfo.isPresent()) {
+            log.error("Client with 'id' - {} didn't found", id);
             success = false;
             status = HttpStatus.NOT_FOUND;
             errorMessage = "Client with id " + id + " not found";
         }
 
         ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfo);
-
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'get/api/auth/{id}': 'responseBody' - 'status':{}, 'body': {} "
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 
     @PostMapping
     public ResponseEntity<ResponseDto> createAuthenticationInfo(@RequestBody AuthenticationInfoDto authenticationInfo) {
+        log.info("Starting 'post /api/auth': post 'authenticationInfo' - {} ", authenticationInfo.toString());
         AuthenticationInfoDto authenticationInfoDto = authService.createAuthenticationInfo(authenticationInfo);
-
         ResponseDto response = ResponseDto.buildResponse(true, null, authenticationInfoDto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
+        log.info("Finishing 'post /api/auth/': 'responseBody' - 'status':{}, 'body': {} "
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAuthenticationInfo(@PathVariable("id") Long id,
                                                                            @RequestBody AuthenticationInfoDto authenticationInfo) {
+        log.info("Starting 'put /api/auth/{id}': put 'id' - {}, 'authenticationInfo' - {}", id, authenticationInfo.toString());
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
         String errorMessage = null;
         Optional<AuthenticationInfoDto> authenticationInfoDto = authService.updateAuthenticationInfo(id, authenticationInfo);
-
         if (!authenticationInfoDto.isPresent()) {
+            log.error("Can't update. Client with 'id' - {} didn't found", id);
             success = false;
             status = HttpStatus.NOT_FOUND;
             errorMessage = "Can't update. Client with id " + id + " not found";
         }
 
         ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfo);
-
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'put /api/auth/{id}': 'responseBody' - 'status':{}, 'body': {} "
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> deleteAuthenticationInfo(@PathVariable("id") Long id) {
+        log.info("Starting 'delete /api/auth/{id}': delete 'id' - {}", id);
 
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -76,13 +85,16 @@ public class AuthController {
         Optional<AuthenticationInfoDto> authenticationInfoDto = authService.deleteAuthenticationInfo(id);
 
         if (!authenticationInfoDto.isPresent()) {
+            log.error("Can't delete. Client with 'id' - {} didn't found", id);
             success = false;
             status = HttpStatus.NOT_FOUND;
             errorMessage = "Can't delete. Client with id " + id + " not found";
         }
 
         ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfoDto);
-
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'delete /api/auth/{id}': 'responseBody' - 'status':{}, 'body': {} "
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 }
