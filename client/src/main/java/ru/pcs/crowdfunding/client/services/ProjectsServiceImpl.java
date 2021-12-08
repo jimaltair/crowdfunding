@@ -57,9 +57,8 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public void createProject(ProjectForm form, MultipartFile file) {
-        ProjectStatus projectStatus = getProjectStatus();
-        projectStatusesRepository.save(projectStatus);
-        log.info("Saved 'projectStatus' - {} into 'projectStatusesRepository'", projectStatus);
+        log.info("Try to create project from {}", form.toString());
+        ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
@@ -127,13 +126,6 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
                 .moneyGoal(form.getMoneyGoal())
                 .status(projectStatus)
-                .build();
-    }
-
-    private ProjectStatus getProjectStatus() {
-        return ProjectStatus.builder()
-                .description("Simple description")
-                .status(ProjectStatus.Status.CONFIRMED)
                 .build();
     }
 
