@@ -27,12 +27,10 @@ public class RestTemplateClient {
         final String fullUrl = remoteAddress + url;
 
         // add Authorization header with token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        HttpEntity<String> request = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(makeHeaders());
 
         ResponseEntity<ResponseDto> responseEntity = restTemplate.exchange(
-                fullUrl, HttpMethod.GET, request, ResponseDto.class);
+                fullUrl, HttpMethod.GET, requestEntity, ResponseDto.class);
         validateNotError(responseEntity, fullUrl);
 
         ResponseDto responseDto = responseEntity.getBody();
@@ -43,12 +41,10 @@ public class RestTemplateClient {
         final String fullUrl = remoteAddress + url;
 
         // add Authorization header with token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        HttpEntity<String> request = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(makeHeaders());
 
         ResponseEntity<ResponseDto> responseEntity = restTemplate.exchange(
-                fullUrl, HttpMethod.GET, request, ResponseDto.class, urlVariables);
+                fullUrl, HttpMethod.GET, requestEntity, ResponseDto.class, urlVariables);
         validateNotError(responseEntity, fullUrl);
 
         ResponseDto responseDto = responseEntity.getBody();
@@ -59,12 +55,10 @@ public class RestTemplateClient {
         final String fullUrl = remoteAddress + url;
 
         // add Authorization header with token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        HttpEntity<Object> httpEntity = new HttpEntity<>(request, headers);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(request, makeHeaders());
 
         ResponseEntity<ResponseDto> responseEntity = restTemplate.postForEntity(
-                fullUrl, httpEntity, ResponseDto.class);
+                fullUrl, requestEntity, ResponseDto.class);
         validateNotError(responseEntity, fullUrl);
 
         ResponseDto responseDto = responseEntity.getBody();
@@ -88,5 +82,11 @@ public class RestTemplateClient {
             throw new IllegalStateException(
                     MessageFormat.format("Request to {0} failed with error: {1}", url, responseDto.getError()));
         }
+    }
+
+    private HttpHeaders makeHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+        return headers;
     }
 }
