@@ -28,7 +28,7 @@ public class AccountController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getAccount(@PathVariable("id") Long id) {
-        log.info("get /api/account/{id}: id = {}", id);
+        log.info("Starting 'get /api/account/{id}': 'id' = {}", id);
 
         ResponseDto response;
         HttpStatus status;
@@ -36,6 +36,7 @@ public class AccountController {
         Optional<AccountDto> accountDto = accountService.findById(id);
 
         if (!accountDto.isPresent()) {
+            log.error("Account with 'id' - {} didn't found", id);
             status = HttpStatus.NOT_FOUND;
             response = ResponseDto.builder()
                     .success(false)
@@ -49,7 +50,8 @@ public class AccountController {
                     .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("get /api/account/{id}: response: {}", responseBody);
+        log.info("Finishing 'get /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
@@ -59,7 +61,7 @@ public class AccountController {
                                                       Long epochSecondTimeStamp) {
 
         Instant balanceDateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
-        log.info("get /api/account/{id}/balance: id = {}, date = {}", id, balanceDateTime);
+        log.info("Starting 'get /api/account/{id}/balance': 'id' = {}, 'date' = {}", id, balanceDateTime);
 
         ResponseDto response;
         HttpStatus status;
@@ -67,13 +69,15 @@ public class AccountController {
         Optional<AccountDto> optionalAccountDto = accountService.findById(id);
 
         if (!optionalAccountDto.isPresent()) {
+            log.error("Account with 'id' - {} didn't found", id);
             status = HttpStatus.NOT_FOUND;
             response = ResponseDto.builder()
                     .success(false)
                     .error(Arrays.asList("Account with id " + id + " not found"))
                     .build();
             ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-            log.info("get /api/account/{id}/balance: response: {}", responseBody);
+            log.info("Finishing 'get /api/account/{id}/balance': 'response': 'status - {}, 'body' - {}"
+                    , responseBody.getStatusCode(), responseBody.getBody().getData());
             return responseBody;
         }
 
@@ -98,32 +102,36 @@ public class AccountController {
                 .build();
 
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("get /api/account/{id}/balance: response: {}", responseBody);
+        log.info("Finishing 'get /api/account/{id}/balance': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
     @GetMapping
     public ResponseEntity<ResponseDto> createAccount() {
+        log.info("Starting 'get /api/account/'");
         AccountDto accountDto = accountService.createAccount();
         ResponseDto response = ResponseDto.builder()
             .success(true)
             .data(accountDto)
             .build();
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
-        log.info("get /api/account/: response: {}", responseBody);
+        log.info("Finishing 'get /api/account/': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAccount(@PathVariable("id") Long id,
                                                      @RequestBody AccountDto updateAccountDto) {
-        log.info("put /api/account/{id}: id = {}, updateAccountDto={}", id, updateAccountDto);
+        log.info("Starting 'put /api/account/{id}': 'id' = {}, 'updateAccountDto' = {}", id, updateAccountDto);
         ResponseDto response;
         HttpStatus status;
 
         Optional<AccountDto> accountDto = accountService.updateAccount(id, updateAccountDto);
 
         if (!accountDto.isPresent()) {
+            log.error("Can't update. Account with 'id' - {} didn't found", id);
             status = HttpStatus.NOT_FOUND;
             response = ResponseDto.builder()
                     .success(false)
@@ -137,13 +145,14 @@ public class AccountController {
                     .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("put /api/account/{id}: response: {}", responseBody);
+        log.info("Finishing 'put /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> deleteAccount(@PathVariable("id") Long id) {
-        log.info("delete /api/account/{id}: id = {}", id);
+        log.info("Starting 'delete /api/account/{id}': 'id' = {}", id);
 
         ResponseDto response;
         HttpStatus status;
@@ -151,6 +160,7 @@ public class AccountController {
         Optional<AccountDto> accountDto = accountService.deleteAccount(id);
 
         if (!accountDto.isPresent()) {
+            log.error("Can't delete. Account with 'id' - {} didn't found", id);
             status = HttpStatus.NOT_FOUND;
             response = ResponseDto.builder()
                     .success(false)
@@ -164,7 +174,8 @@ public class AccountController {
                     .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("put /api/account/{id}: response: {}", responseBody);
+        log.info("Finishing 'put /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 }

@@ -27,20 +27,21 @@ public class OperationController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createOperation(@RequestBody OperationDto newOperationDto) {
-        log.info("post /api/operation: get operationDto = {}", newOperationDto.toString());
+        log.info("Starting 'post /api/operation': get 'operationDto' = {}", newOperationDto.toString());
 
         OperationDto operationDto;
         try {
             operationDto = operationService.createOperation(newOperationDto);
         } catch (IllegalArgumentException e) {
-
+            log.error("Can't create operation", e);
             ResponseDto response = ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList(e.getMessage()))
                 .build();
 
             ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            log.info("post /api/operation: response: {}", responseBody);
+            log.info("Finishing 'post /api/operation': 'response': 'status' - {}, 'body' - {}"
+                    , responseBody.getStatusCode(), responseBody.getBody().getData());
             return responseBody;
         }
         ResponseDto response = ResponseDto.builder()
@@ -48,13 +49,14 @@ public class OperationController {
             .data(operationDto)
             .build();
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
-        log.info("post /api/operation: response: {}", responseBody);
+        log.info("Finishing 'post /api/operation': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getOperation(@PathVariable("id") Long id) {
-        log.info("get /api/operation/{id}, id = {}", id);
+        log.info("Starting 'get /api/operation/{id}': 'id' = {}", id);
 
         ResponseDto response;
         HttpStatus status;
@@ -62,6 +64,7 @@ public class OperationController {
         Optional<OperationDto> operationDto = operationService.findById(id);
 
         if (!operationDto.isPresent()) {
+            log.error("Operation with 'id' - {} didn't found", id);
             status = HttpStatus.NOT_FOUND;
             response = ResponseDto.builder()
                 .success(false)
@@ -75,7 +78,8 @@ public class OperationController {
                 .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("get /api/operation/{id}: response: {}", responseBody);
+        log.info("Finishing 'get /api/operation/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 }
