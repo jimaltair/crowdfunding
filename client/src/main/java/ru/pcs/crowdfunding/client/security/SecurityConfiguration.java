@@ -13,7 +13,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
-                .antMatchers(API_PING).permitAll()
-                .anyRequest().permitAll();
+                    .antMatchers("/").permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                    .formLogin()
+                    .loginPage("/signIn")
+                    .permitAll()
+                .and()
+                    .logout()
+                    .permitAll();
     }
 }
