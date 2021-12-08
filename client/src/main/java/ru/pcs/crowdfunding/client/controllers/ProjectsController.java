@@ -66,6 +66,7 @@ public class ProjectsController {
         if(!projectsService.findById(id).isPresent()){
             return "createProject";
         }
+        model.addAttribute("id", id);
         return "updateProject";
     }
 

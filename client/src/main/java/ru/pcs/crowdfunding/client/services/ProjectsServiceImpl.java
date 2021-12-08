@@ -95,7 +95,7 @@ public class ProjectsServiceImpl implements ProjectsService {
             existedProject.setDescription(form.getDescription());
         }
         if (form.getFinishDate() != null) {
-            existedProject.setFinishDate(Instant.parse(form.getFinishDate()));
+            existedProject.setFinishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC));
         }
         projectsRepository.save(existedProject);
         log.info("Project data was updated successfully");
