@@ -19,20 +19,23 @@ import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
 import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
+
+    private final static String PROJECT_IMAGES_PATH = "/project_images";
 
     private final ProjectsRepository projectsRepository;
 
@@ -51,11 +54,24 @@ public class ProjectsServiceImpl implements ProjectsService {
             log.warn("project with id = {} not found", id);
             return Optional.empty();
         }
-        return Optional.of(from(project.get()));
+
+        Long accountId = project.get().getAccountId();
+        BigDecimal balance = transactionServiceClient.getBalance(accountId);
+        Long donorsCount = transactionServiceClient.getContributorsCount(accountId);
+        List<String> imagesLinks = project.get().getImages().stream()
+                .map(ProjectImage::getPath)
+                .map(path -> FilenameUtils.concat(PROJECT_IMAGES_PATH, FilenameUtils.getName(path)))
+                .collect(Collectors.toList());
+
+        ProjectDto projectDto = ProjectDto.from(project.get());
+        projectDto.setMoneyCollected(balance);
+        projectDto.setContributorsCount(donorsCount);
+        projectDto.setImagesLinks(imagesLinks);
+        return Optional.of(projectDto);
     }
 
     @Override
-    public void createProject(ProjectForm form, MultipartFile file) {
+    public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Try to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
         Project project = getProject(form, projectStatus);
@@ -80,6 +96,8 @@ public class ProjectsServiceImpl implements ProjectsService {
             }
             projectImagesRepository.save(image);
         }
+
+        return Optional.of(project.getId());
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {

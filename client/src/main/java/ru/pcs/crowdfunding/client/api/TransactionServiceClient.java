@@ -10,5 +10,5 @@ public interface TransactionServiceClient {
 
     BigDecimal getBalance(Long accountId);
 
-
+    Long getContributorsCount(Long accountId);
 }
