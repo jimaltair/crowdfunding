@@ -72,12 +72,12 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
-        log.info("Try to create project from {}", form.toString());
+        log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
-        log.info("Try to create account for project");
+        log.info("Trying to create account for project");
         CreateAccountResponse response = transactionServiceClient.createAccount();
         Long projectAccountId = response.getId();
         log.info("Was created new account for project with id={}", projectAccountId);
