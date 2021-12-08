@@ -19,8 +19,9 @@ public class AuthorizationServiceRestTemplateClient extends RestTemplateClient i
     public AuthorizationServiceRestTemplateClient(
             RestTemplateBuilder restTemplateBuilder,
             @Value("${api.authorization-service.remote-address}") String remoteAddress,
+            @Value ("${api.authorization-service.token}")String token,
             ObjectMapper objectMapper) {
-        super(restTemplateBuilder, remoteAddress, objectMapper);
+        super(restTemplateBuilder, remoteAddress, token, objectMapper);
     }
 
     @Override

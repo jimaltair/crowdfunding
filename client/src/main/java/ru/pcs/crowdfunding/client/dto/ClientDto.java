@@ -22,8 +22,6 @@ public class ClientDto {
     private String firstName;
     private String lastName;
 
-    private String about;
-
     private String country;
     private String city;
 
