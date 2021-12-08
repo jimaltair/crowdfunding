@@ -35,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<AuthenticationInfo> authInfo = authenticationInfosRepository.findByEmail(authenticationInfo.getEmail());
 
         if (authInfo.isPresent()) {
+            log.error("An account with email: \"+ authenticationInfo.getEmail() + \" already exists");
             throw new IllegalArgumentException("An account with email: "+ authenticationInfo.getEmail() + " already exists.");
         } else {
             AuthenticationInfo build = AuthenticationInfo.builder()
@@ -46,8 +47,9 @@ public class AuthServiceImpl implements AuthService {
                 .roles(Arrays.asList(roleRepository.getRoleByName("USER")))
                 .status(statusRepository.getStatusByName("CONFIRMED"))
                 .build();
-            AuthenticationInfo info = authenticationInfosRepository.save(build);
-            return Optional.of(info);
+            AuthenticationInfo result = authenticationInfosRepository.save(build);
+            log.info("Result of 'createAuthenticationInfo' with 'authenticationInfosRepository' -  {}", result);
+            return Optional.of(result);
         }
     }
 
@@ -72,8 +74,11 @@ public class AuthServiceImpl implements AuthService {
                 .status(aut.get().getStatus())
                 .build();
             authenticationInfosRepository.save(byId);
-            return Optional.of(AuthenticationInfoDto.from(byId));
+            Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.from(byId));
+            log.info("Result of 'deleteAuthenticationInfo' - {}", result);
+            return result;
         }
-        return Optional.empty();
+        Optional<AuthenticationInfoDto> result = Optional.empty();
+        return result;
     }
 }
