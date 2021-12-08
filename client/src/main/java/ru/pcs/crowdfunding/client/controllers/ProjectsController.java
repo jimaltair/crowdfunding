@@ -58,6 +58,17 @@ public class ProjectsController {
         return "createProject";
     }
 
+    @GetMapping(value = "/update/{id}")
+    public String getProjectUpdatePage(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("projectUpdatedForm", new ProjectForm());
+        // если по запрошенному id-шнику ничего нет, то возвращаю страницу создания проекта -
+        // пока ничего лучше в голову не пришло
+        if(!projectsService.findById(id).isPresent()){
+            return "createProject";
+        }
+        return "updateProject";
+    }
+
     @PostMapping(value = "/update/{id}")
     public String updateProject(@Valid ProjectForm form, @PathVariable("id") Long id, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
