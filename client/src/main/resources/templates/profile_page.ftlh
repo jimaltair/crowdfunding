@@ -72,7 +72,7 @@
                         <div class="text-center" id="author">
                             <img src="/img/avatar_vasiliy.jpg">
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
-                            <p>${clientDto.about}</p>
+                            <p></p>
                             <p class="sosmed-author">
                                 <a href="#"><i class="fa fa-facebook" title="Facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter" title="Twitter"></i></a>

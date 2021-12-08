@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface ProjectsService {
     Optional<ProjectDto> findById(Long id);
 
-    void createProject(ProjectForm form, MultipartFile file);
+    Optional<Long> createProject(ProjectForm form, MultipartFile file);
 }

@@ -105,6 +105,26 @@ public class AccountController {
         return responseBody;
     }
 
+    @GetMapping(value = "/{id}/contributorsCount")
+    public ResponseEntity<ResponseDto> getContributorsCount(@PathVariable("id") Long id,
+                                                            @RequestParam("date") Long epochSecondTimeStamp) {
+        Instant dateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
+
+        HttpStatus httpStatus;
+        ResponseDto responseDto;
+
+        Optional<Long> donorsCount = accountService.getContributorsCount(id, dateTime);
+        if (donorsCount.isPresent()) {
+            httpStatus = HttpStatus.OK;
+            responseDto = ResponseDto.buildSuccess(donorsCount.get());
+        } else {
+            httpStatus = HttpStatus.NOT_FOUND;
+            responseDto = ResponseDto.buildError("Account with id " + id + " not found");
+        }
+
+        return ResponseEntity.status(httpStatus).body(responseDto);
+    }
+
     @GetMapping
     public ResponseEntity<ResponseDto> createAccount() {
         AccountDto accountDto = accountService.createAccount();
