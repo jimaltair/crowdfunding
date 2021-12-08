@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
 
@@ -78,6 +79,35 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public void updateProject(Long id, ProjectForm form, MultipartFile file) {
+        log.info("Try to update project with id={}", id);
+        Optional<Project> project = projectsRepository.getProjectById(id);
+        if (!project.isPresent()) {
+            log.error("Project with id={} was not found", id);
+            throw new IllegalArgumentException("Project was not found");
+        }
+        Project existedProject = project.get();
+        log.info("The existed {}", existedProject);
+        log.info("The new data from {}", form.toString());
+        if (form.getTitle() != null) {
+            existedProject.setTitle(form.getTitle());
+        }
+        if (form.getDescription() != null) {
+            existedProject.setDescription(form.getDescription());
+        }
+        if (form.getFinishDate() != null) {
+            existedProject.setFinishDate(Instant.parse(form.getFinishDate()));
+        }
+        projectsRepository.save(existedProject);
+        log.info("Project data was updated successfully");
+
+        if (!file.isEmpty()) {
+            log.info("Try to update project image with new image with name={}", file.getOriginalFilename());
+//            ProjectImage projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
+            // по идее, здесь должна обновиться фотка проекта, нужно тестировать
+            ProjectImage newProjectImage = getImage(file, existedProject);
+            projectImagesRepository.save(newProjectImage);
+            log.info("Project image was updated successfully");
+        }
 
     }
 
