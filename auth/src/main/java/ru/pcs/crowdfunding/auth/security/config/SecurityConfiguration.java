@@ -2,6 +2,7 @@ package ru.pcs.crowdfunding.auth.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,12 +25,13 @@ import ru.pcs.crowdfunding.auth.security.util.TokenProvider;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static final String API = "/api";
 
-    public static final String SIGN_UP_FILTER_PROCESSES_URL = API + "/signUp";
-    public static final String SIGN_IN_FILTER_PROCESSES_URL = API + "/signIn";
-    public static final String REFRESH_FILTER_PROCESSES_URL = API + "/refresh";
+    @Value("${security.jwt_ms_client_secret_key}")
+    public String JWT_SECRET_KEY;
+
 
     @Autowired
     private ObjectMapper objectMapper;
+
 
     @Autowired
     private AuthenticationInfosRepository authenticationInfosRepository;
@@ -74,7 +76,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("**").hasAuthority("MS_CLIENT");
 
         http.addFilter(tokenAuthenticationFilter);
-        http.addFilterBefore(new TokenAuthorizationFilter(authorizationInfosRepository, objectMapper),
+        http.addFilterBefore(new TokenAuthorizationFilter(objectMapper, JWT_SECRET_KEY),
                 UsernamePasswordAuthenticationFilter.class);
     }
 }
