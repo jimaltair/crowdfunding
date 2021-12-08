@@ -57,4 +57,15 @@ public class ProjectsController {
         projectsService.createProject(form, file);
         return "createProject";
     }
+
+    @PostMapping(value = "/update/{id}")
+    public String updateProject(@Valid ProjectForm form, @PathVariable("id") Long id, BindingResult result, Model model,
+                                @RequestParam("file") MultipartFile file) {
+        if (result.hasErrors()) {
+            model.addAttribute("projectUpdatedForm", form);
+        }
+        projectsService.updateProject(id, form, file);
+        // здесь должна прилететь страница проекта
+        return "projectCard";
+    }
 }

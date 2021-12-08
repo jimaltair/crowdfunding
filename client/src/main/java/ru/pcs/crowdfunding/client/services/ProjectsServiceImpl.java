@@ -76,6 +76,11 @@ public class ProjectsServiceImpl implements ProjectsService {
         }
     }
 
+    @Override
+    public void updateProject(Long id, ProjectForm form, MultipartFile file) {
+
+    }
+
     private ProjectImage getImage(MultipartFile file, Project project) {
         try {
             return ProjectImage.builder()
