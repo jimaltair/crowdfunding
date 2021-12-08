@@ -135,13 +135,6 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .build();
     }
 
-    private ProjectStatus getProjectStatus() {
-        return ProjectStatus.builder()
-                .description("Simple description")
-                .status(ProjectStatus.Status.CONFIRMED)
-                .build();
-    }
-
     @Override
     public Page<Project> getConfirmedProjects() {
         Pageable page = PageRequest.of(0, 10);
