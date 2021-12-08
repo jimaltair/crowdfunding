@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>profile page</title>
 </head>
+
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/bootstrap/css/font-awesome.min.css"/>
 <script src="/bootstrap/js/jquery-1.11.3.min.js"></script>
@@ -70,7 +71,9 @@
                     </div>
                     <div class="panel-body">
                         <div class="text-center" id="author">
-                            <img src="@Vi">
+<#--                            <img src="@Vi">-->
+                            <img src="/img/avatar_vasiliy.jpg">
+<#--                            <img src=${clientDto.image.content}/>-->
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <#--                            <p>${clientDto.about}</p>-->
                             <p class="sosmed-author">

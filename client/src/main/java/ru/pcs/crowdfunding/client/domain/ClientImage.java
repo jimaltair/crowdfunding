@@ -3,6 +3,7 @@ package ru.pcs.crowdfunding.client.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.awt.image.BufferedImage;
 
 @Getter
 @Setter
@@ -27,4 +28,6 @@ public class ClientImage {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
+
 }

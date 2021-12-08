@@ -3,18 +3,18 @@ package ru.pcs.crowdfunding.client.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import ru.pcs.crowdfunding.client.domain.ClientImage;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 @Controller
@@ -41,14 +41,9 @@ public class ClientController {
     }
 
     @PostMapping(value = "/{id}")
-    public String update(@PathVariable Long id, @Valid ClientForm form,
-                         BindingResult result, Model model,
+    public String update(@PathVariable Long id, @Valid ClientForm form, Model model,
                          @RequestParam("file") MultipartFile file) {
         log.info("update by id = {}", id);
-//        if (result.hasErrors()) {
-//            model.addAttribute("");
-//
-//        }
 
         ClientForm newForm = clientsService.updateClient(id, form, file);
 
@@ -56,6 +51,27 @@ public class ClientController {
 
         return "redirect:/client/" + id;
     }
+
+    @GetMapping(value = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
+    public String downloadImage(@PathVariable Long clientId, Model model) {
+//        byte[] image = clientsService.getImageBytes(imageId);
+
+        BufferedImage image = clientsService.getImageFile(clientId);
+         model.addAttribute("clientDto", image);
+
+        return "redirect:/client/" + clientId;
+    }
+
+
+//    @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+//    Resource downloadImage(@PathVariable Long id) {
+//        ClientImage image = clientsService.getImage(id);
+//        byte[] mas = image.getContent();
+//
+//
+//        return mas;
+//    }
+
 
 //
 //    @GetMapping(value = "/{id}/image")

@@ -41,4 +41,7 @@ public class Client {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     private List<Project> projects;
+
+
+
 }
