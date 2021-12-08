@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.ClientImage;
 
-import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 @Data
@@ -16,24 +15,18 @@ import java.math.BigDecimal;
 @Builder
 public class ClientForm {
 
-    public static final String CLIENTS_IMAGE_PATH = "./client/src/main/resources/static/clients_images/";
+    public static final String CLIENTS_IMAGE_PATH = "./client/src/main/resources/static/temp_clients_images/";
 
-//    @NotBlank
     private String firstName;
 
-//    @NotBlank
     private String lastName;
 
-//    @NotBlank
     private String country;
 
-//    @NotBlank
     private String city;
 
-//    @NotBlank
     private String email;
 
-//    @NotBlank
     private BigDecimal sumAccount;
 
     private ClientImage image;

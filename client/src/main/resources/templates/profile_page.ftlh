@@ -70,7 +70,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="text-center" id="author">
-                            <img src="/img/avatar_vasiliy.jpg">
+                            <img src="@Vi">
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <#--                            <p>${clientDto.about}</p>-->
                             <p class="sosmed-author">

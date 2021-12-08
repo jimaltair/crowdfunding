@@ -1,7 +1,9 @@
 package ru.pcs.crowdfunding.client.services;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.metadata.raw.ConstrainedElement;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
@@ -82,17 +84,15 @@ public class ClientsServiceImpl implements ClientsService {
 
         ClientForm clientForm = ClientForm.from(client);
         clientForm.setEmail(getEmail(clientId));
-//        clientForm.setImage(getImage(file, clientId));
-
-
-//        clientForm.setImage(findImage(file,client));
         return clientForm;
     }
 
-//    @Override
-//    public ClientImage getImage(MultipartFile file, Long clientId) {
-//        return clientImagesRepository.getById(clientId);
-//    }
+    @Override
+    public ClientImage getImage(Long clientId) {
+        ClientImage clientImage = clientImagesRepository.getById(clientId);
+//        byte[] mas = clientImagesRepository.getBytesImage(clientId);
+        byte[] encodeBase64 = Base64.encode();
+    }
 
 
     private ClientImage createClientImage(MultipartFile file, Client client) {

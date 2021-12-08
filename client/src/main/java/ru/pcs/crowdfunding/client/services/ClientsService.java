@@ -13,5 +13,5 @@ public interface ClientsService {
 
     ClientForm updateClient(Long clientId, ClientForm form, MultipartFile file);
 
-//    ClientImage getImage(MultipartFile file, Long clientId);
+    ClientImage getImage(Long clientId);
 }
