@@ -13,12 +13,14 @@ public class RestTemplateClient {
 
     private final RestTemplate restTemplate;
     private final String remoteAddress;
+    private final String token;
     private final ObjectMapper objectMapper;
 
     public RestTemplateClient(RestTemplateBuilder restTemplateBuilder, String remoteAddress,
-                              ObjectMapper objectMapper) {
+                              String token, ObjectMapper objectMapper) {
         this.restTemplate = restTemplateBuilder.build();
         this.remoteAddress = remoteAddress;
+        this.token = token;
         this.objectMapper = objectMapper;
     }
 
