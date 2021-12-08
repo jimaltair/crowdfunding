@@ -27,13 +27,13 @@ public class OperationController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createOperation(@RequestBody OperationDto newOperationDto) {
-        log.info("Starting 'post /api/operation': get 'operationDto' = {}", newOperationDto.toString());
+        log.info("post /api/operation: get operationDto = {}", newOperationDto.toString());
 
         OperationDto operationDto;
         try {
             operationDto = operationService.createOperation(newOperationDto);
         } catch (IllegalArgumentException e) {
-            log.error("Can't create operation", e);
+
             ResponseDto response = ResponseDto.builder()
                 .success(false)
                 .error(Arrays.asList(e.getMessage()))
@@ -56,7 +56,7 @@ public class OperationController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getOperation(@PathVariable("id") Long id) {
-        log.info("Starting 'get /api/operation/{id}': 'id' = {}", id);
+        log.info("get /api/operation/{id}, id = {}", id);
 
         ResponseDto response;
         HttpStatus status;
@@ -64,7 +64,6 @@ public class OperationController {
         Optional<OperationDto> operationDto = operationService.findById(id);
 
         if (!operationDto.isPresent()) {
-            log.error("Operation with 'id' - {} didn't found", id);
             status = HttpStatus.NOT_FOUND;
             response = ResponseDto.builder()
                 .success(false)

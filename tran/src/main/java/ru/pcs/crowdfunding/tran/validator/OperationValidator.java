@@ -20,7 +20,7 @@ public class OperationValidator {
     private final PaymentsRepository paymentsRepository;
 
     public void isValid(OperationDto operationDto) {
-        log.info("Starting method 'isValid' with parameters: {}", operationDto);
+        log.info("Start method 'isValid' with parameters: {}", operationDto.toString());
 
         this.isOperationDtoNotNull(operationDto);
         this.isOperationTypeExist(operationDto);
@@ -43,12 +43,11 @@ public class OperationValidator {
             this.isCreditAccountIdExist(operationDto);
             this.isBalanceEnoughForOperation(operationDto);
         }
-        log.info("Finishing method 'isValid' with parameters: {}", operationDto);
     }
 
     private void isOperationDtoNotNull(OperationDto operationDto) {
         if (operationDto == null) {
-            log.error("Validation error: Operation not transferred / received null");
+            log.error("Validation error: ", new IllegalArgumentException("Операция не передана/получен null"));
             throw new IllegalArgumentException("Операция не передана / получен null");
         }
     }
@@ -59,28 +58,31 @@ public class OperationValidator {
             !operationDto.getOperationType().equals(OperationType.Type.TOP_UP.toString()) &&
             !operationDto.getOperationType().equals(OperationType.Type.WITHDRAW.toString())
         ) {
-            log.error("Validation error: This 'operationType' - {} don't exist", operationDto.getOperationType());
+            log.error("Validation error: ", new IllegalArgumentException(
+                "Типа операции " +  operationDto.getOperationType() + " не существует"));
             throw new IllegalArgumentException("Типа операции " +  operationDto.getOperationType() + " не существует");
         }
     }
 
     private void isCreditAccountIdExist(OperationDto operationDto) {
         if (!accountsRepository.findById(operationDto.getCreditAccountId()).isPresent()) {
-            log.error("Validation error: This 'credit account id' - {} don't exist", operationDto.getCreditAccountId());
+            log.error("Validation error: ", new IllegalArgumentException(
+                "Счета credit_account_id = " + operationDto.getCreditAccountId() + " не существует"));
             throw new IllegalArgumentException("Счета credit_account_id = " + operationDto.getCreditAccountId() + " не существует");
         }
     }
 
     private void isDebitAccountIdExist(OperationDto operationDto) {
         if (!accountsRepository.findById(operationDto.getDebitAccountId()).isPresent()){
-            log.error("Validation error: This 'debit_account_id' - {} don't exist", operationDto.getDebitAccountId());
+            log.error("Validation error: ", new IllegalArgumentException(
+                "Счета debit_account_id = " + operationDto.getDebitAccountId() + " не существует"));
             throw new IllegalArgumentException("Счета debit_account_id = " + operationDto.getDebitAccountId() + " не существует");
         }
     }
 
     private void isSumGreaterThanZero(OperationDto operationDto) {
         if (operationDto.getSum().compareTo(BigDecimal.ZERO) < 1) {
-            log.error("Validation error: This 'operation sum' - {} is equal or below zero ", operationDto.getSum());
+            log.error("Validation error: ", new IllegalArgumentException("Сумма = " + operationDto.getSum() + " операции меньше или равна нулю"));
             throw new IllegalArgumentException("Сумма = " + operationDto.getSum() + " операции меньше или равна нулю");
         }
     }
@@ -89,7 +91,8 @@ public class OperationValidator {
         Account account = accountsRepository.getById(operationDto.getCreditAccountId());
         BigDecimal balance = paymentsRepository.findBalanceByAccountAndDatetime(account, operationDto.getDatetime());
         if (balance.compareTo(operationDto.getSum()) <= 0 & balance.compareTo(BigDecimal.ZERO) < 1) {
-            log.error("Validation error: Balance is below zero or equal 'operation sum' - {}", operationDto.getSum());
+            log.error("Validation error: ", new IllegalArgumentException(
+                "Для совершения операции на сумму " + operationDto.getSum() + " на счете недостаточно средств"));
             throw new IllegalArgumentException("Для совершения операции на сумму " + operationDto.getSum() + " на счете недостаточно средств");
         }
     }
@@ -98,7 +101,8 @@ public class OperationValidator {
         Account creditAccount = accountsRepository.getById(operationDto.getCreditAccountId());
         Account debitAccount = accountsRepository.getById(operationDto.getDebitAccountId());
         if (creditAccount.equals(debitAccount)) {
-            log.error("Validation error: You can't transfer to the same account");
+            log.error("Validation error: ", new IllegalArgumentException(
+                "Осуществлять перевод с с кошелька на этот же кошелек запрещено"));
             throw new IllegalArgumentException("Осуществлять перевод с с кошелька на этот же кошелек запрещено");
         }
     }

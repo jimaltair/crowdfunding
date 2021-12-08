@@ -76,42 +76,41 @@ public class OperationServiceImpl implements OperationService {
         if (operationType.equals(OperationType.Type.REFUND.toString()) ||
             operationType.equals(OperationType.Type.PAYMENT.toString())
         ) {
-            log.info("'OperationType' is {} ", operationType);
             operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
             operation = operationsRepository.save(operationBuild);
-            log.info("Saved the 'operation' in the database: {}", operation);
+            log.info("saved the operation in the database: {}", operation);
             Payment writeOff = paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
-            log.info("Saved the 'payment' in the database: {}", writeOff);
+            log.info("saved the payment in the database: {}", writeOff);
             Payment replenishment = paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
-            log.info("Saved the 'payment' in the database: {}", replenishment);
+            log.info("saved the payment in the database: {}", replenishment);
         }
 
         if (operationType.equals(OperationType.Type.TOP_UP.toString())) {
-            log.info("'OperationType' is {}", operationType);
+
             if (depositingOnPlatformService.createDepositOnPlatform()) {
                 operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
                 operationBuild.setCreditAccount(accountsRepository.getById(1L));
                 operation = operationsRepository.save(operationBuild);
-                log.info("Saved the 'operation' in the database: {}", operation);
+                log.info("saved the operation in the database: {}", operation);
                 Payment replenishment = paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
-                log.info("Saved the 'payment' in the database: {}", replenishment);
+                log.info("saved the payment in the database: {}", replenishment);
             } else
-                log.error("An error occurred during the deposit operation");
+                log.error("Operation error", new IllegalArgumentException("An error occurred during the deposit operation"));
                 throw new IllegalArgumentException("An error occurred during the deposit operation");
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
-            log.info("'OperationType' is {}", operationType);
+
             if (withdrawalFromPlatformService.createWithdrowalFromPlatform()) {
                 operationBuild.setDebitAccount(accountsRepository.getById(1L));
                 operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
                 operation = operationsRepository.save(operationBuild);
-                log.info("Saved the 'operation' in the database: {}", operation);
+                log.info("saved the operation in the database: {}", operation);
                 Payment writeOff = paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
-                log.info("Saved the 'payment' in the database: {}", writeOff);
+                log.info("saved the payment in the database: {}", writeOff);
             } else
-                log.error("An error occurred during the withdrawal operation from the platform");
+                log.error("Operation error", new IllegalArgumentException("An error occurred during the withdrawal operation from the platform"));
                 throw new IllegalArgumentException("An error occurred during the withdrawal operation from the platform");
         }
         return from(operation);
@@ -120,7 +119,6 @@ public class OperationServiceImpl implements OperationService {
     @Override
     public Optional<OperationDto> findById(Long id) {
         Optional<Operation> optionalOperation = operationsRepository.findById(id);
-        log.debug("Result of 'findById' - {}", optionalOperation);
         return optionalOperation.map(OperationDto::from);
     }
 }
