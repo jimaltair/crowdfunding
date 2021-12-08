@@ -36,14 +36,11 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
-    //Надо убрать из хардкода...
-    private String JWT_SECRET_KEY = "MS_CLIENT_SECRET!Phrase";
-
-    private final AuthorizationInfosRepository authorizationInfosRepository;
     private final ObjectMapper objectMapper;
+
+    private final String JWT_SECRET_KEY;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -81,9 +78,4 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean isForAll(HttpServletRequest request) {
-        return request.getRequestURI().equals(SecurityConfiguration.SIGN_UP_FILTER_PROCESSES_URL)
-                || request.getRequestURI().equals(SecurityConfiguration.SIGN_IN_FILTER_PROCESSES_URL)
-                || request.getRequestURI().equals(SecurityConfiguration.REFRESH_FILTER_PROCESSES_URL);
-    }
 }
