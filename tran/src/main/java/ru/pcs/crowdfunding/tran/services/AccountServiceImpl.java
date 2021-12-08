@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.tran.domain.Account;
 import ru.pcs.crowdfunding.tran.dto.AccountDto;
 import ru.pcs.crowdfunding.tran.repositories.AccountsRepository;
+import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
 
 import java.math.BigDecimal;
@@ -19,13 +20,19 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountsRepository accountsRepository;
     private final PaymentsRepository paymentsRepository;
-
+    private final OperationsRepository operationsRepository;
 
     @Override
     public BigDecimal getBalance(Account account, Instant dateTime) {
         BigDecimal balance = paymentsRepository.findBalanceByAccountAndDatetime(account, dateTime);
         log.info("for account = {} get balance = {} ", account.getId(), balance);
         return balance;
+    }
+
+    @Override
+    public Optional<Long> getContributorsCount(Long accountId, Instant dateTime) {
+        return accountsRepository.findById(accountId)
+                .map(account -> operationsRepository.getContributorsCount(account, dateTime));
     }
 
     @Override

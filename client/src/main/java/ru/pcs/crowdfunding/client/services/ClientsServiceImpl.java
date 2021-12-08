@@ -2,10 +2,8 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.IOP.TransactionService;
 import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
-import ru.pcs.crowdfunding.client.api.AuthorizationServiceRestTemplateClient;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
