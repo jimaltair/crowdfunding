@@ -35,7 +35,6 @@ public class AuthController {
             success = false;
             status = HttpStatus.NOT_FOUND;
             errorMessage = "Client with id " + id + " not found";
-
         }
 
         ResponseDto response = ResponseDto.buildResponse(success, errorMessage, authenticationInfo);
@@ -72,7 +71,6 @@ public class AuthController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAuthenticationInfo(@PathVariable("id") Long id,
                                                                            @RequestBody AuthenticationInfoDto authenticationInfo) {
-        log.info("Starting 'put /api/auth/{id}': put 'id' - {}, 'authenticationInfo' - {}", id, authenticationInfo.toString());
         boolean success = true;
         HttpStatus status = HttpStatus.ACCEPTED;
         String errorMessage = null;

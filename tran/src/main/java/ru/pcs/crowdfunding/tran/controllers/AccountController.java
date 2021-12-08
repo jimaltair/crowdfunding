@@ -49,7 +49,8 @@ public class AccountController {
                     .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("get /api/account/{id}: response: {}", responseBody);
+        log.info("Finishing 'get /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
@@ -73,7 +74,8 @@ public class AccountController {
                     .error(Arrays.asList("Account with id " + id + " not found"))
                     .build();
             ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-            log.info("get /api/account/{id}/balance: response: {}", responseBody);
+            log.info("Finishing 'get /api/account/{id}/balance': 'response': 'status - {}, 'body' - {}"
+                    , responseBody.getStatusCode(), responseBody.getBody().getData());
             return responseBody;
         }
 
@@ -98,8 +100,29 @@ public class AccountController {
                 .build();
 
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("get /api/account/{id}/balance: response: {}", responseBody);
+        log.info("Finishing 'get /api/account/{id}/balance': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
+    }
+
+    @GetMapping(value = "/{id}/contributorsCount")
+    public ResponseEntity<ResponseDto> getContributorsCount(@PathVariable("id") Long id,
+                                                            @RequestParam("date") Long epochSecondTimeStamp) {
+        Instant dateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
+
+        HttpStatus httpStatus;
+        ResponseDto responseDto;
+
+        Optional<Long> donorsCount = accountService.getContributorsCount(id, dateTime);
+        if (donorsCount.isPresent()) {
+            httpStatus = HttpStatus.OK;
+            responseDto = ResponseDto.buildSuccess(donorsCount.get());
+        } else {
+            httpStatus = HttpStatus.NOT_FOUND;
+            responseDto = ResponseDto.buildError("Account with id " + id + " not found");
+        }
+
+        return ResponseEntity.status(httpStatus).body(responseDto);
     }
 
     @GetMapping
@@ -110,7 +133,8 @@ public class AccountController {
             .data(accountDto)
             .build();
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
-        log.info("get /api/account/: response: {}", responseBody);
+        log.info("Finishing 'get /api/account/': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
@@ -137,7 +161,8 @@ public class AccountController {
                     .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("put /api/account/{id}: response: {}", responseBody);
+        log.info("Finishing 'put /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
@@ -164,7 +189,8 @@ public class AccountController {
                     .build();
         }
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
-        log.info("put /api/account/{id}: response: {}", responseBody);
+        log.info("Finishing 'put /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 }

@@ -16,6 +16,8 @@ public class TransactionServiceRestTemplateClient extends RestTemplateClient imp
 
     private static final String API_ACCOUNT_URL = "/api/account";
     private static final String GET_BALANCE_URL = API_ACCOUNT_URL + "/{accountId}/balance?date={date}";
+    private static final String GET_CONTRIBUTORS_COUNT_URL =
+            API_ACCOUNT_URL + "/{accountId}/contributorsCount?date={date}";
 
     @Autowired
     public TransactionServiceRestTemplateClient(
@@ -37,5 +39,8 @@ public class TransactionServiceRestTemplateClient extends RestTemplateClient imp
         return balance.getBalance();
     }
 
-
+    @Override
+    public Long getContributorsCount(Long accountId) {
+        return get(GET_CONTRIBUTORS_COUNT_URL, Long.class, accountId, Instant.now().getEpochSecond());
+    }
 }
