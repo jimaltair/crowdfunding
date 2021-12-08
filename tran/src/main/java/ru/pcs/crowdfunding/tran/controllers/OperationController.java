@@ -27,7 +27,7 @@ public class OperationController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createOperation(@RequestBody OperationDto newOperationDto) {
-        log.info("get newOperationDto {}", newOperationDto.toString());
+        log.info("post /api/operation: get operationDto = {}", newOperationDto.toString());
 
         OperationDto operationDto;
         try {
@@ -38,19 +38,25 @@ public class OperationController {
                 .success(false)
                 .error(Arrays.asList(e.getMessage()))
                 .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+            ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            log.info("Finishing 'post /api/operation': 'response': 'status' - {}, 'body' - {}"
+                    , responseBody.getStatusCode(), responseBody.getBody().getData());
+            return responseBody;
         }
         ResponseDto response = ResponseDto.builder()
             .success(true)
             .data(operationDto)
             .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
+        log.info("Finishing 'post /api/operation': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getOperation(@PathVariable("id") Long id) {
-
-        log.info("get Operation by id {}", id);
+        log.info("get /api/operation/{id}, id = {}", id);
 
         ResponseDto response;
         HttpStatus status;
@@ -70,6 +76,9 @@ public class OperationController {
                 .data(operationDto.get())
                 .build();
         }
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'get /api/operation/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 }

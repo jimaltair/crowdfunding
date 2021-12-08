@@ -14,7 +14,6 @@ import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
-import ru.pcs.crowdfunding.client.dto.CreateAccountRequest;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
@@ -24,12 +23,14 @@ import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.pcs.crowdfunding.client.domain.ProjectStatus.Status.CONFIRMED;
 import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
@@ -39,6 +40,8 @@ import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
+
+    private final static String PROJECT_IMAGES_PATH = "/project_images";
 
     private final ProjectsRepository projectsRepository;
 
@@ -57,20 +60,31 @@ public class ProjectsServiceImpl implements ProjectsService {
             log.warn("project with id = {} not found", id);
             return Optional.empty();
         }
-        return Optional.of(from(project.get()));
+
+        Long accountId = project.get().getAccountId();
+        BigDecimal balance = transactionServiceClient.getBalance(accountId);
+        Long donorsCount = transactionServiceClient.getContributorsCount(accountId);
+        List<String> imagesLinks = project.get().getImages().stream()
+                .map(ProjectImage::getPath)
+                .map(path -> FilenameUtils.concat(PROJECT_IMAGES_PATH, FilenameUtils.getName(path)))
+                .collect(Collectors.toList());
+
+        ProjectDto projectDto = ProjectDto.from(project.get());
+        projectDto.setMoneyCollected(balance);
+        projectDto.setContributorsCount(donorsCount);
+        projectDto.setImagesLinks(imagesLinks);
+        return Optional.of(projectDto);
     }
 
     @Override
-    public void createProject(ProjectForm form, MultipartFile file) {
+    public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Try to create project from {}", form.toString());
-        ProjectStatus projectStatus = getProjectStatus();
-        projectStatusesRepository.save(projectStatus);
+        ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
-        CreateAccountRequest requestToCreateAccount = CreateAccountRequest.requestToCreateNewAccount();
-        log.info("Try to create account for project with {}", requestToCreateAccount.toString());
-        CreateAccountResponse response = transactionServiceClient.createAccount(requestToCreateAccount);
+        log.info("Try to create account for project");
+        CreateAccountResponse response = transactionServiceClient.createAccount();
         Long projectAccountId = response.getId();
         log.info("Was created new account for project with id={}", projectAccountId);
         project.setAccountId(projectAccountId);
@@ -88,6 +102,8 @@ public class ProjectsServiceImpl implements ProjectsService {
             }
             projectImagesRepository.save(image);
         }
+
+        return Optional.of(project.getId());
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {

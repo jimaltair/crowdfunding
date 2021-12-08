@@ -1,16 +1,5 @@
 ### Account
 
-POST http://localhost:8082/api/account
-Content-Type: application/json
-
-{
-  "isActive":true,
-  "createdAt":"2021-12-01T13:45:29Z",
-  "modifiedAt":"2021-12-02T12:16:37Z"
-}
-
-### предлагаю верхний заменить на нижний запрос
-
 GET http://localhost:8082/api/account
 
 ###
@@ -18,8 +7,6 @@ GET http://localhost:8082/api/account/2
 
 ###
 GET http://localhost:8082/api/account/3/balance?date=1638806337
-
-
 
 
 ### Operation
@@ -31,7 +18,7 @@ Content-Type: application/json
   "initiatorId": 1,
   "operationType": "TOP_UP",
   "debitAccountId": 3,
-  "sum": 5.00
+  "sum": 10.00
 }
 
 <> 2021-12-06T173218.201.json
@@ -45,7 +32,7 @@ Content-Type: application/json
 {
   "initiatorId": 1,
   "operationType": "WITHDRAW",
-  "creditAccountId": 4,
+  "creditAccountId": 3,
   "sum": 5.00
 }
 
@@ -62,7 +49,7 @@ Content-Type: application/json
   "operationType": "PAYMENT",
   "debitAccountId": 4,
   "creditAccountId": 3,
-  "sum": 10.00
+  "sum": 5.00
 }
 
 <> 2021-12-06T173259.201.json
@@ -77,9 +64,9 @@ Content-Type: application/json
 {
   "initiatorId": 1,
   "operationType": "REFUND",
-  "debitAccountId": 4,
-  "creditAccountId": 99,
-  "sum": 10.00
+  "debitAccountId": 3,
+  "creditAccountId": 4,
+  "sum": 5.00
 }
 
 <> 2021-12-05T222529.201.json

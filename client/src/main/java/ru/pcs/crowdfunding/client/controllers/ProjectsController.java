@@ -54,7 +54,11 @@ public class ProjectsController {
             return "createProject";
         }
 
-        projectsService.createProject(form, file);
-        return "createProject";
+        Optional<Long> projectId = projectsService.createProject(form, file);
+        if (!projectId.isPresent()) {
+            throw new IllegalStateException("Unable to create project");
+        }
+
+        return "redirect:/projects/" + projectId.get();
     }
 }

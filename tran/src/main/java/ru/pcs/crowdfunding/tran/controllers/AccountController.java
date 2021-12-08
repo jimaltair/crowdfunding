@@ -28,7 +28,7 @@ public class AccountController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> getAccount(@PathVariable("id") Long id) {
-        log.info("get Account by id {}", id);
+        log.info("get /api/account/{id}: id = {}", id);
 
         ResponseDto response;
         HttpStatus status;
@@ -48,7 +48,10 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'get /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 
     @GetMapping(value = "/{id}/balance")
@@ -57,7 +60,7 @@ public class AccountController {
                                                       Long epochSecondTimeStamp) {
 
         Instant balanceDateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
-        log.info("get balance by Account id {} at {}", id, balanceDateTime);
+        log.info("get /api/account/{id}/balance: id = {}, date = {}", id, balanceDateTime);
 
         ResponseDto response;
         HttpStatus status;
@@ -70,7 +73,10 @@ public class AccountController {
                     .success(false)
                     .error(Arrays.asList("Account with id " + id + " not found"))
                     .build();
-            return ResponseEntity.status(status).body(response);
+            ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+            log.info("Finishing 'get /api/account/{id}/balance': 'response': 'status - {}, 'body' - {}"
+                    , responseBody.getStatusCode(), responseBody.getBody().getData());
+            return responseBody;
         }
 
         AccountDto accountDto = optionalAccountDto.get();
@@ -93,7 +99,30 @@ public class AccountController {
                 .data(balanceDto)
                 .build();
 
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'get /api/account/{id}/balance': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
+    }
+
+    @GetMapping(value = "/{id}/contributorsCount")
+    public ResponseEntity<ResponseDto> getContributorsCount(@PathVariable("id") Long id,
+                                                            @RequestParam("date") Long epochSecondTimeStamp) {
+        Instant dateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
+
+        HttpStatus httpStatus;
+        ResponseDto responseDto;
+
+        Optional<Long> donorsCount = accountService.getContributorsCount(id, dateTime);
+        if (donorsCount.isPresent()) {
+            httpStatus = HttpStatus.OK;
+            responseDto = ResponseDto.buildSuccess(donorsCount.get());
+        } else {
+            httpStatus = HttpStatus.NOT_FOUND;
+            responseDto = ResponseDto.buildError("Account with id " + id + " not found");
+        }
+
+        return ResponseEntity.status(httpStatus).body(responseDto);
     }
 
     @GetMapping
@@ -103,12 +132,16 @@ public class AccountController {
             .success(true)
             .data(accountDto)
             .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
+        log.info("Finishing 'get /api/account/': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> updateAccount(@PathVariable("id") Long id,
                                                      @RequestBody AccountDto updateAccountDto) {
+        log.info("put /api/account/{id}: id = {}, updateAccountDto={}", id, updateAccountDto);
         ResponseDto response;
         HttpStatus status;
 
@@ -127,11 +160,16 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'put /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<ResponseDto> deleteAccount(@PathVariable("id") Long id) {
+        log.info("delete /api/account/{id}: id = {}", id);
+
         ResponseDto response;
         HttpStatus status;
 
@@ -150,6 +188,9 @@ public class AccountController {
                     .data(accountDto.get())
                     .build();
         }
-        return ResponseEntity.status(status).body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(status).body(response);
+        log.info("Finishing 'put /api/account/{id}': 'response': 'status' - {}, 'body' - {}"
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
+        return responseBody;
     }
 }

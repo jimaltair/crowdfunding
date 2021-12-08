@@ -19,15 +19,15 @@ public class SignUpForm {
 
     private Long id;
 
-    @Size(min = 4, max = 20)
+    @Size(min = 2, max = 20)
     @NotBlank
     private String firstName;
 
-    @Size(min = 4, max = 20)
+    @Size(min = 2, max = 20)
     @NotBlank
     private String lastName;
 
-    @Size(min = 3, max = 20)
+    @Size(min = 2, max = 20)
     @NotBlank
     private String country;
 
@@ -42,7 +42,13 @@ public class SignUpForm {
 
     @Email
     @NotBlank
+    @Size(min = 7, max = 45)
     private String email;
+
+    /**
+     * Токен для возврата на фронт из обработчика /signUp
+     */
+    private String accessToken;
 
     public static SignUpForm from(Client client) {
         return SignUpForm.builder()
