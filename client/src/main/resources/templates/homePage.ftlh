@@ -16,7 +16,7 @@
                         <button id="signUp"  type="submit" onclick="location.href = 'http://localhost:8080/signUp'"
                         >Зарегистрироваться</button>
                         <button id="signIn" class="btn btn-default" type="submit"
-                                onclick="location.href = 'http://localhost:8080/login'">Войти
+                                onclick="location.href = 'http://localhost:8080/signIn'">Войти
                         </button>
                     </div>
                 </div>
