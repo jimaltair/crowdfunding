@@ -2,19 +2,33 @@
 <#import "spring.ftl" as spring/>
 <head>
     <meta charset="UTF-8">
-    <title>КРАУДФАНДИНГ ДЛЯ ДИЗАЙНЕРОВ ВЕБ СТРАНИЦ </title>
+    <title>Home page </title>
 </head>
 <body>
 <h1>СПИСОК ПРОЕКТОВ КОТОРЫЕ CONFIRMED</h1>
-<table>
+
+    <div id="main-content" class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <label for="Hello">Главная страница: </label>
+                        <button id="signUp"  type="submit" onclick="location.href = 'http://localhost:8080/signUp'"
+                        >Зарегистрироваться</button>
+                        <button id="signIn" class="btn btn-default" type="submit"
+                                onclick="location.href = 'http://localhost:8080/login'">Войти
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <tr>
         <#list ListProject as projects>
-        <p>Название: ${projects.getTitle()}
-            Описание: ${projects.getDescription()}
-            МОНЕЙ ГОЛ: ${projects.getMoneyGoal()}
+            <p><a href="localhost:8080/projects/${projects.id}">Проект: ${projects.getTitle()}</a></p>
             </#list>
     </tr>
 
-</table>
+
 </body>
 </html>
