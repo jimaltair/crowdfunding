@@ -21,8 +21,9 @@ public class TransactionServiceRestTemplateClient extends RestTemplateClient imp
     public TransactionServiceRestTemplateClient(
             RestTemplateBuilder restTemplateBuilder,
             @Value("${api.transaction-service.remote-address}") String remoteAddress,
+            @Value ("${api.authorization-service.token}")String token,
             ObjectMapper objectMapper) {
-        super(restTemplateBuilder, remoteAddress, objectMapper);
+        super(restTemplateBuilder, remoteAddress, token, objectMapper);
     }
 
     @Override
