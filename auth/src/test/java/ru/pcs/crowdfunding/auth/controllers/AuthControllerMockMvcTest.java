@@ -42,7 +42,7 @@ class AuthControllerMockMvcTest {
     @BeforeEach
     void setUp() {
 
-        //region Get
+        //region GET
         when(authService.findById(1L)).thenReturn(
             Optional.of(AuthenticationInfoDto.builder()
                 .userId(1L)
@@ -86,7 +86,7 @@ class AuthControllerMockMvcTest {
                 .andExpect(jsonPath("$['error']", nullValue(null)))
                 .andExpect(jsonPath("$['data'].userId", is(1)))
                 .andExpect(jsonPath("$['data'].email", is("email@email.com")))
-                .andExpect(jsonPath("$['data'].password", is("111!"))) //TODO зачем мы пароль возвращаем?
+                .andExpect(jsonPath("$['data'].password", is("111!")))
                 .andExpect(jsonPath("$['data'].refreshToken", is("refresh_test_token")))
                 .andExpect(jsonPath("$['data'].isActive", is(true)));
         }
