@@ -80,12 +80,12 @@ class AuthenticationServiceImpl implements AuthenticationService {
                     .findByEmail(email).get();
 
             log.info("Check password - {} - in authenticationInfosRepository for email - {}", password, email);
-            log.info("password encode - {}, correct password - {}", password, authenticationInfoInRepo.getPassword());
             if (passwordEncoder.matches(password, authenticationInfoInRepo.getPassword())) {
                 log.info("Password for email - {} - correct", email);
                 return true;
             }
         }
+        log.info("Password for email - {} - invalid", email);
         return false;
     }
 
