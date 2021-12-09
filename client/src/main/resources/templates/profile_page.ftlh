@@ -139,10 +139,12 @@
                                         <td>Собрано</td>
                                         <td>Количество участников</td>
                                     </tr>
-                                 <#list projects as project>
+                                 <#list projectsDtos as project>
                                      <tr>
                                          <td> <a href="../projects/${project.id}">${project.title}</a></td>
                                          <td>${project.moneyGoal}</td>
+                                         <td>${project.moneyCollected}</td>
+                                         <td>${project.contributorsCount}</td>
                                      </tr>
                                  </#list>
                                     </tbody>
