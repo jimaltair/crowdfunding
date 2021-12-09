@@ -24,8 +24,6 @@ import java.math.BigDecimal;
 @Builder
 public class ProjectForm {
 
-    public static final String PROJECT_IMAGE_PATH = "./client/src/main/resources/static/project_images/";
-
     @NotBlank
     private String title;
 

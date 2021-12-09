@@ -28,7 +28,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.pcs.crowdfunding.client.dto.ProjectForm.PROJECT_IMAGE_PATH;
+import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
 
 @Service
 @RequiredArgsConstructor
@@ -86,32 +86,31 @@ public class ProjectsServiceImpl implements ProjectsService {
         projectsRepository.save(project);
 
         if (!file.isEmpty()) {
-            ProjectImage image = getImage(file, project);
-            try {
-                log.info("Try to save project image {}", image.getPath());
-                Files.copy(file.getInputStream(), Paths.get(image.getPath()));
-            } catch (IOException e) {
-                log.error("Can't save project image {}", image.getPath());
-                throw new IllegalArgumentException(e);
-            }
-            projectImagesRepository.save(image);
+            log.info("Try to save image with name={}", file.getOriginalFilename());
+            ProjectImage projectImage = getImage(file, project);
+            Long id = projectImagesRepository.save(projectImage).getId();
+            log.info("Image was saved with id={}", id);
         }
 
         return Optional.of(project.getId());
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
-        if (file == null || project == null) {
-            throw new IllegalArgumentException("Can't upload image");
+        try {
+            return ProjectImage.builder()
+                    .content(file.getBytes())
+                    .name(file.getOriginalFilename())
+                    .project(project)
+                    .build();
+        } catch (IOException e) {
+            log.error("Can't save image {}", file.getOriginalFilename());
+            throw new IllegalStateException(e);
         }
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        createDirectoryIfNotExists(PROJECT_IMAGE_PATH);
-        return ProjectImage.builder()
-                .project(project)
-                .path(PROJECT_IMAGE_PATH + UUID.randomUUID() + "." + extension)
-                .build();
     }
 
+    /**
+     * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется
+     */
     private void createDirectoryIfNotExists(String path) {
         if (Files.notExists(Paths.get(path))) {
             try {
