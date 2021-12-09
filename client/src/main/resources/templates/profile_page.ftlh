@@ -71,7 +71,7 @@
                     <div class="panel-body">
                         <div class="text-center" id="author">
                             <#if clientDto.image??>
-                                <img src="/client/image/${clientDto.image.id}"/>
+                                <img src="/clients/image/${clientDto.image.id}"/>
                             </#if>
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <p></p>
@@ -159,8 +159,7 @@
                             </div>
                             <br>
                             <div class="tab-pane fade" id="change_profile">
-                                <form role="form" class="form-horizontal" action="/client/${clientDto.id}" method="post" enctype="multipart/form-data">
-<#--                              <form action="/client/${clientDto.id}" method="put" enctype="multipart/form-data">-->
+                                <form role="form" class="form-horizontal" action="/clients/${clientDto.id}" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Имя</label>
                                         <div class="col-sm-10">

@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/client")
+@RequestMapping("/clients")
 @RequiredArgsConstructor
 @Slf4j
 public class ClientController {
@@ -51,7 +51,7 @@ public class ClientController {
 
         model.addAttribute("clientDto", newForm);
 
-        return "redirect:/client/" + id;
+        return "redirect:/clients/" + id;
     }
 
     @GetMapping("/image/{id}")
