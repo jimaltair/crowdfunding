@@ -73,7 +73,9 @@
                         <div class="text-center" id="author">
 <#--                            <img src="@Vi">-->
 <#--                            <img src="/img/avatar_vasiliy.jpg">-->
-                            <img src="/client/image/${clientDto.image.id}"/>
+                            <#if clientDto.image??>
+                                <img src="/client/image/${clientDto.image.id}"/>
+                            </#if>
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <#--                            <p>${clientDto.about}</p>-->
                             <p class="sosmed-author">
