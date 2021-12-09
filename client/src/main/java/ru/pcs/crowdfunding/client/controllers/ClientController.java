@@ -15,10 +15,12 @@ import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
+import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
