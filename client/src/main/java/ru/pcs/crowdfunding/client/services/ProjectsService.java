@@ -5,6 +5,7 @@ import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.dto.ProjectImageDto;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface ProjectsService {
@@ -14,5 +15,9 @@ public interface ProjectsService {
 
     Optional<ProjectImageDto> getImageById(Long id);
 
-    void updateProject(Long id, ProjectForm form, MultipartFile file);
+    ProjectDto updateProject(Long id, ProjectForm form, MultipartFile file);
+
+    BigDecimal getMoneyCollectedByProjectId(Long projectId);
+
+    Long getContributorsCountByProjectId(Long projectId);
 }

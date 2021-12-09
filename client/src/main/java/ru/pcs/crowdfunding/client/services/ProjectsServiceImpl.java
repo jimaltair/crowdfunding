@@ -46,6 +46,18 @@ public class ProjectsServiceImpl implements ProjectsService {
     private final TransactionServiceClient transactionServiceClient;
 
     @Override
+    public BigDecimal getMoneyCollectedByProjectId(Long projectId) {
+        Project project = projectsRepository.getProjectById(projectId).get();
+        return transactionServiceClient.getBalance(project.getAccountId());
+    }
+
+    @Override
+    public Long getContributorsCountByProjectId(Long projectId) {
+        Project project = projectsRepository.getProjectById(projectId).get();
+        return transactionServiceClient.getContributorsCount(project.getAccountId());
+    }
+
+    @Override
     public Optional<ProjectDto> findById(Long id) {
         Optional<Project> project = projectsRepository.findById(id);
         if (!project.isPresent()) {
@@ -93,7 +105,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public void updateProject(Long id, ProjectForm form, MultipartFile file) {
+    public ProjectDto updateProject(Long id, ProjectForm form, MultipartFile file) {
         log.info("Try to update project with id={}", id);
         Optional<Project> project = projectsRepository.getProjectById(id);
         if (!project.isPresent()) {
@@ -110,7 +122,9 @@ public class ProjectsServiceImpl implements ProjectsService {
             existedProject.setDescription(form.getDescription());
         }
         if (form.getFinishDate() != null) {
-            existedProject.setFinishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC));
+            // здесь нужно заменить на получение даты из формы
+            // LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC) - работает некорректно
+            existedProject.setFinishDate(Instant.now());
         }
         projectsRepository.save(existedProject);
         log.info("Project data was updated successfully");
@@ -123,7 +137,7 @@ public class ProjectsServiceImpl implements ProjectsService {
             projectImagesRepository.save(newProjectImage);
             log.info("Project image was updated successfully");
         }
-
+        return ProjectDto.from(existedProject);
     }
 
     @Override

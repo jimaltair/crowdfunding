@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.dto.ProjectImageDto;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
@@ -28,6 +29,7 @@ import java.util.Optional;
 public class ProjectsController {
 
     private final ProjectsService projectsService;
+    private final TransactionServiceClient transactionServiceClient;
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable("id") Long id, Model model) {
@@ -112,7 +114,11 @@ public class ProjectsController {
         if (result.hasErrors()) {
             model.addAttribute("projectUpdatedForm", form);
         }
-        projectsService.updateProject(id, form, file);
+        ProjectDto updatedProject = projectsService.updateProject(id, form, file);
+        // вычисляем поля moneyCollected и contributorsCount на ходу
+        updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
+        updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
+        model.addAttribute("project", updatedProject);
         return "projectCard";
     }
 }
