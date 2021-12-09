@@ -1,4 +1,4 @@
-package ru.pcs.crowdfunding.auth.security.filters;
+package ru.pcs.crowdfunding.tran.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -6,21 +6,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.xml.bind.v2.TODO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.pcs.crowdfunding.auth.domain.Role;
-import ru.pcs.crowdfunding.auth.domain.Status;
-import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;
-import ru.pcs.crowdfunding.auth.security.config.SecurityConfiguration;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 

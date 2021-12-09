@@ -8,6 +8,7 @@ import ru.pcs.crowdfunding.client.domain.Project;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +26,10 @@ public class ProjectDto {
     private Instant finishDate;
 
     private BigDecimal moneyGoal;
+    private BigDecimal moneyCollected;
+    private Long contributorsCount;
+
+    private List<Long> imagesIds;
 
     private String status;
 
