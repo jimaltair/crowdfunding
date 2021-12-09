@@ -29,7 +29,7 @@ public class ProjectDto {
     private BigDecimal moneyCollected;
     private Long contributorsCount;
 
-    private List<String> imagesLinks;
+    private List<Long> imagesIds;
 
     private String status;
 
