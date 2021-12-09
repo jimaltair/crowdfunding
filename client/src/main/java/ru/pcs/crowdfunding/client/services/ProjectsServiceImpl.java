@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -100,7 +100,6 @@ public class ProjectsServiceImpl implements ProjectsService {
             Long id = projectImagesRepository.save(projectImage).getId();
             log.info("Image was saved with id={}", id);
         }
-
         return Optional.of(project.getId());
     }
 
@@ -122,14 +121,22 @@ public class ProjectsServiceImpl implements ProjectsService {
             existedProject.setDescription(form.getDescription());
         }
         if (form.getFinishDate() != null) {
-            // здесь нужно заменить на получение даты из формы
-            // LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC) - работает некорректно
-            existedProject.setFinishDate(Instant.now());
+            Instant finishDate = getInstantFromString(form.getFinishDate(), "yyyy-MM-dd");
+            existedProject.setFinishDate(finishDate);
         }
         projectsRepository.save(existedProject);
         log.info("Project data was updated successfully");
         updateProjectImage(file, existedProject);
         return ProjectDto.from(existedProject);
+    }
+
+    private Instant getInstantFromString(String input, String pattern) {
+        DateTimeFormatter DTF = new DateTimeFormatterBuilder()
+                .appendPattern(pattern)
+                .parseDefaulting(ChronoField.NANO_OF_DAY, 0)
+                .toFormatter()
+                .withZone(ZoneId.of("GMT"));
+        return DTF.parse(input, Instant::from);
     }
 
     private void updateProjectImage(MultipartFile file, Project existedProject) {

@@ -20,6 +20,9 @@ import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Controller
@@ -29,7 +32,6 @@ import java.util.Optional;
 public class ProjectsController {
 
     private final ProjectsService projectsService;
-    private final TransactionServiceClient transactionServiceClient;
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable("id") Long id, Model model) {
@@ -95,8 +97,6 @@ public class ProjectsController {
         model.addAttribute("projectUpdatedForm", new ProjectForm());
         Optional<ProjectDto> currentProject = projectsService.findById(id);
         if(!currentProject.isPresent()){
-            // если по запрошенному id-шнику ничего нет, то возвращаю страницу создания проекта -
-            // пока ничего лучше в голову не пришло
             return "createProject";
         }
         ProjectDto project = currentProject.get();
@@ -104,8 +104,9 @@ public class ProjectsController {
         model.addAttribute("project_title", project.getTitle());
         model.addAttribute("project_description", project.getDescription());
         model.addAttribute("project_money_goal", project.getMoneyGoal().toString());
-        // временный вариант для дебага
-        String finishDate = "2021-12-31";
+
+        String finishDate = project.getFinishDate().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
         model.addAttribute("finish_date", finishDate);
         return "updateProject";
     }
@@ -117,9 +118,10 @@ public class ProjectsController {
             model.addAttribute("projectUpdatedForm", form);
         }
         ProjectDto updatedProject = projectsService.updateProject(id, form, file);
-        // вычисляем поля moneyCollected и contributorsCount на ходу
+
         updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
         updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
+
         model.addAttribute("project", updatedProject);
         return "redirect:/projects/" + id;
     }
