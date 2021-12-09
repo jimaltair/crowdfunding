@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.domain.AuthorizationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
+import ru.pcs.crowdfunding.auth.dto.SignInForm;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;
 import ru.pcs.crowdfunding.auth.security.util.TokenContent;
@@ -61,7 +62,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationInfoDto signInAuthentication(AuthenticationInfoDto client) {
+    public boolean signInAuthentication(SignInForm client) {
         String email = client.getEmail();
         String password = client.getPassword();
         log.info("Search email - {} in 'authenticationInfosRepository", email);
@@ -71,13 +72,13 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
             log.info("Check password - {} - in authenticationInfosRepository for email - {}", password, email);
             password = passwordEncoder.encode(password);
+            log.info("password encode - {}, correct password - {}", password, authenticationInfoInRepo.getPassword());
             if (passwordEncoder.encode(password).equals(authenticationInfoInRepo.getPassword())) {
                 log.info("Password for email - {} - correct", email);
-
+                return true;
             }
-
         }
-        return client;
+        return false;
     }
 
     @Override
