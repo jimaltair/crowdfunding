@@ -67,6 +67,7 @@ public class ProjectsServiceImpl implements ProjectsService {
         projectDto.setMoneyCollected(balance);
         projectDto.setContributorsCount(donorsCount);
         projectDto.setImagesLinks(imagesLinks);
+        log.info("Result of 'findById': 'projectDto' - {}",projectDto);
         return Optional.of(projectDto);
     }
 
