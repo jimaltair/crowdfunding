@@ -71,13 +71,11 @@
                     </div>
                     <div class="panel-body">
                         <div class="text-center" id="author">
-<#--                            <img src="@Vi">-->
-<#--                            <img src="/img/avatar_vasiliy.jpg">-->
                             <#if clientDto.image??>
                                 <img src="/client/image/${clientDto.image.id}"/>
                             </#if>
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
-                            <#--                            <p>${clientDto.about}</p>-->
+                            <p></p>
                             <p class="sosmed-author">
                                 <a href="#"><i class="fa fa-facebook" title="Facebook"></i></a>
                                 <a href="#"><i class="fa fa-twitter" title="Twitter"></i></a>

@@ -22,11 +22,8 @@ public class ClientImage {
     private byte[] content;
 
     private String name;
-    private String path;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
-
-
 }
