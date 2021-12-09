@@ -25,7 +25,7 @@ import java.util.Locale;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-class AuthenticationServiceImpl implements AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final static Duration DEFAULT_TOKEN_DURATION = Duration.ofDays(30);
 

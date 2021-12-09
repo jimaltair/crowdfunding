@@ -1,6 +1,7 @@
 package ru.pcs.crowdfunding.auth.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Getter
+@Builder
 @Setter
 @Entity
 @NoArgsConstructor
