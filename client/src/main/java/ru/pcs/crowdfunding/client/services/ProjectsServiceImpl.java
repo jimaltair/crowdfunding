@@ -59,8 +59,7 @@ public class ProjectsServiceImpl implements ProjectsService {
         BigDecimal balance = transactionServiceClient.getBalance(accountId);
         Long donorsCount = transactionServiceClient.getContributorsCount(accountId);
         List<String> imagesLinks = project.get().getImages().stream()
-                .map(ProjectImage::getPath)
-                .map(path -> FilenameUtils.concat(PROJECT_IMAGES_PATH, FilenameUtils.getName(path)))
+                .map(image -> FilenameUtils.concat(PROJECT_IMAGES_PATH, image.getId().toString()))
                 .collect(Collectors.toList());
 
         ProjectDto projectDto = ProjectDto.from(project.get());
