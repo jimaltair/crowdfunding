@@ -35,22 +35,15 @@ public class ClientController {
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable Long id, Model model) {
-        log.info("get by id = {}", id);
+        log.info("Starting 'get /clients/{id}': get 'id' - {}", id);
 
         Optional<ClientDto> client = clientsService.findById(id);
         if (!client.isPresent()) {
+            log.error("Client with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client with id " + id + " not found");
         }
-        List<Project> projects = client.get().getProjects();
-        List<ProjectDto> projectDtos = projects.stream().map(project -> {
-            Optional<ProjectDto> projectDto = projectsService.findById(project.getId());
-            if (!projectDto.isPresent()) {
-                log.error("Project didn't found");
-                throw new IllegalArgumentException("Project didn't found");
-            }
-            return projectDto.get();}).collect(Collectors.toList());
-        log.debug("result = {}", client.get());
 
+        log.info("Finishing 'get /clients/{id}': result = {}", client.get());
         model.addAttribute("clientDto", client.get());
         model.addAttribute("projectsDtos", projectDtos);
 
