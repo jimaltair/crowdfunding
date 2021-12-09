@@ -12,16 +12,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
-import ru.pcs.crowdfunding.client.dto.ProjectImageDto;
-import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
-import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
