@@ -3,20 +3,24 @@ package ru.pcs.crowdfunding.auth.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.domain.AuthorizationInfo;
+import ru.pcs.crowdfunding.auth.domain.Role;
+import ru.pcs.crowdfunding.auth.domain.Status;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.dto.SignInForm;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;
+import ru.pcs.crowdfunding.auth.repositories.RolesRepository;
+import ru.pcs.crowdfunding.auth.repositories.StatusesRepository;
 import ru.pcs.crowdfunding.auth.security.util.TokenContent;
 import ru.pcs.crowdfunding.auth.security.util.TokenProvider;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Locale;
 
 @Service
@@ -28,6 +32,8 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationInfosRepository authenticationInfosRepository;
     private final AuthorizationInfosRepository authorizationInfosRepository;
+    private final RolesRepository rolesRepository;
+    private final StatusesRepository statusesRepository;
 
     private final TokenProvider tokenProvider;
 
@@ -44,6 +50,8 @@ class AuthenticationServiceImpl implements AuthenticationService {
                 .userId(client.getUserId())
                 .refreshToken(client.getRefreshToken())
                 .isActive(true)
+                .roles(Arrays.asList(rolesRepository.getByName(Role.RoleEnum.USER)))
+                .status(statusesRepository.getByName(Status.StatusEnum.CONFIRMED))
                 .build();
 
         log.info("Saving 'newClientInfo' - {} in 'authenticationInfosRepository'", newClientInfo);
