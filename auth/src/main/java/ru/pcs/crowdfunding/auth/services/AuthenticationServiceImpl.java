@@ -61,6 +61,26 @@ class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    public AuthenticationInfoDto signInAuthentication(AuthenticationInfoDto client) {
+        String email = client.getEmail();
+        String password = client.getPassword();
+        log.info("Search email - {} in 'authenticationInfosRepository", email);
+        if (authenticationInfosRepository.findByEmail(email).isPresent()) {
+            AuthenticationInfo authenticationInfoInRepo = authenticationInfosRepository
+                    .findByEmail(email).get();
+
+            log.info("Check password - {} - in authenticationInfosRepository for email - {}", password, email);
+            password = passwordEncoder.encode(password);
+            if (passwordEncoder.encode(password).equals(authenticationInfoInRepo.getPassword())) {
+                log.info("Password for email - {} - correct", email);
+
+            }
+
+        }
+        return client;
+    }
+
+    @Override
     public boolean existEmailInDb(AuthenticationInfoDto client) {
 
         boolean isExistEmailInDb = authenticationInfosRepository.findByEmail(client.getEmail()).isPresent();
