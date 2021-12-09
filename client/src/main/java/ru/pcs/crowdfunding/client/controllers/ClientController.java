@@ -24,16 +24,15 @@ public class ClientController {
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable Long id, Model model) {
-        log.info("Starting 'get /clients/{id}': get 'id' - {}", id);
+        log.info("get by id = {}", id);
 
         Optional<ClientDto> client = clientsService.getById(id);
 
         if (!client.isPresent()) {
-            log.error("Client with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client with id " + id + " not found");
         }
+        log.debug("result = {}", client.get());
 
-        log.info("Finishing 'get /clients/{id}': result = {}", client.get());
         model.addAttribute("clientDto", client.get());
         model.addAttribute("projects", client.get().getProjects());
 
