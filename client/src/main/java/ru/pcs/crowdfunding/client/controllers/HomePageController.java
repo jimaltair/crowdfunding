@@ -5,14 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.pcs.crowdfunding.client.domain.Project;
+import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/home")
+@RequestMapping("/")
 @RequiredArgsConstructor
 @Slf4j
 public class HomePageController {
@@ -21,8 +20,11 @@ public class HomePageController {
 
     @RequestMapping()
     public String getHomePage(Model model) {
-//        List<Project> page = projectsService.getConfirmedProjects().stream().collect(Collectors.toList());
-//        model.addAttribute("ListProject", page);
+
+        List<ProjectDto> page = projectsService.getConfirmedProjects();
+
+        model.addAttribute("ListProject", page);
+
         return "homePage";
     }
 }

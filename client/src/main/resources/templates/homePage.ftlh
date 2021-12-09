@@ -19,17 +19,16 @@
                                 onclick="location.href = 'http://localhost:8080/signIn'">Войти
                         </button>
                         <button id="logout" class="btn btn-default" type="submit"
-                                onclick="location.href = 'http://localhost:8081/logout'">Выход
+                                onclick="location.href = 'http://localhost:8080/logout'">Выход
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-<#--    <tr>-->
-<#--        <#list ListProject as projects>-->
-<#--            <p><a href="localhost:8080/projects/${projects.id}">Проект: ${projects.getTitle()}</a></p>-->
-<#--            </#list>-->
-<#--    </tr>-->
+        <#list ListProject as projects>
+            <p><a href="localhost:8080/projects/${projects.id}">Проект: ${projects.getTitle()}</a></p>
+            </#list>
+
  </body>
 </html>

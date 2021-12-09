@@ -177,6 +177,13 @@ public class ProjectsServiceImpl implements ProjectsService {
         }
     }
 
+    @Override
+    public List<ProjectDto> getConfirmedProjects() {
+        return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(ProjectStatus.builder()
+                .id(2L)
+                .build()));
+    }
+
     /**
      * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется
      */
