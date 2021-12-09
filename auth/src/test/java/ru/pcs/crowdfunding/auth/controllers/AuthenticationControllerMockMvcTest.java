@@ -44,6 +44,14 @@ public class AuthenticationControllerMockMvcTest {
     void setUp() {
 
         //region POST
+        when(authenticationService.existEmailInDb(
+            AuthenticationInfoDto.builder()
+                .userId(1L)
+                .email("email@email.com")
+                .password("1111111!")
+                .build()
+        )).thenReturn(true);
+
         when(authenticationService.signUpAuthentication(
             AuthenticationInfoDto.builder()
                 .userId(1L)
@@ -88,8 +96,7 @@ public class AuthenticationControllerMockMvcTest {
             mockMvc.perform(post("/api/signUp")
                     .header("Content-Type", "application/json")
                     .header("Authorization", techAuthToken)
-                    .content("{\"userId\": 1, \"email\": \"mail@email.com\", \"password\": \"1111111!\"}")
-
+                    .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
