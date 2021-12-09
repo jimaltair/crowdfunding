@@ -2,13 +2,17 @@ package ru.pcs.crowdfunding.client.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
@@ -60,5 +64,26 @@ public class ProjectsController {
         }
 
         return "redirect:/projects/" + projectId.get();
+    }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> getImageById(@PathVariable("id") Long id) {
+        log.info("get project image by id {}", id);
+
+        Optional<ImageDto> imageDto = projectsService.getImageById(id);
+        if (!imageDto.isPresent()) {
+            log.error("project image with id {} not found", id);
+            return ResponseEntity.notFound().build();
+        }
+
+        log.info("found project image with id {}, format {} and content length {}",
+                id, imageDto.get().getFormat(), imageDto.get().getContent().length);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf("image/" + imageDto.get().getFormat()));
+        headers.setContentLength(imageDto.get().getContent().length);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(imageDto.get().getContent());
     }
 }
