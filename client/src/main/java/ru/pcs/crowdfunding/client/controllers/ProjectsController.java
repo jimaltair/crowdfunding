@@ -121,6 +121,6 @@ public class ProjectsController {
         updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
         updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
         model.addAttribute("project", updatedProject);
-        return "projectCard";
+        return "redirect:/projects/" + id;
     }
 }
