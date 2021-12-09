@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <title>Изменение данных проекта</title>
 </head>
-<#--<script>-->
-<#--    const element = document.getElementById('finishDate');-->
-<#--    element.valueAsNumber = Date.now()-(new Date()).getTimezoneOffset()*60000;-->
-<#--<script/>-->
 <body>
 <h1>Изменение данных проекта</h1>
 <h2>Пожалуйста, введите новые данные:</h2>
@@ -22,7 +18,7 @@
     <input id="moneyGoal" name="moneyGoal" value=${project_money_goal}>
     <br>
     <label for="finishDate">Новая дата завершения проекта:</label>
-    <input id="finishDate" type="date"  name="finishDate" value="2021-12-31">
+    <input id="finishDate" type="date"  name="finishDate" value=${finish_date}>
     <h3>Пожалуйста, загрузите изображение для проекта:</h3>
     <input type="file" name="file">
     <br>

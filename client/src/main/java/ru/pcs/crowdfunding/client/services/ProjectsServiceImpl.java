@@ -128,16 +128,23 @@ public class ProjectsServiceImpl implements ProjectsService {
         }
         projectsRepository.save(existedProject);
         log.info("Project data was updated successfully");
+        updateProjectImage(file, existedProject);
+        return ProjectDto.from(existedProject);
+    }
 
+    private void updateProjectImage(MultipartFile file, Project existedProject) {
         if (!file.isEmpty()) {
-            log.info("Try to update project image with new image with name={}", file.getOriginalFilename());
-//            ProjectImage projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
-            // по идее, здесь должна обновиться фотка проекта, нужно тестировать
-            ProjectImage newProjectImage = getImage(file, existedProject);
-            projectImagesRepository.save(newProjectImage);
+            log.info("Try to update project image with new image: name={} and size={}", file.getOriginalFilename(), file.getSize());
+            ProjectImage projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
+            try {
+                projectImage.setContent(file.getBytes());
+                projectImage.setName(file.getOriginalFilename());
+            } catch (IOException e) {
+                throw new IllegalStateException("Problem with updating project image");
+            }
+            projectImagesRepository.save(projectImage);
             log.info("Project image was updated successfully");
         }
-        return ProjectDto.from(existedProject);
     }
 
     @Override

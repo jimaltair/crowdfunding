@@ -104,7 +104,9 @@ public class ProjectsController {
         model.addAttribute("project_title", project.getTitle());
         model.addAttribute("project_description", project.getDescription());
         model.addAttribute("project_money_goal", project.getMoneyGoal().toString());
-        model.addAttribute("finish_date", project.getFinishDate().toString());
+        // временный вариант для дебага
+        String finishDate = "2021-12-31";
+        model.addAttribute("finish_date", finishDate);
         return "updateProject";
     }
 
