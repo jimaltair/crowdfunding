@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,18 @@ public class ProjectsServiceImpl implements ProjectsService {
     private final ProjectImagesRepository projectImagesRepository;
 
     private final TransactionServiceClient transactionServiceClient;
+
+    @Override
+    public BigDecimal getMoneyCollectedByProjectId(Long projectId) {
+        Project project = projectsRepository.getProjectById(projectId).get();
+        return transactionServiceClient.getBalance(project.getAccountId());
+    }
+
+    @Override
+    public Long getContributorsCountByProjectId(Long projectId) {
+        Project project = projectsRepository.getProjectById(projectId).get();
+        return transactionServiceClient.getContributorsCount(project.getAccountId());
+    }
 
     @Override
     public Optional<ProjectDto> findById(Long id) {
@@ -87,8 +100,58 @@ public class ProjectsServiceImpl implements ProjectsService {
             Long id = projectImagesRepository.save(projectImage).getId();
             log.info("Image was saved with id={}", id);
         }
-
         return Optional.of(project.getId());
+    }
+
+    @Override
+    public ProjectDto updateProject(Long id, ProjectForm form, MultipartFile file) {
+        log.info("Try to update project with id={}", id);
+        Optional<Project> project = projectsRepository.getProjectById(id);
+        if (!project.isPresent()) {
+            log.error("Project with id={} was not found", id);
+            throw new IllegalArgumentException("Project was not found");
+        }
+        Project existedProject = project.get();
+        log.info("The existed {}", existedProject);
+        log.info("The new data from {}", form.toString());
+        if (form.getTitle() != null) {
+            existedProject.setTitle(form.getTitle());
+        }
+        if (form.getDescription() != null) {
+            existedProject.setDescription(form.getDescription());
+        }
+        if (form.getFinishDate() != null) {
+            Instant finishDate = getInstantFromString(form.getFinishDate(), "yyyy-MM-dd");
+            existedProject.setFinishDate(finishDate);
+        }
+        projectsRepository.save(existedProject);
+        log.info("Project data was updated successfully");
+        updateProjectImage(file, existedProject);
+        return ProjectDto.from(existedProject);
+    }
+
+    private Instant getInstantFromString(String input, String pattern) {
+        DateTimeFormatter DTF = new DateTimeFormatterBuilder()
+                .appendPattern(pattern)
+                .parseDefaulting(ChronoField.NANO_OF_DAY, 0)
+                .toFormatter()
+                .withZone(ZoneId.of("GMT"));
+        return DTF.parse(input, Instant::from);
+    }
+
+    private void updateProjectImage(MultipartFile file, Project existedProject) {
+        if (!file.isEmpty()) {
+            log.info("Try to update project image with new image: name={} and size={}", file.getOriginalFilename(), file.getSize());
+            ProjectImage projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
+            try {
+                projectImage.setContent(file.getBytes());
+                projectImage.setName(file.getOriginalFilename());
+            } catch (IOException e) {
+                throw new IllegalStateException("Problem with updating project image");
+            }
+            projectImagesRepository.save(projectImage);
+            log.info("Project image was updated successfully");
+        }
     }
 
     @Override
