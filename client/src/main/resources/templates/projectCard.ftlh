@@ -5,9 +5,9 @@
 </head>
 <body>
 <h2>${project.title}</h2>
-<#if project.imagesLinks??>
-    <#list project.imagesLinks as link>
-        <img src="${link}" alt="project image" />
+<#if project.imagesIds??>
+    <#list project.imagesIds as imageId>
+        <img src="/projects/image/${imageId}" alt="project image" />
         <br>
     </#list>
     <br>
