@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"projects"})
+@ToString(exclude = {"pr ojects"})
 @EqualsAndHashCode(exclude = {"projects"})
 @Entity
 @Table(name = "client")
@@ -32,7 +32,6 @@ public class Client {
     @Column(name = "city", nullable = false)
     private String city;
 
-//    @Column(name = "client_image_id", nullable = false)
     @OneToOne(mappedBy = "client")
     private ClientImage image;
 

@@ -52,35 +52,13 @@ public class ClientController {
         return "redirect:/client/" + id;
     }
 
-    @GetMapping(value = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
-    public String downloadImage(@PathVariable Long clientId, Model model) {
-//        byte[] image = clientsService.getImageBytes(imageId);
-
-        BufferedImage image = clientsService.getImageFile(clientId);
-         model.addAttribute("clientDto", image);
-
-        return "redirect:/client/" + clientId;
-    }
-
-
-//    @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-//    Resource downloadImage(@PathVariable Long id) {
-//        ClientImage image = clientsService.getImage(id);
-//        byte[] mas = image.getContent();
+//    @GetMapping(value = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
+//    public String downloadImage(@PathVariable Long clientId, Model model) {
 //
+//        BufferedImage image = clientsService.getImageFile(clientId);
+//         model.addAttribute("clientDto", image);
 //
-//        return mas;
+//        return "redirect:/client/" + clientId;
 //    }
 
-
-//
-//    @GetMapping(value = "/{id}/image")
-//    public String getClientImage(@PathVariable Long id, Model model,
-//                                 @RequestParam("file") MultipartFile file ) {
-//        log.info("get clients image by clientId = {}", id);
-//
-//        ClientImage clientImage = clientsService.getImage(file, id);
-//
-//        model.addAttribute();
-//    }
 }
