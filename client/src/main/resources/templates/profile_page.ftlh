@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <title>profile page</title>
 </head>
-
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/bootstrap/css/font-awesome.min.css"/>
 <script src="/bootstrap/js/jquery-1.11.3.min.js"></script>
@@ -99,7 +98,6 @@
                         <div id="myTabContent" class="tab-content">
                             <hr>
                             <div class="tab-pane fade active in" id="detail">
-                                <#----------------------->
                                 <h4>Данные профиля</h4>
                                 <table class="table table-th-block">
                                     <tbody>
