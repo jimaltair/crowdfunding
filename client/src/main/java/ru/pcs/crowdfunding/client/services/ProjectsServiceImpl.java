@@ -61,7 +61,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     public Optional<ProjectDto> findById(Long id) {
         Optional<Project> project = projectsRepository.findById(id);
         if (!project.isPresent()) {
-            log.warn("project with id = {} not found", id);
+            log.warn("Project with 'id' = {} not found", id);
             return Optional.empty();
         }
 
@@ -76,17 +76,18 @@ public class ProjectsServiceImpl implements ProjectsService {
         projectDto.setMoneyCollected(balance);
         projectDto.setContributorsCount(donorsCount);
         projectDto.setImagesIds(imagesIds);
+        log.info("Result of 'findById' - {}", projectDto);
         return Optional.of(projectDto);
     }
 
     @Override
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
-        log.info("Try to create project from {}", form.toString());
+        log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
         Project project = getProject(form, projectStatus);
 
         // создаём запрос в transaction-service на создание счёта для проекта
-        log.info("Try to create account for project");
+        log.info("Trying to create account for project");
         CreateAccountResponse response = transactionServiceClient.createAccount();
         Long projectAccountId = response.getId();
         log.info("Was created new account for project with id={}", projectAccountId);
@@ -184,7 +185,7 @@ public class ProjectsServiceImpl implements ProjectsService {
             try {
                 Files.createDirectory(Paths.get(path).toAbsolutePath().normalize());
             } catch (IOException e) {
-                log.error("Can't create directory {}", path);
+                log.error("Can't create directory {}", path, e);
                 throw new IllegalArgumentException(e);
             }
         }

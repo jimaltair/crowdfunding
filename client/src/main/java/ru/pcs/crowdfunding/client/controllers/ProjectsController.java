@@ -32,14 +32,15 @@ public class ProjectsController {
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable("id") Long id, Model model) {
-        log.info("get by id = {}", id);
+        log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
         if (!project.isPresent()) {
+            log.error("Project with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
         }
 
-        log.debug("result = {}", project.get());
+        log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
 
         model.addAttribute("project", project.get());
         return "projectCard";
@@ -47,6 +48,7 @@ public class ProjectsController {
 
     @GetMapping(value = "/create")
     public String getProjectCreatePage(Model model) {
+        log.info("Starting 'get /projects/create'");
         model.addAttribute("projectCreatedForm", new ProjectForm());
         return "createProject";
     }
@@ -54,17 +56,19 @@ public class ProjectsController {
     @PostMapping(value = "/create")
     public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
-
+        log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
+            log.error("Can't create new project, 'result' has error(s) - {}", result.getAllErrors());
             model.addAttribute("projectCreatedForm", form);
             return "createProject";
         }
 
         Optional<Long> projectId = projectsService.createProject(form, file);
         if (!projectId.isPresent()) {
+            log.error("Unable to create project");
             throw new IllegalStateException("Unable to create project");
         }
-
+        log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
         return "redirect:/projects/" + projectId.get();
     }
 
