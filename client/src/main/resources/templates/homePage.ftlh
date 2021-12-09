@@ -25,8 +25,11 @@
                 </div>
             </div>
         </div>
-
+        <p>Топ 7 проектов!</p>
         <#list ListProject as projects>
+            <#if projects_index == 7>
+                <#break>
+            </#if>
             <p><a href="localhost:8080/projects/${projects.id}">Проект: ${projects.getTitle()}</a></p>
             </#list>
 
