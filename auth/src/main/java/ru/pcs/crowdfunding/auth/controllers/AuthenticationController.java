@@ -21,7 +21,7 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid AuthenticationInfoDto authenticationInfoDto) {
         log.info("Starting 'post /api/signUp/': post 'authenticationInfoDto' - {}", authenticationInfoDto.toString());
