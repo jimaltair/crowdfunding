@@ -11,9 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AuthSignInResponse {
     private Long userId;
-    private String email;
-    private String password;
     private String accessToken;
-    private String refreshToken;
-    private Boolean isActive;
 }
