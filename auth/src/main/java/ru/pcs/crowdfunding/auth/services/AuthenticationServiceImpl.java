@@ -3,6 +3,7 @@ package ru.pcs.crowdfunding.auth.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +72,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
                     .findByEmail(email).get();
 
             log.info("Check password - {} - in authenticationInfosRepository for email - {}", password, email);
-            password = passwordEncoder.encode(password);
+            password = passwordEncoder.encode(password); // кодируется иначе
             log.info("password encode - {}, correct password - {}", password, authenticationInfoInRepo.getPassword());
             if (passwordEncoder.encode(password).equals(authenticationInfoInRepo.getPassword())) {
                 log.info("Password for email - {} - correct", email);
