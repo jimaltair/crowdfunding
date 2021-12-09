@@ -1,5 +1,6 @@
 package ru.pcs.crowdfunding.auth.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -8,17 +9,21 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
+import ru.pcs.crowdfunding.auth.domain.Role;
+import ru.pcs.crowdfunding.auth.domain.Status;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.services.AuthenticationService;
-import ru.pcs.crowdfunding.auth.services.AuthenticationServiceImpl;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -31,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @DisplayName("AuthenticationController")
 public class AuthenticationControllerMockMvcTest {
 
@@ -38,33 +44,56 @@ public class AuthenticationControllerMockMvcTest {
     private MockMvc mockMvc;
 
     @MockBean
+    private AuthenticationInfosRepository authenticationInfosRepository;
+
+    @MockBean
     private AuthenticationService authenticationService;
+
+
 
     private String techAuthToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI";
     private String otherTechAuthToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjQxNTc5Nzc2fQ.zaAgZjCMUEzML_W-px8al2DQsSOIqemMxDjoRHlQ7MQ";
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-
         //region POST
-        AuthenticationInfoDto build = AuthenticationInfoDto.builder()
+        AuthenticationInfoDto authInfoDto = AuthenticationInfoDto.builder()
             .userId(1L)
             .email("email@email.com")
             .password("1111111!")
+            .accessToken(null)
+            .refreshToken(null)
+            .isActive(null)
             .build();
 
-        when(authenticationService.existEmailInDb(build)).thenReturn(true);
 
-        when(authenticationService.signUpAuthentication(build)).thenReturn(
-            AuthenticationInfoDto.builder()
-                .userId(1L)
-                .email("email@email.com")
-                .password("1111111!")
-                .accessToken("eyJ0eXAiOiJKV1Q")
-                .refreshToken("refresh_test_token")
-                .isActive(true)
-                .build()
-        );
+        when(authenticationService.existEmailInDb(authInfoDto)).thenReturn(true);
+
+        AuthenticationInfo authInfo = AuthenticationInfo.builder()
+            .email("email@email.com".toLowerCase())
+            .password("1111111!")
+            .userId(1L)
+            .refreshToken("refresh_test_token")
+            .isActive(true)
+            .roles(Arrays.asList(Role.builder().name(Role.RoleEnum.USER).build()))
+            .status(Status.builder().name(Status.StatusEnum.CONFIRMED).build())
+            .build();
+
+        when(authenticationInfosRepository.findByEmail("email@email.com")).thenReturn(Optional.of(authInfo));
+
+        when(authenticationService.signUpAuthentication(authInfoDto))
+            .thenReturn(
+                AuthenticationInfoDto.builder()
+                    .userId(1L)
+                    .email("email@email.com")
+                    .password("1111111!")
+                    .accessToken("eyJ0eXAiOiJKV1Q")
+                    .refreshToken("refresh_test_token")
+                    .isActive(true)
+                    .build()
+            );
+        when(authenticationInfosRepository.save(authInfo)).thenReturn(authInfo);
     }
 
     @Nested
@@ -91,13 +120,24 @@ public class AuthenticationControllerMockMvcTest {
         @Test
         void when_newEmail_then_Status201_and_ResponseReturnsAuthenticationInfo() throws Exception {
 
+            String json = objectMapper.writeValueAsString(
+                AuthenticationInfoDto.builder()
+                    .userId(1L)
+                    .email("email@email.com")
+                    .password("1111111!")
+                    .accessToken(null)
+                    .refreshToken(null)
+                    .isActive(null)
+                    .build());
+
 
             mockMvc.perform(post("/api/signUp")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", techAuthToken)
-                    .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
-
-                )
+//                    .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
+//                    .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\", \"accessToken\": null, \"refreshToken\": null, \"isActive\": null}")
+                    .content(json)
+                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$['success']", is(true)))
