@@ -13,6 +13,7 @@ import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
+import ru.pcs.crowdfunding.client.dto.ProjectImageDto;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
@@ -29,14 +30,10 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static ru.pcs.crowdfunding.client.dto.ProjectDto.from;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
-
-    private final static String PROJECT_IMAGES_PATH = "/project_images";
 
     private final ProjectsRepository projectsRepository;
 
@@ -59,15 +56,14 @@ public class ProjectsServiceImpl implements ProjectsService {
         Long accountId = project.get().getAccountId();
         BigDecimal balance = transactionServiceClient.getBalance(accountId);
         Long donorsCount = transactionServiceClient.getContributorsCount(accountId);
-        List<String> imagesLinks = project.get().getImages().stream()
-                .map(ProjectImage::getPath)
-                .map(path -> FilenameUtils.concat(PROJECT_IMAGES_PATH, FilenameUtils.getName(path)))
+        List<Long> imagesIds = project.get().getImages().stream()
+                .map(ProjectImage::getId)
                 .collect(Collectors.toList());
 
         ProjectDto projectDto = ProjectDto.from(project.get());
         projectDto.setMoneyCollected(balance);
         projectDto.setContributorsCount(donorsCount);
-        projectDto.setImagesLinks(imagesLinks);
+        projectDto.setImagesIds(imagesIds);
         return Optional.of(projectDto);
     }
 
@@ -128,6 +124,15 @@ public class ProjectsServiceImpl implements ProjectsService {
             log.info("Project image was updated successfully");
         }
 
+    }
+
+    @Override
+    public Optional<ProjectImageDto> getImageById(Long id) {
+        return projectImagesRepository.findById(id)
+                .map(image -> ProjectImageDto.builder()
+                        .format(FilenameUtils.getExtension(image.getName()))
+                        .content(image.getContent())
+                        .build());
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
