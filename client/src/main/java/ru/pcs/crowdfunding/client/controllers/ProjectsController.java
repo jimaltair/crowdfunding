@@ -18,6 +18,8 @@ import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Controller
@@ -30,14 +32,15 @@ public class ProjectsController {
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable("id") Long id, Model model) {
-        log.info("get by id = {}", id);
+        log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
         if (!project.isPresent()) {
+            log.error("Project with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
         }
 
-        log.debug("result = {}", project.get());
+        log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
 
         model.addAttribute("project", project.get());
         return "projectCard";
@@ -45,6 +48,7 @@ public class ProjectsController {
 
     @GetMapping(value = "/create")
     public String getProjectCreatePage(Model model) {
+        log.info("Starting 'get /projects/create'");
         model.addAttribute("projectCreatedForm", new ProjectForm());
         return "createProject";
     }
@@ -52,17 +56,19 @@ public class ProjectsController {
     @PostMapping(value = "/create")
     public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
-
+        log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
+            log.error("Can't create new project, 'result' has error(s) - {}", result.getAllErrors());
             model.addAttribute("projectCreatedForm", form);
             return "createProject";
         }
 
         Optional<Long> projectId = projectsService.createProject(form, file);
         if (!projectId.isPresent()) {
+            log.error("Unable to create project");
             throw new IllegalStateException("Unable to create project");
         }
-
+        log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
         return "redirect:/projects/" + projectId.get();
     }
 
@@ -85,5 +91,39 @@ public class ProjectsController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(imageDto.get().getContent());
+    }
+
+    @GetMapping(value = "/update/{id}")
+    public String getProjectUpdatePage(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("projectUpdatedForm", new ProjectForm());
+        Optional<ProjectDto> currentProject = projectsService.findById(id);
+        if(!currentProject.isPresent()){
+            return "createProject";
+        }
+        ProjectDto project = currentProject.get();
+        model.addAttribute("id", id);
+        model.addAttribute("project_title", project.getTitle());
+        model.addAttribute("project_description", project.getDescription());
+        model.addAttribute("project_money_goal", project.getMoneyGoal().toString());
+
+        String finishDate = project.getFinishDate().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        model.addAttribute("finish_date", finishDate);
+        return "updateProject";
+    }
+
+    @PostMapping(value = "/update/{id}")
+    public String updateProject(@Valid ProjectForm form, @PathVariable("id") Long id, BindingResult result, Model model,
+                                @RequestParam("file") MultipartFile file) {
+        if (result.hasErrors()) {
+            model.addAttribute("projectUpdatedForm", form);
+        }
+        ProjectDto updatedProject = projectsService.updateProject(id, form, file);
+
+        updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
+        updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
+
+        model.addAttribute("project", updatedProject);
+        return "redirect:/projects/" + id;
     }
 }
