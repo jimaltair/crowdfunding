@@ -129,9 +129,22 @@
                             </div>
                             <#----------------------------------->
                             <div class="tab-pane fade" id="own_projects">
-                                <h4>Типа свои проекты </h4>
+                                <h4>Данные о своих проектах: </h4>
                                 <table class="table table-th-block">
                                     <tbody>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Цель</td>
+                                        <td>Собрано</td>
+                                        <td>Количество участников</td>
+                                    </tr>
+                                 <#list projects as project>
+                                     <tr>
+                                         <td> <a href="../projects/${project.id}">${project.title}</a></td>
+                                         <td>${project.moneyGoal}</td>
+                                     </tr>
+                                 </#list>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="sponsored_projects">

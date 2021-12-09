@@ -27,12 +27,14 @@ public class ClientController {
         log.info("get by id = {}", id);
 
         Optional<ClientDto> client = clientsService.getById(id);
+
         if (!client.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client with id " + id + " not found");
         }
         log.debug("result = {}", client.get());
 
         model.addAttribute("clientDto", client.get());
+        model.addAttribute("projects", client.get().getProjects());
 
         return "profile_page";
     }
