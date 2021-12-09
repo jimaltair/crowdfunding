@@ -15,7 +15,4 @@ public interface ClientsService {
 
     ClientForm updateClient(Long clientId, ClientForm form, MultipartFile file);
 
-    ClientImage getImage(Long clientId);
-
-    void writeFile(ClientImage clientImage, OutputStream outputStream);
 }

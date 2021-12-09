@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"pr ojects"})
+@ToString(exclude = {"projects"})
 @EqualsAndHashCode(exclude = {"projects"})
 @Entity
 @Table(name = "client")

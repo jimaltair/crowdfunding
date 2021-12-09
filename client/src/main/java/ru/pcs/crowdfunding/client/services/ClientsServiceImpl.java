@@ -13,12 +13,9 @@ import ru.pcs.crowdfunding.client.repositories.ClientImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static ru.pcs.crowdfunding.client.dto.ClientDto.from;
-import static ru.pcs.crowdfunding.client.dto.ClientForm.CLIENTS_IMAGE_PATH;
 
 @Service
 @RequiredArgsConstructor
@@ -59,64 +56,32 @@ public class ClientsServiceImpl implements ClientsService {
         client.setCountry(form.getCountry());
         client.setCity(form.getCity());
 
-        clientsRepository.save(client);
-
+        // Если передали новое изображение, то обновляем/создаем
         if (!file.isEmpty()) {
-            clientImagesRepository.deleteAll();
-
-            log.info("Try to save image with name={}", file.getOriginalFilename()); //сделать имя уникальным
-            ClientImage clientImage = createClientImage(file, client);
-            Long id = clientImagesRepository.save(clientImage).getId();
-            log.info("Image was saved with id={}", id);
-
-            FileOutputStream fout;
-
-
-            {
-                try {
-                    fout = new FileOutputStream(CLIENTS_IMAGE_PATH);
-                    writeFile(clientImage, fout);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+            if (client.getImage() == null) {
+                client.setImage(ClientImage.builder()
+                        .client(client)
+                        .build());
             }
+
+            updateImageContent(client.getImage(), file);
+
+            clientImagesRepository.save(client.getImage());
         }
+
+        clientsRepository.save(client);
 
         ClientForm clientForm = ClientForm.from(client);
         clientForm.setEmail(getEmail(clientId));
-//        clientForm.setImage(getImage(clientId));
         return clientForm;
     }
 
-    @Override
-    public ClientImage getImage(Long clientId) {
-
-        return ClientImage.builder()
-                .path(CLIENTS_IMAGE_PATH)
-                .build();
-    }
-
-    @Override
-    public void writeFile(ClientImage clientImage, OutputStream outputStream) {
+    private void updateImageContent(ClientImage clientImage, MultipartFile file) {
         try {
-            byte[] mas = clientImagesRepository.getBytesImage(clientImage.getClient().getId());
-//            Files.copy(Paths.get(CLIENTS_IMAGE_PATH), outputStream);
-            //Files.copy(mas, outputStream);
-            outputStream.write(mas);
+            clientImage.setName(file.getOriginalFilename());
+            clientImage.setContent(file.getBytes());
         } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private ClientImage createClientImage(MultipartFile file, Client client) {
-        try {
-            return ClientImage.builder()
-                    .name(file.getOriginalFilename())
-                    .client(client)
-                    .content(file.getBytes())
-                    .build();
-        } catch (IOException e) {
-            log.error("Can't save image {}", file.getOriginalFilename());
+            log.error("Can't update image content {}", file.getOriginalFilename(), e);
             throw new IllegalStateException(e);
         }
     }

@@ -15,8 +15,6 @@ import java.math.BigDecimal;
 @Builder
 public class ClientForm {
 
-    public static final String CLIENTS_IMAGE_PATH = "C:\\Users\\4801000\\IdeaProjects\\crowdfunding11111\\client\\src\\main\\resources\\static\\img\\1.jpg";
-
     private String firstName;
 
     private String lastName;
