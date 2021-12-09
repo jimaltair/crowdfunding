@@ -11,9 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
+import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.services.AuthenticationService;
+import ru.pcs.crowdfunding.auth.services.AuthenticationServiceImpl;
 
 import java.util.Arrays;
 
@@ -26,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @DisplayName("AuthenticationController")
 public class AuthenticationControllerMockMvcTest {
@@ -73,7 +76,7 @@ public class AuthenticationControllerMockMvcTest {
         @Test
         void when_usedУEmail_then_Status201_and_ResponseReturnsAuthenticationInfo() throws Exception {
             mockMvc.perform(post("/api/signUp")
-                    .header("Content-Type", "application/json")
+                    .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", techAuthToken)
                     .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
                 )
@@ -87,10 +90,13 @@ public class AuthenticationControllerMockMvcTest {
         @Disabled
         @Test
         void when_newEmail_then_Status201_and_ResponseReturnsAuthenticationInfo() throws Exception {
+
+
             mockMvc.perform(post("/api/signUp")
-                    .header("Content-Type", "application/json")
+                    .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", techAuthToken)
                     .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
+
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -107,7 +113,7 @@ public class AuthenticationControllerMockMvcTest {
         @Test
         void when_passwordIsLess7CharactersLong_thenStatus400() throws Exception {
             mockMvc.perform(post("/api/signUp")
-                    .header("Content-Type", "application/json")
+                    .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", techAuthToken)
                     .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"11!\"}")
                 )
@@ -118,7 +124,7 @@ public class AuthenticationControllerMockMvcTest {
         @Test
         void when_techAuthTokenOther_thenStatus403AndErrorMessageReturns() throws Exception {
             mockMvc.perform(post("/api/signUp")
-                    .header("Content-Type", "application/json")
+                    .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", otherTechAuthToken)
                     .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"11!\"}")
                 )
