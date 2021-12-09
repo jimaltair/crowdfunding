@@ -32,12 +32,15 @@ public class Client {
     @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "avatar_image_path")
-    private String avatarImagePath;
+    @OneToOne(mappedBy = "client")
+    private ClientImage image;
 
     @Column(name = "account_id", unique = true)
     private Long accountId;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     private List<Project> projects;
+
+
+
 }

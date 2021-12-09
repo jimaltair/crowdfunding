@@ -70,7 +70,9 @@
                     </div>
                     <div class="panel-body">
                         <div class="text-center" id="author">
-                            <img src="/img/avatar_vasiliy.jpg">
+                            <#if clientDto.image??>
+                                <img src="/clients/image/${clientDto.image.id}"/>
+                            </#if>
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <p></p>
                             <p class="sosmed-author">
@@ -96,7 +98,6 @@
                         <div id="myTabContent" class="tab-content">
                             <hr>
                             <div class="tab-pane fade active in" id="detail">
-<#----------------------->
                                 <h4>Данные профиля</h4>
                                 <table class="table table-th-block">
                                     <tbody>
@@ -158,46 +159,52 @@
                             </div>
                             <br>
                             <div class="tab-pane fade" id="change_profile">
-                                <form role="form" class="form-horizontal">
+                                <form role="form" class="form-horizontal" action="/clients/${clientDto.id}" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Имя</label>
                                         <div class="col-sm-10">
-                                            <input name="first_name" type="text" class="form-control"
-                                                   placeholder="имя"/>
+                                            <input name="firstName" type="text" class="form-control"
+                                                   value="${clientDto.firstName}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Фамилия</label>
                                         <div class="col-sm-10">
-                                            <input name="last_name" type="text" class="form-control"
-                                                   placeholder="фамилия"/>
+                                            <input name="lastName" type="text" class="form-control"
+                                                   value="${clientDto.lastName}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Страна</label>
                                         <div class="col-sm-10">
                                             <input name="country" type="text" class="form-control"
-                                                   placeholder="страна"/>
+                                                   value="${clientDto.country}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Город</label>
                                         <div class="col-sm-10">
                                             <input name="city" type="text" class="form-control"
-                                                   placeholder="город"/>
+                                                   value="${clientDto.city}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Почта</label>
                                         <div class="col-sm-10">
-                                            <input name="email" type="email" class="form-control" placeholder="почта"/>
+                                            <input name="email" type="email" class="form-control" value="${clientDto.email}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <input type="submit" class="btn btn-info" value="Сохранить"/>
+                                        <label class="control-label col-sm-2">Фото профиля:</label>
+                                        <input type="file" name="file">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <br>
+                                                <input type="submit" class="btn btn-info" value="Сохранить"/>
+                                            </div>
                                         </div>
                                     </div>
+<#--                                </form>-->
                                 </form>
                             </div>
                         </div>

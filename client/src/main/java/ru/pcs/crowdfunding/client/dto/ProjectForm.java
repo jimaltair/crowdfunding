@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class ProjectForm {
-
     @NotBlank
     private String title;
 
@@ -38,5 +37,4 @@ public class ProjectForm {
     private BigDecimal moneyGoal;
 
     private ProjectImage image;
-
 }

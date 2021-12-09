@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProjectImageDto {
+public class ImageDto {
     private String format;
     private byte[] content;
 }
