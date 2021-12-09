@@ -44,21 +44,15 @@ public class AuthenticationControllerMockMvcTest {
     void setUp() {
 
         //region POST
-        when(authenticationService.existEmailInDb(
-            AuthenticationInfoDto.builder()
-                .userId(1L)
-                .email("email@email.com")
-                .password("1111111!")
-                .build()
-        )).thenReturn(true);
+        AuthenticationInfoDto build = AuthenticationInfoDto.builder()
+            .userId(1L)
+            .email("email@email.com")
+            .password("1111111!")
+            .build();
 
-        when(authenticationService.signUpAuthentication(
-            AuthenticationInfoDto.builder()
-                .userId(1L)
-                .email("email@email.com")
-                .password("1111111!")
-                .build()
-        )).thenReturn(
+        when(authenticationService.existEmailInDb(build)).thenReturn(true);
+
+        when(authenticationService.signUpAuthentication(build)).thenReturn(
             AuthenticationInfoDto.builder()
                 .userId(1L)
                 .email("email@email.com")
