@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ImageDto {
-    private String fileName;
+public class ProjectImageDto {
+    private String format;
     private byte[] content;
 }

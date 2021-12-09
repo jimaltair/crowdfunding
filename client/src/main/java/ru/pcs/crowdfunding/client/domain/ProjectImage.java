@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"content", "project"})
+@ToString()
 @EqualsAndHashCode()
 @Entity
 public class ProjectImage {
