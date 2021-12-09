@@ -113,7 +113,6 @@ public class ProjectsController {
             model.addAttribute("projectUpdatedForm", form);
         }
         projectsService.updateProject(id, form, file);
-        // здесь должна прилететь страница проекта, когда будет готова
         return "projectCard";
     }
 }

@@ -13,4 +13,6 @@ public interface ProjectsService {
     Optional<Long> createProject(ProjectForm form, MultipartFile file);
 
     Optional<ProjectImageDto> getImageById(Long id);
+
+    void updateProject(Long id, ProjectForm form, MultipartFile file);
 }
