@@ -5,6 +5,7 @@ import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.ClientImage;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
+import ru.pcs.crowdfunding.client.dto.ImageDto;
 
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
@@ -15,4 +16,5 @@ public interface ClientsService {
 
     ClientForm updateClient(Long clientId, ClientForm form, MultipartFile file);
 
+    Optional<ImageDto> getImageById(Long id);
 }

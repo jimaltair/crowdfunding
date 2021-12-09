@@ -12,7 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import ru.pcs.crowdfunding.client.dto.ProjectImageDto;
+import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
@@ -70,7 +70,7 @@ public class ProjectsController {
     public ResponseEntity<byte[]> getImageById(@PathVariable("id") Long id) {
         log.info("get project image by id {}", id);
 
-        Optional<ProjectImageDto> imageDto = projectsService.getImageById(id);
+        Optional<ImageDto> imageDto = projectsService.getImageById(id);
         if (!imageDto.isPresent()) {
             log.error("project image with id {} not found", id);
             return ResponseEntity.notFound().build();

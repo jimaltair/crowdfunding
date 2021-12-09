@@ -2,6 +2,7 @@ package ru.pcs.crowdfunding.client.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
@@ -9,6 +10,7 @@ import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.*;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
+import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.repositories.ClientImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
@@ -43,8 +45,14 @@ public class ClientsServiceImpl implements ClientsService {
         return Optional.of(clientDto);
     }
 
-    private String getEmail(Long idClient) {
-        return authorizationServiceClient.getAuthInfo(idClient).getEmail();
+
+    @Override
+    public Optional<ImageDto> getImageById(Long id) {
+        return clientImagesRepository.findById(id)
+                .map(image -> ImageDto.builder()
+                        .format(FilenameUtils.getExtension(image.getName()))
+                        .content(image.getContent())
+                        .build());
     }
 
     @Override
@@ -85,4 +93,9 @@ public class ClientsServiceImpl implements ClientsService {
             throw new IllegalStateException(e);
         }
     }
+
+    private String getEmail(Long idClient) {
+        return authorizationServiceClient.getAuthInfo(idClient).getEmail();
+    }
+
 }

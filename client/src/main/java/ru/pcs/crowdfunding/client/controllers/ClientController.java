@@ -2,8 +2,10 @@ package ru.pcs.crowdfunding.client.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
+import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 
 import javax.validation.Valid;
-import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 @Controller
@@ -52,13 +54,25 @@ public class ClientController {
         return "redirect:/client/" + id;
     }
 
-//    @GetMapping(value = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
-//    public String downloadImage(@PathVariable Long clientId, Model model) {
-//
-//        BufferedImage image = clientsService.getImageFile(clientId);
-//         model.addAttribute("clientDto", image);
-//
-//        return "redirect:/client/" + clientId;
-//    }
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> getImageById(@PathVariable("id") Long id) {
+        log.info("get client image by id {}", id);
+
+        Optional<ImageDto> imageDto = clientsService.getImageById(id);
+        if (!imageDto.isPresent()) {
+            log.error("client image with id {} not found", id);
+            return ResponseEntity.notFound().build();
+        }
+
+        log.info("found client image with id {}, format {} and content length {}",
+                id, imageDto.get().getFormat(), imageDto.get().getContent().length);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf("image/" + imageDto.get().getFormat()));
+        headers.setContentLength(imageDto.get().getContent().length);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(imageDto.get().getContent());
+    }
 
 }

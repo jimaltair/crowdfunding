@@ -13,7 +13,7 @@ import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.dto.ProjectImageDto;
+import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
@@ -92,9 +92,9 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public Optional<ProjectImageDto> getImageById(Long id) {
+    public Optional<ImageDto> getImageById(Long id) {
         return projectImagesRepository.findById(id)
-                .map(image -> ProjectImageDto.builder()
+                .map(image -> ImageDto.builder()
                         .format(FilenameUtils.getExtension(image.getName()))
                         .content(image.getContent())
                         .build());
