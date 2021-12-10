@@ -9,6 +9,7 @@ import ru.pcs.crowdfunding.client.domain.Project;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -44,5 +45,9 @@ public class ProjectDto {
                 .moneyGoal(project.getMoneyGoal())
                 .status(project.getStatus().getStatus().toString())
                 .build();
+    }
+
+    public static List<ProjectDto> from(List<Project> projects) {
+        return projects.stream().map(ProjectDto::from).collect(Collectors.toList());
     }
 }
