@@ -11,7 +11,6 @@ import ru.pcs.crowdfunding.auth.domain.AuthorizationInfo;
 import ru.pcs.crowdfunding.auth.domain.Role;
 import ru.pcs.crowdfunding.auth.domain.Status;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
-import ru.pcs.crowdfunding.auth.dto.AuthorizationInfoDto;
 import ru.pcs.crowdfunding.auth.dto.SignInForm;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;

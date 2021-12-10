@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.pcs.crowdfunding.client.dto.AuthSignInRequest;
 import ru.pcs.crowdfunding.client.dto.AuthSignInResponse;
-import ru.pcs.crowdfunding.client.dto.SignInForm;
 import ru.pcs.crowdfunding.client.services.SignInService;
 
 import javax.servlet.http.Cookie;
@@ -27,7 +26,7 @@ public class SignInController {
 
     @GetMapping
     public String getSignInPage(Model model) {
-        model.addAttribute("signInForm", new SignInForm());
+        model.addAttribute("signInForm", new AuthSignInRequest());
         return "signIn";
     }
 
