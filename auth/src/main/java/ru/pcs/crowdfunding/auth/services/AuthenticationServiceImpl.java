@@ -22,6 +22,7 @@ import ru.pcs.crowdfunding.auth.security.util.TokenProvider;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,23 +78,22 @@ class AuthenticationServiceImpl implements AuthenticationService {
         String password = client.getPassword();
         log.info("Search email - {} in 'authenticationInfosRepository", email);
 
-        if (authenticationInfosRepository.findByEmail(email).isPresent()) {
-            AuthenticationInfo authenticationInfoInRepo = authenticationInfosRepository
-                    .findByEmail(email).get();
+        Optional<AuthenticationInfo> authenticationInfoOptional = authenticationInfosRepository
+                .findByEmail(email);
+
+        if (authenticationInfoOptional.isPresent()) {
+            AuthenticationInfo authenticationInfoInRepo = authenticationInfoOptional.get();
 
             log.info("Check password - {} - in authenticationInfosRepository for email - {}", password, email);
 
             if (passwordEncoder.matches(password, authenticationInfoInRepo.getPassword())) {
                 log.info("Password for email - {} - correct", email);
                 Long userId = authenticationInfoInRepo.getUserId();
-                String accessToken;
 
                 log.info("Check existence accessToken into authorizationInfoRepository by id - {}", userId);
+                String accessToken = authorizationInfosRepository.getById(userId).getAccessToken();
 
-                if (authorizationInfosRepository.getById(userId).getAccessToken() != null) {
-                    accessToken = authorizationInfosRepository.getById(userId).getAccessToken();
-                    log.info("AccessToken by id {} exist", userId);
-                } else {
+                if (accessToken == null) {
                     log.info("AccessToken had not existed by id {} and generated", userId);
                     accessToken = this.generateAccessToken(userId);
                 }
