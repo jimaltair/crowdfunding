@@ -28,4 +28,22 @@ public class Role {
         MODERATOR,
         ADMIN
     }
+
+    public static Role getRoleFromString(String input) {
+        Role role;
+        switch (input) {
+            case "USER":
+                role = new Role(1L, RoleEnum.USER);
+                break;
+            case "MODERATOR":
+                role = new Role(2L, RoleEnum.MODERATOR);
+                break;
+            case "ADMIN":
+                role = new Role(3L, RoleEnum.ADMIN);
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected role: " + input);
+        }
+        return role;
+    }
 }

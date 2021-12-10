@@ -29,7 +29,8 @@ import java.util.Optional;
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final static Duration DEFAULT_TOKEN_DURATION = Duration.ofDays(30);
+    private static final Duration DEFAULT_TOKEN_DURATION = Duration.ofDays(30);
+    public static final Role DEFAULT_ROLE = new Role(1L, Role.RoleEnum.USER);
 
     private final AuthenticationInfosRepository authenticationInfosRepository;
     private final AuthorizationInfosRepository authorizationInfosRepository;
@@ -119,6 +120,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String generateAccessToken(Long userId) {
         TokenContent tokenContent = TokenContent.builder()
                 .userId(userId)
+                .role(DEFAULT_ROLE)
                 .build();
         String result = tokenProvider.generate(tokenContent, DEFAULT_TOKEN_DURATION);
         log.info("Result of 'generateAccessToken' - {}", result);

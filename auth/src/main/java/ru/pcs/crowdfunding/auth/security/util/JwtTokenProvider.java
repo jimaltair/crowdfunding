@@ -6,6 +6,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.pcs.crowdfunding.auth.domain.Role;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -23,6 +24,7 @@ public class JwtTokenProvider implements TokenProvider {
         return JWT.create()
                 .withExpiresAt(calcExpirationDate(lifeTime))
                 .withSubject(tokenContent.getUserId().toString())
+                .withClaim("role", tokenContent.getRole().getName().toString())
                 .sign(Algorithm.HMAC256(jwtSecretKey));
     }
 
@@ -33,10 +35,12 @@ public class JwtTokenProvider implements TokenProvider {
                     .build()
                     .verify(token);
 
-            Long userId = Long.parseLong(jwt.getSubject());
+            Long userId = Long.parseLong(jwt.getClaim("sub").asString());
+            String role = jwt.getClaim("role").asString();
 
             return TokenContent.builder()
                     .userId(userId)
+                    .role(Role.getRoleFromString(role))
                     .build();
         } catch (Exception e) {
             log.error("Exception while decoding token", e);
