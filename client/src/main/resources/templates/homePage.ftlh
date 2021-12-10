@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-        <p>Топ 7 проектов!</p>
+        <p>Топ проекты: </p>
         <#list ListProject as projects>
             <#if projects_index == 7>
                 <#break>
