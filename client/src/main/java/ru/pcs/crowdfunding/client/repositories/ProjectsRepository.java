@@ -9,6 +9,7 @@ import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,6 +20,7 @@ public interface ProjectsRepository extends JpaRepository<Project, Long> {
 
     Page<Project> findAllByAuthorId(Long authorId, Pageable pageable);
     Page<Project> findProjectsByStatusEquals(ProjectStatus projectStatus, Pageable pageable);
+    List<Project> findProjectsByStatusEquals(ProjectStatus projectStatus);
     Page<Project> findProjectsByDescriptionContains(String description, Pageable pageable);
     Page<Project> findProjectsByTitleContains(String title, Pageable pageable);
 
