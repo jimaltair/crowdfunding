@@ -9,7 +9,7 @@ import ru.pcs.crowdfunding.client.security.filters.TokenAuthorizationFilter;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    public static final String API_PING = "/api/v0/ping";
+
     public static final String SIGN_IN_PAGE = "/signIn";
 
     @Autowired
@@ -22,7 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
-                .antMatchers(API_PING).permitAll()
+                .antMatchers("**").permitAll()
                 .anyRequest().permitAll()
         .and()
         .logout()
@@ -31,10 +31,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
         .logoutSuccessUrl(SIGN_IN_PAGE);
 
-//        http.authorizeRequests()
-//                .antMatchers("**").permitAll()
-//                .anyRequest().permitAll();
-//
-//        http.addFilter(tokenAuthorizationFilter);
+        http.addFilter(tokenAuthorizationFilter);
     }
 }
