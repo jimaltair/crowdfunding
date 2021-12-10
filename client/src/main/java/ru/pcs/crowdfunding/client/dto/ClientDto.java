@@ -1,9 +1,6 @@
 package ru.pcs.crowdfunding.client.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.ClientImage;
 import ru.pcs.crowdfunding.client.domain.Project;
@@ -15,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"image"})
+@EqualsAndHashCode(exclude = {"image"})
 public class ClientDto {
 
     private Long id;
