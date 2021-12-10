@@ -7,6 +7,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
 import ru.pcs.crowdfunding.client.dto.GetBalanceResponseDto;
+import ru.pcs.crowdfunding.client.dto.OperationDto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -15,6 +16,7 @@ import java.time.Instant;
 public class TransactionServiceRestTemplateClient extends RestTemplateClient implements TransactionServiceClient {
 
     private static final String API_ACCOUNT_URL = "/api/account";
+    private static final String API_OPERATION_URL = "/api/operation";
     private static final String GET_BALANCE_URL = API_ACCOUNT_URL + "/{accountId}/balance?date={date}";
     private static final String GET_CONTRIBUTORS_COUNT_URL =
             API_ACCOUNT_URL + "/{accountId}/contributorsCount?date={date}";
@@ -42,5 +44,10 @@ public class TransactionServiceRestTemplateClient extends RestTemplateClient imp
     @Override
     public Long getContributorsCount(Long accountId) {
         return get(GET_CONTRIBUTORS_COUNT_URL, Long.class, accountId, Instant.now().getEpochSecond());
+    }
+
+    @Override
+    public OperationDto operate(OperationDto operationDto) {
+        return post(API_OPERATION_URL, operationDto, OperationDto.class);
     }
 }
