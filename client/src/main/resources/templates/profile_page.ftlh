@@ -150,7 +150,6 @@
                                         </tr>
                                     </#list>
                                     </tbody>
-                                    </tbody>
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="sponsored_projects">
