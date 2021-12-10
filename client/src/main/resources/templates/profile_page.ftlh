@@ -71,7 +71,8 @@
                     <div class="panel-body">
                         <div class="text-center" id="author">
                             <#if clientDto.image??>
-                                <img src="/clients/image/${clientDto.image.id}"/>
+                                <img src="/clients/image/${clientDto.image.id}"
+                                     style="max-width: 256px; max-height: 256px; width: auto; height: auto;"/>
                             </#if>
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <p></p>
