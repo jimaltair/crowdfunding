@@ -30,7 +30,7 @@
             <#if projects_index == 7>
                 <#break>
             </#if>
-            <p><a href="localhost:8080/projects/${projects.id}">Проект: ${projects.getTitle()}</a></p>
+            <p><a href="${ProjectsUri}${projects.id}">Проект: ${projects.getTitle()}</a></p>
             </#list>
 
  </body>

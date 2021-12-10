@@ -28,6 +28,9 @@ public class HomePageController {
     @Value(value = "${uriLogout}")
     private String uriLogout;
 
+    @Value(value = "${uriProjects}")
+    private String uriProjects;
+
     @RequestMapping()
     public String getHomePage(Model model) {
 
@@ -36,6 +39,7 @@ public class HomePageController {
         model.addAttribute("ListProject", page);
         model.addAttribute("SignUpUri", uriSignUpPage);
         model.addAttribute("SignInUri", uriSignInPage);
+        model.addAttribute("ProjectsUri", uriProjects);
         model.addAttribute("Logout", uriLogout);
 
         return "homePage";
