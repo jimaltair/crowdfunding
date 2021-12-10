@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.pcs.crowdfunding.client.security.filters.TokenAuthorizationFilter;
+import ru.pcs.crowdfunding.client.services.ClientsService;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -15,9 +17,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    @Autowired
+    private ClientsService clientsService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        TokenAuthorizationFilter tokenAuthorizationFilter = new TokenAuthorizationFilter(objectMapper);
+        TokenAuthorizationFilter tokenAuthorizationFilter =
+                new TokenAuthorizationFilter(tokenProvider, objectMapper, clientsService);
 
         http.csrf().disable();
 
@@ -31,6 +40,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
         .logoutSuccessUrl(SIGN_IN_PAGE);
 
-        http.addFilter(tokenAuthorizationFilter);
+        http.addFilterBefore(tokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
