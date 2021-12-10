@@ -71,7 +71,7 @@
                     <div class="panel-body">
                         <div class="text-center" id="author">
                             <#if clientDto.image??>
-                                <img src="/clients/image/${clientDto.image.id}"/>
+                                <img src="/clients/image/${clientDto.image.id}" width="200" height="200"/>
                             </#if>
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
                             <p></p>
@@ -191,7 +191,7 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Почта</label>
                                         <div class="col-sm-10">
-                                            <input name="email" type="email" class="form-control" value="${clientDto.email}"/>
+                                            <td>${clientDto.email}</td>
                                         </div>
                                     </div>
                                     <div class="form-group">
