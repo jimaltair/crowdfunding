@@ -9,9 +9,17 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 public class OperationDto {
+
+    public enum Type {
+        PAYMENT,
+        REFUND,
+        TOP_UP,
+        WITHDRAW
+    }
+
     private Long initiatorId;
     private Instant datetime;
-    private String typeOperation;
+    private Type operationType;
     private Long debitAccountId;
     private Long creditAccountId;
     private BigDecimal sum;

@@ -95,9 +95,10 @@ public class OperationServiceImpl implements OperationService {
                 log.info("saved the operation in the database: {}", operation);
                 Payment replenishment = paymentsRepository.save(replenishmentTransactionBuilder(operationDto, operation));
                 log.info("saved the payment in the database: {}", replenishment);
-            } else
+            } else {
                 log.error("Operation error", new IllegalArgumentException("An error occurred during the deposit operation"));
                 throw new IllegalArgumentException("An error occurred during the deposit operation");
+            }
         }
 
         if (operationType.equals(OperationType.Type.WITHDRAW.toString())) {
@@ -109,9 +110,10 @@ public class OperationServiceImpl implements OperationService {
                 log.info("saved the operation in the database: {}", operation);
                 Payment writeOff = paymentsRepository.save(writeOffTransactionBuilder(operationDto, operation));
                 log.info("saved the payment in the database: {}", writeOff);
-            } else
+            } else {
                 log.error("Operation error", new IllegalArgumentException("An error occurred during the withdrawal operation from the platform"));
                 throw new IllegalArgumentException("An error occurred during the withdrawal operation from the platform");
+            }
         }
         return from(operation);
     }
