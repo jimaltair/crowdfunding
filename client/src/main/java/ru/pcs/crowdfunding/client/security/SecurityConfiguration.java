@@ -3,18 +3,11 @@ package ru.pcs.crowdfunding.client.security;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.AnyRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static final String API_PING = "/api/v0/ping";
     public static final String SIGN_IN_PAGE = "/signIn";
-
-
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
