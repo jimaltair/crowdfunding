@@ -13,13 +13,13 @@
                 <div class="form-inline">
                     <div class="form-group">
                         <label for="Hello">Главная страница: </label>
-                        <button id="signUp"  type="submit" onclick="location.href = 'http://localhost:8080/signUp'"
+                        <button id="signUp"  type="submit" onclick="location.href = '${SignUpUri}'"
                         >Зарегистрироваться</button>
                         <button id="signIn" class="btn btn-default" type="submit"
-                                onclick="location.href = 'http://localhost:8080/signIn'">Войти
+                                onclick="location.href = '${SignInUri}'">Войти
                         </button>
                         <button id="logout" class="btn btn-default" type="submit"
-                                onclick="location.href = 'http://localhost:8080/logout'">Выход
+                                onclick="location.href = '${Logout}'">Выход
                         </button>
                     </div>
                 </div>

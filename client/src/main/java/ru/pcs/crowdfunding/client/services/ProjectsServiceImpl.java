@@ -179,9 +179,11 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public List<ProjectDto> getConfirmedProjects() {
-        return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(ProjectStatus.builder()
-                .id(2L)
-                .build()));
+        ProjectStatus statusConfirmed = projectStatusesRepository
+                .getByStatus(ProjectStatus.Status.CONFIRMED);
+
+        return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(
+               statusConfirmed));
     }
 
     /**
