@@ -7,7 +7,8 @@
 <h2>${project.title}</h2>
 <#if project.imagesIds??>
     <#list project.imagesIds as imageId>
-        <img src="/projects/image/${imageId}" alt="project image" />
+        <img src="/projects/image/${imageId}" alt="project image"
+             style="max-width: 512px; max-height: 512px; width: auto; height: auto;" />
         <br>
     </#list>
     <br>
