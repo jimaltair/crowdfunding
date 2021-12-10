@@ -24,5 +24,7 @@ public interface ProjectsService {
 
     Long getContributorsCountByProjectId(Long projectId);
 
+    List<ProjectDto> getConfirmedProjects();
+
     List<ProjectDto> getProjectsFromClient(ClientDto client);
 }

@@ -13,23 +13,25 @@
                 <div class="form-inline">
                     <div class="form-group">
                         <label for="Hello">Главная страница: </label>
-                        <button id="signUp"  type="submit" onclick="location.href = 'http://localhost:8080/signUp'"
+                        <button id="signUp"  type="submit" onclick="location.href = '${SignUpUri}'"
                         >Зарегистрироваться</button>
                         <button id="signIn" class="btn btn-default" type="submit"
-                                onclick="location.href = 'http://localhost:8080/signIn'">Войти
+                                onclick="location.href = '${SignInUri}'">Войти
                         </button>
                         <button id="logout" class="btn btn-default" type="submit"
-                                onclick="location.href = 'http://localhost:8081/logout'">Выход
+                                onclick="location.href = '${Logout}'">Выход
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+        <p>Топ проекты: </p>
+        <#list ListProject as projects>
+            <#if projects_index == 7>
+                <#break>
+            </#if>
+            <p><a href="${ProjectsUri}${projects.id}">Проект: ${projects.getTitle()}</a></p>
+            </#list>
 
-<#--    <tr>-->
-<#--        <#list ListProject as projects>-->
-<#--            <p><a href="localhost:8080/projects/${projects.id}">Проект: ${projects.getTitle()}</a></p>-->
-<#--            </#list>-->
-<#--    </tr>-->
  </body>
 </html>
