@@ -8,4 +8,5 @@ public interface OperationTypesRepository extends JpaRepository<OperationType, L
 
     @Query(value = "select * from operation_type where type = ?1", nativeQuery=true)
     OperationType findOperationType(String type);
+
 }

@@ -32,6 +32,8 @@ public class ClientDto {
 
     private String email;
 
+    private Long accountId;
+
     public static ClientDto from(Client client) {
 
         return ClientDto.builder()
@@ -41,6 +43,7 @@ public class ClientDto {
                 .country(client.getCountry())
                 .city(client.getCity())
                 .image(client.getImage())
+                .accountId(client.getAccountId())
                 .projects(client.getProjects())
                 .build();
     }

@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @Slf4j
 public class SignUpController {
 
-    private static final String TOKEN_COOKIE_NAME = "accessToken";
+    public static final String TOKEN_COOKIE_NAME = "accessToken";
 
     private final SignUpService signUpService;
 
