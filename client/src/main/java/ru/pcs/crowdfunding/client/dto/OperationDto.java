@@ -17,6 +17,7 @@ public class OperationDto {
         WITHDRAW
     }
 
+    private Long id;
     private Long initiatorId;
     private Instant datetime;
     private Type operationType;
