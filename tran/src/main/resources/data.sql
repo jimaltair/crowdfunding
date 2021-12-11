@@ -10,3 +10,5 @@ INSERT into account(id, date_created, is_active, date_modified) values
 (2, now(), true, now()),
 (3, now(), true, now())
 ON CONFLICT (id) DO NOTHING;
+
+SELECT setval('account_id_seq', (SELECT MAX(id) FROM account));
