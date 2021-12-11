@@ -143,14 +143,24 @@ public class ProjectsServiceImpl implements ProjectsService {
     private void updateProjectImage(MultipartFile file, Project existedProject) {
         if (!file.isEmpty()) {
             log.info("Try to update project image with new image: name={} and size={}", file.getOriginalFilename(), file.getSize());
-            ProjectImage projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
+            Optional<ProjectImage> projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
             try {
-                projectImage.setContent(file.getBytes());
-                projectImage.setName(file.getOriginalFilename());
+                if (!projectImage.isPresent()) {
+                    log.info("The project has no image, create new one");
+                    ProjectImage newProjectImage = ProjectImage.builder()
+                            .project(existedProject)
+                            .content(file.getBytes())
+                            .name(file.getName())
+                            .build();
+                    projectImagesRepository.save(newProjectImage);
+                } else {
+                    projectImage.get().setContent(file.getBytes());
+                    projectImage.get().setName(file.getOriginalFilename());
+                    projectImagesRepository.save(projectImage.get());
+                }
             } catch (IOException e) {
                 throw new IllegalStateException("Problem with updating project image");
             }
-            projectImagesRepository.save(projectImage);
             log.info("Project image was updated successfully");
         }
     }
@@ -183,7 +193,7 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .getByStatus(ProjectStatus.Status.CONFIRMED);
 
         return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(
-               statusConfirmed));
+                statusConfirmed));
     }
 
     /**
