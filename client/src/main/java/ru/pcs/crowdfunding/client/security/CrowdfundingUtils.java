@@ -11,16 +11,14 @@ import java.util.Optional;
 @Slf4j
 public class CrowdfundingUtils {
 
-    public static Long getClientIdFromRequestContext() {
+    public static Optional<Long> getClientIdFromRequestContext() {
         log.info("Try to get client id from RequestContextHolder");
-        // TODO: добавить перехват NPE
-        Optional<Long> clientId = Optional.of(
+        Optional<Long> clientId = Optional.ofNullable(
                 (Long) RequestContextHolder.getRequestAttributes().getAttribute("client_id", 1));
         if (!clientId.isPresent()) {
             log.error("Can't get client id from RequestContextHolder");
-            throw new IllegalArgumentException("Problem with getting client id from RequestContextHolder");
         }
-        return clientId.get();
+        return clientId;
     }
 
     public static Optional<String> getCookieValueFromRequest(HttpServletRequest request, String cookieName) {

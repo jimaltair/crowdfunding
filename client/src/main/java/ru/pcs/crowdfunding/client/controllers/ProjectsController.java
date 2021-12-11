@@ -36,8 +36,12 @@ public class ProjectsController {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         // пример того как можем получить id текущего пользователя
-        Long clientId = CrowdfundingUtils.getClientIdFromRequestContext();
-        log.info("Getting project home page for user with id={}", clientId);
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (clientId.isPresent()) {
+            log.info("Getting project home page for user with id={}", clientId);
+        } else {
+            log.warn("Can't get user id from RequestContext");
+        }
 
         Optional<ProjectDto> project = projectsService.findById(id);
         if (!project.isPresent()) {
@@ -102,7 +106,7 @@ public class ProjectsController {
     public String getProjectUpdatePage(@PathVariable("id") Long id, Model model) {
         model.addAttribute("projectUpdatedForm", new ProjectForm());
         Optional<ProjectDto> currentProject = projectsService.findById(id);
-        if(!currentProject.isPresent()){
+        if (!currentProject.isPresent()) {
             return "createProject";
         }
         ProjectDto project = currentProject.get();
