@@ -36,36 +36,42 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<String> tokenOptional = CrowdfundingUtils.getCookieValueFromRequest(request, TOKEN_COOKIE_NAME);
-        if (tokenOptional.isPresent()) {
-            String token = tokenOptional.get();
-            log.info("Got token {} from cookie", token);
-            try {
-                Long clientId = tokenProvider.getClientIdFromToken(token);
-                log.info("Got client id={} from token", clientId);
+        if (request.getRequestURI().equals(SecurityConfiguration.SIGN_IN_PAGE) ||
+                request.getRequestURI().equals(SecurityConfiguration.SIGN_UP_PAGE) ||
+                request.getRequestURI().equals(SecurityConfiguration.HOME_PAGE)) {
+            filterChain.doFilter(request, response);
+        } else {
+            Optional<String> tokenOptional = CrowdfundingUtils.getCookieValueFromRequest(request, TOKEN_COOKIE_NAME);
+            if (tokenOptional.isPresent()) {
+                String token = tokenOptional.get();
+                log.info("Got token {} from cookie", token);
+                try {
+                    Long clientId = tokenProvider.getClientIdFromToken(token);
+                    log.info("Got client id={} from token", clientId);
 
-                if (!clientsService.findById(clientId).isPresent()) {
-                    logger.warn(String.format("Can't find user with id=%d", clientId));
+                    if (!clientsService.findById(clientId).isPresent()) {
+                        logger.warn(String.format("Can't find user with id=%d", clientId));
+                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        objectMapper.writeValue(response.getWriter(), Collections.singletonMap("error", "user not found with token"));
+                    }
+
+                    // кладём id пользователя в аттрибуты RequestContextHolder'а, чтобы он был доступен из любой точки
+                    // нашего сервиса
+                    RequestContextHolder.getRequestAttributes().setAttribute("client_id", clientId, 1);
+
+                    filterChain.doFilter(request, response);
+                } catch (IllegalAccessException e) {
+                    logger.warn("Token is invalid");
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    objectMapper.writeValue(response.getWriter(), Collections.singletonMap("error", "user not found with token"));
+                    objectMapper.writeValue(response.getWriter(),
+                            Collections.singletonMap("error", "Token is expired or invalid"));
                 }
-
-                // кладём id пользователя в аттрибуты RequestContextHolder'а, чтобы он был доступен из любой точки
-                // нашего сервиса
-                RequestContextHolder.getRequestAttributes().setAttribute("client_id", clientId, 1);
-
+            } else {
+                logger.warn("Token is missing");
                 filterChain.doFilter(request, response);
-            } catch (IllegalAccessException e) {
-                logger.warn("Token is invalid");
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                objectMapper.writeValue(response.getWriter(),
-                        Collections.singletonMap("error", "Token is expired or invalid"));
             }
-        } else {
-            logger.warn("Token is missing");
-            filterChain.doFilter(request, response);
         }
     }
 }

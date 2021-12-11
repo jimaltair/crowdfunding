@@ -13,6 +13,7 @@ public class CrowdfundingUtils {
 
     public static Long getClientIdFromRequestContext() {
         log.info("Try to get client id from RequestContextHolder");
+        // TODO: добавить перехват NPE
         Optional<Long> clientId = Optional.of(
                 (Long) RequestContextHolder.getRequestAttributes().getAttribute("client_id", 1));
         if (!clientId.isPresent()) {
