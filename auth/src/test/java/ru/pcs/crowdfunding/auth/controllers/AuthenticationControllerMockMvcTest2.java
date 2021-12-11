@@ -9,15 +9,15 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
+import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 
 import java.util.Arrays;
 
@@ -32,30 +32,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureWebTestClient
+@AutoConfigureTestDatabase
+@TestPropertySource(properties = {"spring.sql.init.mode=never"}) // выключает накатывание data.sql
 @DisplayName("AuthenticationController")
 public class AuthenticationControllerMockMvcTest2 {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private EmbeddedDatabase embeddedDatabase;
+    @Autowired
+    private AuthenticationInfosRepository authenticationInfosRepository;
 
     private String techAuthToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI";
     private String otherTechAuthToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjQxNTc5Nzc2fQ.zaAgZjCMUEzML_W-px8al2DQsSOIqemMxDjoRHlQ7MQ";
 
     @BeforeEach
     void setUp() {
-        embeddedDatabase = new EmbeddedDatabaseBuilder().
-                setType(EmbeddedDatabaseType.H2).
-                addScript("db-test-schema.sql").
-                addScript("db-test-data.sql").
-                build();
+        authenticationInfosRepository.save(AuthenticationInfo.builder()
+                .userId(42L)
+                .email("email@email.com")
+                .password("22222222!")
+                .build());
     }
 
     @AfterEach
     public void tearDown() {
-        embeddedDatabase.shutdown();
     }
 
     @Nested
