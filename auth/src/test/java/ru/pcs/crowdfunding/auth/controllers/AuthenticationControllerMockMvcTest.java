@@ -59,6 +59,7 @@ public class AuthenticationControllerMockMvcTest {
 
     @AfterEach
     public void tearDown() {
+        authenticationInfosRepository.deleteAll();
     }
 
     @Nested
