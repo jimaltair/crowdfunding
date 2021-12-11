@@ -90,7 +90,7 @@ public class OperationValidator {
     private void isBalanceEnoughForOperation(OperationDto operationDto) {
         Account account = accountsRepository.getById(operationDto.getCreditAccountId());
         BigDecimal balance = paymentsRepository.findBalanceByAccountAndDatetime(account, operationDto.getDatetime());
-        if (balance.compareTo(operationDto.getSum()) <= 0 & balance.compareTo(BigDecimal.ZERO) < 1) {
+        if (balance.compareTo(operationDto.getSum()) < 0 || balance.compareTo(BigDecimal.ZERO) < 1) {
             log.error("Validation error: ", new IllegalArgumentException(
                 "Для совершения операции на сумму " + operationDto.getSum() + " на счете недостаточно средств"));
             throw new IllegalArgumentException("Для совершения операции на сумму " + operationDto.getSum() + " на счете недостаточно средств");
