@@ -134,8 +134,6 @@ class SignUpControllerTest {
                 .andExpect(content().string(containsString("Sign Up Page")));
     }
 
-
-
     @Test
     void whenFormIsCorrect_thenSignUpAndRedirect () throws Exception {
        MvcResult mvcResult =  mockMvc.perform(post("/signUp")

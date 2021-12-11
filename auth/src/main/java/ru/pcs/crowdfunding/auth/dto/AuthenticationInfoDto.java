@@ -1,6 +1,5 @@
 package ru.pcs.crowdfunding.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.validation.ValidPassword;
@@ -13,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Builder
 @AllArgsConstructor
