@@ -5,8 +5,3 @@ INSERT into operation_type (id, description, type) values
 (4, 'withdrawal of funds from the platform', 'WITHDRAW')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT into account(id, date_created, is_active, date_modified) values
-(1, now(), true, now()),
-(2, now(), true, now()),
-(3, now(), true, now())
-ON CONFLICT (id) DO NOTHING;
