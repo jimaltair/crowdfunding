@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +14,7 @@ import ru.pcs.crowdfunding.client.services.SignInService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 
 @RequiredArgsConstructor
@@ -24,14 +26,24 @@ public class SignInController {
     private final SignInService signInService;
     private static final String TOKEN_COOKIE_NAME = "accessToken";
 
-    @GetMapping
+    @GetMapping()
     public String getSignInPage(Model model) {
         model.addAttribute("signInForm", new AuthSignInRequest());
         return "signIn";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String signIn(AuthSignInRequest authSignInRequest, HttpServletResponse response) {
+    public String signIn(@Valid AuthSignInRequest authSignInRequest,
+                         BindingResult bindingResult,
+                         Model model,
+                         HttpServletResponse response) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("signInForm", authSignInRequest);
+            log.error("Incorrect data sign in, 'bindingResult' has error(s) - {}", bindingResult.getAllErrors());
+            return "signIn";
+        }
+
         log.info("Введен email {} ", authSignInRequest.getEmail());
 
         AuthSignInResponse responseForm = signInService.signIn(authSignInRequest);
@@ -42,8 +54,7 @@ public class SignInController {
         if (responseForm.getUserId() == 0L) {
             return "redirect:/signIn?error";
         }
+
         return "redirect:/clients/" + responseForm.getUserId();
-
     }
-
 }
