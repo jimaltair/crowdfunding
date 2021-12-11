@@ -1,6 +1,8 @@
 package ru.pcs.crowdfunding.client.services;
 
 import org.springframework.web.multipart.MultipartFile;
+import ru.pcs.crowdfunding.client.domain.Client;
+import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
@@ -23,4 +25,6 @@ public interface ProjectsService {
     Long getContributorsCountByProjectId(Long projectId);
 
     List<ProjectDto> getConfirmedProjects();
+
+    List<ProjectDto> getProjectsFromClient(ClientDto client);
 }
