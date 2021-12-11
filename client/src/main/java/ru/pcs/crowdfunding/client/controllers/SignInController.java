@@ -28,7 +28,7 @@ public class SignInController {
 
     @GetMapping
     public String getSignInPage(Model model) {
-        model.addAttribute("signInForm", new AuthSignInRequest());
+        model.addAttribute("authSignInRequest", new AuthSignInRequest());
         return "signIn";
     }
 
@@ -39,7 +39,7 @@ public class SignInController {
                          HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("signInForm", authSignInRequest);
+            model.addAttribute("authSignInRequest", authSignInRequest);
             log.error("Incorrect data sign in, 'bindingResult' has error(s) - {}", bindingResult.getAllErrors());
             return "signIn";
         }
