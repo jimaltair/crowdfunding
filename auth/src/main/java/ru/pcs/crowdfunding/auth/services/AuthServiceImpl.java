@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
-import ru.pcs.crowdfunding.auth.repositories.RoleRepository;
+import ru.pcs.crowdfunding.auth.repositories.RolesRepository;
 import ru.pcs.crowdfunding.auth.repositories.StatusRepository;
 
 import java.util.Arrays;
@@ -19,7 +19,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationInfosRepository authenticationInfosRepository;
     private final StatusRepository statusRepository;
-    private final RoleRepository roleRepository;
+    private final RolesRepository rolesRepository;
 
     @Override
     public Optional<AuthenticationInfoDto> findById(Long id) {
@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
                 .password(authenticationInfo.getPassword())
                 .refreshToken("refresh")  //TODO дописать
                 .isActive(true)
-                .roles(Arrays.asList(roleRepository.getRoleByName("USER")))
+                .roles(Arrays.asList(rolesRepository.getRoleByName("USER")))
                 .status(statusRepository.getStatusByName("CONFIRMED"))
                 .build();
             AuthenticationInfo result = authenticationInfosRepository.save(build);

@@ -30,7 +30,7 @@ import java.util.Optional;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private static final Duration DEFAULT_TOKEN_DURATION = Duration.ofDays(30);
-    public static final Role DEFAULT_ROLE = new Role(1L, Role.RoleEnum.USER);
+    private static final String DEFAULT_USER_ROLE = "USER";
 
     private final AuthenticationInfosRepository authenticationInfosRepository;
     private final AuthorizationInfosRepository authorizationInfosRepository;
@@ -120,7 +120,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String generateAccessToken(Long userId) {
         TokenContent tokenContent = TokenContent.builder()
                 .userId(userId)
-                .role(DEFAULT_ROLE)
+                .role(rolesRepository.getRoleByName(DEFAULT_USER_ROLE))
                 .build();
         String result = tokenProvider.generate(tokenContent, DEFAULT_TOKEN_DURATION);
         log.info("Result of 'generateAccessToken' - {}", result);

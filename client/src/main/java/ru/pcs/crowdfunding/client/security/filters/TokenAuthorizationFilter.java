@@ -5,10 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
 import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
+import ru.pcs.crowdfunding.client.security.SecurityConfiguration;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 
 import javax.servlet.FilterChain;
@@ -54,13 +57,12 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         objectMapper.writeValue(response.getWriter(), Collections.singletonMap("error", "user not found with token"));
+                    } else {
+                        // кладём id пользователя в аттрибуты RequestContextHolder'а, чтобы он был доступен из любой точки
+                        // нашего сервиса
+                        RequestContextHolder.getRequestAttributes().setAttribute("client_id", clientId, 1);
+                        filterChain.doFilter(request, response);
                     }
-
-                    // кладём id пользователя в аттрибуты RequestContextHolder'а, чтобы он был доступен из любой точки
-                    // нашего сервиса
-                    RequestContextHolder.getRequestAttributes().setAttribute("client_id", clientId, 1);
-
-                    filterChain.doFilter(request, response);
                 } catch (IllegalAccessException e) {
                     logger.warn("Token is invalid");
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
