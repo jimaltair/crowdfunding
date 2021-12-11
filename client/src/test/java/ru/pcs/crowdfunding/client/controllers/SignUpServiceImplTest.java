@@ -138,6 +138,5 @@ class SignUpServiceImplTest {
         Client client = clientsRepository.findById(TEST_CLIENT_ID).get();
 
         assertEquals(TEST_ACCOUNT_ID, client.getAccountId());
-
     }
 }
