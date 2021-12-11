@@ -12,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"image"})
-@EqualsAndHashCode(exclude = {"image"})
+@ToString(exclude = {"image", "projects"})
+@EqualsAndHashCode(exclude = {"image", "projects"})
 public class ClientDto {
 
     private Long id;

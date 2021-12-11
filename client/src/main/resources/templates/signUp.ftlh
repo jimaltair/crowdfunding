@@ -38,6 +38,10 @@
     <label for="email">Enter email:</label>
     <@spring.formInput 'signUpForm.email' 'id="email" class="text" placeholder="Your email"'/>
     <@spring.showErrors '<br>' 'error' />
+    <#if emailAlreadyExists??>
+        <br>
+        <span class="error">This email already exists</span>
+    </#if>
     <br>
     <br>
     <label for="password">Enter password:</label>

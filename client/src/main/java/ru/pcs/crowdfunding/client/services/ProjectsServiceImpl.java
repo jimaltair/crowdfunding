@@ -10,10 +10,7 @@ import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
-import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
-import ru.pcs.crowdfunding.client.dto.ProjectDto;
-import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.dto.ImageDto;
+import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
@@ -55,6 +52,19 @@ public class ProjectsServiceImpl implements ProjectsService {
     public Long getContributorsCountByProjectId(Long projectId) {
         Project project = projectsRepository.getProjectById(projectId).get();
         return transactionServiceClient.getContributorsCount(project.getAccountId());
+    }
+
+    @Override
+    public List<ProjectDto> getProjectsFromClient(ClientDto clientDto) {
+        List<Project> projects = clientDto.getProjects();
+        return projects.stream().map(project -> {
+            Optional<ProjectDto> projectDto = findById(project.getId());
+            if (!projectDto.isPresent()) {
+                log.error("Project didn't found");
+                throw new IllegalArgumentException("Project didn't found");
+            }
+            return projectDto.get();
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -143,14 +153,24 @@ public class ProjectsServiceImpl implements ProjectsService {
     private void updateProjectImage(MultipartFile file, Project existedProject) {
         if (!file.isEmpty()) {
             log.info("Try to update project image with new image: name={} and size={}", file.getOriginalFilename(), file.getSize());
-            ProjectImage projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
+            Optional<ProjectImage> projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
             try {
-                projectImage.setContent(file.getBytes());
-                projectImage.setName(file.getOriginalFilename());
+                if (!projectImage.isPresent()) {
+                    log.info("The project has no image, create new one");
+                    ProjectImage newProjectImage = ProjectImage.builder()
+                            .project(existedProject)
+                            .content(file.getBytes())
+                            .name(file.getName())
+                            .build();
+                    projectImagesRepository.save(newProjectImage);
+                } else {
+                    projectImage.get().setContent(file.getBytes());
+                    projectImage.get().setName(file.getOriginalFilename());
+                    projectImagesRepository.save(projectImage.get());
+                }
             } catch (IOException e) {
                 throw new IllegalStateException("Problem with updating project image");
             }
-            projectImagesRepository.save(projectImage);
             log.info("Project image was updated successfully");
         }
     }
@@ -183,7 +203,7 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .getByStatus(ProjectStatus.Status.CONFIRMED);
 
         return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(
-               statusConfirmed));
+                statusConfirmed));
     }
 
     /**
