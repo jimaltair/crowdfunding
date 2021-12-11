@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
 import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 
@@ -34,11 +36,9 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<Cookie> cookie = Arrays.stream(request.getCookies())
-                .filter(cracker -> cracker.getName().equals(TOKEN_COOKIE_NAME))
-                .findFirst();
-        if (cookie.isPresent()) {
-            String token = cookie.get().getValue();
+        Optional<String> tokenOptional = CrowdfundingUtils.getCookieValueFromRequest(request, TOKEN_COOKIE_NAME);
+        if (tokenOptional.isPresent()) {
+            String token = tokenOptional.get();
             log.info("Got token {} from cookie", token);
             try {
                 Long clientId = tokenProvider.getClientIdFromToken(token);
@@ -50,7 +50,11 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     objectMapper.writeValue(response.getWriter(), Collections.singletonMap("error", "user not found with token"));
                 }
-                //TODO: здесь можно добавить логику по дополнительной проверке роли юзера - её также можно достать из токена
+
+                // кладём id пользователя в аттрибуты RequestContextHolder'а, чтобы он был доступен из любой точки
+                // нашего сервиса
+                RequestContextHolder.getRequestAttributes().setAttribute("client_id", clientId, 1);
+
                 filterChain.doFilter(request, response);
             } catch (IllegalAccessException e) {
                 logger.warn("Token is invalid");

@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
+import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
@@ -33,6 +34,10 @@ public class ProjectsController {
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable("id") Long id, Model model) {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
+
+        // пример того как можем получить id текущего пользователя
+        Long clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        log.info("Getting project home page for user with id={}", clientId);
 
         Optional<ProjectDto> project = projectsService.findById(id);
         if (!project.isPresent()) {
