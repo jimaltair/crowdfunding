@@ -167,7 +167,6 @@
                                 <form role="form" class="form-inline" action="/operation/top_up" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <input name="client_id" type="hidden" class="form-control" value="${clientDto.id}"/>
-                                        <input name="account_id" type="hidden" class="form-control" value="${clientDto.accountId}"/>
                                         <label class="control-label col-sm-4">Пополнить баланс</label>
                                         <input name="sum" type="text" class="form-control" placeholder="введите сумму"/>
                                     </div>
