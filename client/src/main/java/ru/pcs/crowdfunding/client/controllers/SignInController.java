@@ -26,7 +26,7 @@ public class SignInController {
     private final SignInService signInService;
     private static final String TOKEN_COOKIE_NAME = "accessToken";
 
-    @GetMapping()
+    @GetMapping
     public String getSignInPage(Model model) {
         model.addAttribute("signInForm", new AuthSignInRequest());
         return "signIn";
