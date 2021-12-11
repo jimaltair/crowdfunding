@@ -41,7 +41,7 @@
     <br>
     <br>
     <label for="password">Enter password:</label>
-    <@spring.formInput 'signUpForm.password' 'id="password" class="text" placeholder="Your password"'/>
+    <@spring.formPasswordInput 'signUpForm.password' 'id="password" class="text" placeholder="Your password"'/>
     <@spring.showErrors '<br>' 'error' />
     <br>
     <br>

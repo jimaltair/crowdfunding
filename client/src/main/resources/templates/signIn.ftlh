@@ -21,7 +21,7 @@
     <br>
     <br>
     <label for="password">Ваш пароль:</label>
-    <@spring.formInput 'authSignInRequest.password' 'id="password" class="text" placeholder="Пароль"'/>
+    <@spring.formPasswordInput 'authSignInRequest.password' 'id="password" class="text" placeholder="Пароль"'/>
     <@spring.showErrors '<br>' 'error' />
     <br>
     <br>
