@@ -1,5 +1,6 @@
 package ru.pcs.crowdfunding.auth.controllers;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -51,6 +52,11 @@ class AuthControllerMockMvcTest {
             .refreshToken("refresh_test_token")
             .isActive(true)
             .build());
+    }
+
+    @AfterEach
+    public void tearDown() {
+        authenticationInfosRepository.deleteAll();
     }
 
     @Nested
