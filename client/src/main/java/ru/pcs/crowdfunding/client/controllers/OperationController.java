@@ -66,6 +66,7 @@ public class OperationController {
 
         try {
             operationDto = operationService.operate(operationDto);
+            log.info("Getting operationDto from tran service = {} ", operationDto);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return "redirect:/clients/" + clientId + "?error=" + e;
@@ -108,6 +109,7 @@ public class OperationController {
 
         try {
             operationDto = operationService.operate(operationDto);
+            log.info("Getting operationDto from tran service = {} ", operationDto);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return "redirect:/projects/" + projectId + "?error=" + e;

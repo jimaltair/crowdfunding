@@ -59,7 +59,8 @@ public class AccountController {
                                                       @RequestParam("date")
                                                       Long epochSecondTimeStamp) {
 
-        Instant balanceDateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
+        //Instant balanceDateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
+        Instant balanceDateTime = Instant.now();
         log.info("get /api/account/{id}/balance: id = {}, date = {}", id, balanceDateTime);
 
         ResponseDto response;
