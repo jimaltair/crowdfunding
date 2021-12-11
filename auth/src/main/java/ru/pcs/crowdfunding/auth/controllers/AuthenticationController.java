@@ -44,7 +44,7 @@ public class AuthenticationController {
                 .success(false)
                 .error(Arrays.asList("Email already exists","ERROR MESSAGE"))
                 .build();
-        ResponseEntity<ResponseDto> responseBody = ResponseEntity.badRequest().body(response);
+        ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         log.info("Finishing 'post /api/signUp/': 'responseBody' - {} , {} ", responseBody.getStatusCode(), responseBody.getBody().getError());
         return responseBody;
     }
