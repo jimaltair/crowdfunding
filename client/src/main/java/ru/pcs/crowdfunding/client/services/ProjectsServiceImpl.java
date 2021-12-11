@@ -10,10 +10,7 @@ import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
-import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
-import ru.pcs.crowdfunding.client.dto.ProjectDto;
-import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.dto.ImageDto;
+import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
@@ -55,6 +52,19 @@ public class ProjectsServiceImpl implements ProjectsService {
     public Long getContributorsCountByProjectId(Long projectId) {
         Project project = projectsRepository.getProjectById(projectId).get();
         return transactionServiceClient.getContributorsCount(project.getAccountId());
+    }
+
+    @Override
+    public List<ProjectDto> getProjectsFromClient(ClientDto clientDto) {
+        List<Project> projects = clientDto.getProjects();
+        return projects.stream().map(project -> {
+            Optional<ProjectDto> projectDto = findById(project.getId());
+            if (!projectDto.isPresent()) {
+                log.error("Project didn't found");
+                throw new IllegalArgumentException("Project didn't found");
+            }
+            return projectDto.get();
+        }).collect(Collectors.toList());
     }
 
     @Override
