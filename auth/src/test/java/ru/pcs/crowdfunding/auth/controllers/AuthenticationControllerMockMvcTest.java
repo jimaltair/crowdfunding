@@ -2,7 +2,6 @@ package ru.pcs.crowdfunding.auth.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -49,8 +48,6 @@ public class AuthenticationControllerMockMvcTest {
     @MockBean
     private AuthenticationService authenticationService;
 
-
-
     private String techAuthToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI";
     private String otherTechAuthToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjQxNTc5Nzc2fQ.zaAgZjCMUEzML_W-px8al2DQsSOIqemMxDjoRHlQ7MQ";
     ObjectMapper objectMapper = new ObjectMapper();
@@ -58,6 +55,17 @@ public class AuthenticationControllerMockMvcTest {
     @BeforeEach
     void setUp() {
         //region POST
+        when(authenticationService.existEmailInDb(
+            AuthenticationInfoDto.builder()
+                .userId(2L)
+                .email("email@email.com")
+                .password("1111111!")
+                .accessToken(null)
+                .refreshToken(null)
+                .isActive(null)
+                .build()
+        )).thenReturn(true);
+
         AuthenticationInfoDto authInfoDto = AuthenticationInfoDto.builder()
             .userId(1L)
             .email("email@email.com")
@@ -67,8 +75,7 @@ public class AuthenticationControllerMockMvcTest {
             .isActive(null)
             .build();
 
-
-        when(authenticationService.existEmailInDb(authInfoDto)).thenReturn(true);
+        when(authenticationService.existEmailInDb(authInfoDto)).thenReturn(false);
 
         AuthenticationInfo authInfo = AuthenticationInfo.builder()
             .email("email@email.com".toLowerCase())
@@ -101,22 +108,20 @@ public class AuthenticationControllerMockMvcTest {
     @DisplayName("POST /api/signUp")
     class GetSignUpTest {
 
-        @Disabled
         @Test
         void when_usedУEmail_then_Status201_and_ResponseReturnsAuthenticationInfo() throws Exception {
             mockMvc.perform(post("/api/signUp")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", techAuthToken)
-                    .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
+                    .content("{\"userId\": 2, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$['false']", is(true)))
+                .andExpect(jsonPath("$['success']", is(false)))
                 .andExpect(jsonPath("$['error']", is(Arrays.asList("Email already exists", "ERROR MESSAGE"))))
                 .andExpect(jsonPath("$['data']", nullValue(null)));
         }
 
-        @Disabled
         @Test
         void when_newEmail_then_Status201_and_ResponseReturnsAuthenticationInfo() throws Exception {
 
@@ -134,8 +139,6 @@ public class AuthenticationControllerMockMvcTest {
             mockMvc.perform(post("/api/signUp")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", techAuthToken)
-//                    .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\"}")
-//                    .content("{\"userId\": 1, \"email\": \"email@email.com\", \"password\": \"1111111!\", \"accessToken\": null, \"refreshToken\": null, \"isActive\": null}")
                     .content(json)
                  )
                 .andDo(print())
