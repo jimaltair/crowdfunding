@@ -83,7 +83,7 @@
         <#if userId == 0 >
             <li class="nav-item"><a class="nav-link" href="/signIn">Профиль</a></li>
         <#else>
-            <li class="nav-item"><a class="nav-link" href="/clients/${userId}">Профиль</a></li>
+            <li class="nav-item"><a class="nav-link" href="/clients/">Профиль</a></li>
         </#if>
         <li class="nav-item"><a class="nav-link" href="/logout">Выход</a></li>
     </ul>
@@ -133,7 +133,7 @@
                                   enctype="multipart/form-data">
                                 <input name="project_id" type="hidden" class="form-control" value="${project.id}"/>
                                 <input name="sumPayment" type="text" class="form-control" placeholder="Введите сумму"/>
-                                <input type="submit" class="btn btn-success col-12" value="Поддержать проект"/>
+                                <input type="submit" class="btn btn-success col-12" style="width: auto" value="Поддержать проект"/>
                             </form>
                         </div>
                         <!-- Project days -->

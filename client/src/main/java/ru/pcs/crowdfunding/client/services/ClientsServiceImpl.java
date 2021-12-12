@@ -26,11 +26,11 @@ import static ru.pcs.crowdfunding.client.dto.ClientDto.from;
 @Slf4j
 public class ClientsServiceImpl implements ClientsService {
     private final ClientsRepository clientsRepository;
+    private final ProjectsRepository projectsRepository;
 
     private final ClientImagesRepository clientImagesRepository;
     private final TransactionServiceClient transactionServiceClient;
     private final AuthorizationServiceClient authorizationServiceClient;
-    private final ProjectsRepository projectsRepository;
 
     @Override
     public Optional<ClientDto> findById(Long id) {
@@ -57,9 +57,6 @@ public class ClientsServiceImpl implements ClientsService {
         }
         return clientsRepository.findById(project.get().getAuthor().getId());
     }
-
-
-
     @Override
     public Optional<ImageDto> getImageById(Long id) {
         return clientImagesRepository.findById(id)

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.domain.Client;
-import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
@@ -24,7 +23,6 @@ import ru.pcs.crowdfunding.client.services.ProjectsService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -37,32 +35,38 @@ import java.util.Optional;
 public class ProjectsController {
 
     private final ProjectsService projectsService;
-    private final ClientsService clientsService;
     private final JwtTokenProvider tokenProvider;
+    private final ClientsService clientsService;
 
     @GetMapping(value = "/{id}")
-    public String getById(@PathVariable("id") Long id, Model model,  HttpServletRequest request) {
+    public String getById(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
-        Optional<Client> client = clientsService.findByProject(project.get());
-        double moneyCollected = project.get().getMoneyCollected().doubleValue();
-        double moneyGoal = project.get().getMoneyGoal().doubleValue();
-        long percent = (long) ((moneyCollected / moneyGoal) * 100);
-        LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
-        LocalDate finishDate = project.get().getFinishDate().atZone(ZoneOffset.UTC).toLocalDate();
-        int finish = finishDate.compareTo(LocalDate.now());
         if (!project.isPresent()) {
             log.error("Project with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
         }
-        Long tokenClientId = 0L;
+        Optional<Client> client = clientsService.findByProject(project.get());
+        if (!client.isPresent()) {
+            log.error("Client didn't found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client didn't found");
+        }
+
+        long percent = getPercentForProgressBar(project);
+
+        LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = getDaysLeft(project);
+
+
+        Long tokenClientId;
 
         try {
             String token = getTokenFromCookie(request);
             tokenClientId = tokenProvider.getClientIdFromToken(token);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            return "newProjectCard";
         }
 
         log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
@@ -77,6 +81,19 @@ public class ProjectsController {
         return "newProjectCard";
     }
 
+    private int getDaysLeft(Optional<ProjectDto> project) {
+        LocalDate finishDate = project.get().getFinishDate().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = finishDate.compareTo(LocalDate.now());
+        return finish;
+    }
+
+    private long getPercentForProgressBar(Optional<ProjectDto> project) {
+        double moneyCollected = project.get().getMoneyCollected().doubleValue();
+        double moneyGoal = project.get().getMoneyGoal().doubleValue();
+        long percent = (long) ((moneyCollected / moneyGoal) * 100);
+        return percent;
+    }
+
     @GetMapping(value = "/create")
     public String getProjectCreatePage(Model model) {
         log.info("Starting 'get /projects/create'");
@@ -85,7 +102,7 @@ public class ProjectsController {
     }
 
     @PostMapping(value = "/create")
-    public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
+    public String createProject(@Valid ProjectForm form, BindingResult result, Model model, HttpServletRequest request,
                                 @RequestParam("file") MultipartFile file) {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
@@ -93,6 +110,18 @@ public class ProjectsController {
             model.addAttribute("projectCreatedForm", form);
             return "createProject";
         }
+
+        Long clientId;
+
+        try {
+            String token = getTokenFromCookie(request);
+            clientId = tokenProvider.getClientIdFromToken(token);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return "createProject";
+        }
+
+        form.setClientId(clientId);
 
         Optional<Long> projectId = projectsService.createProject(form, file);
         if (!projectId.isPresent()) {
@@ -158,26 +187,8 @@ public class ProjectsController {
         return "redirect:/projects/" + id;
     }
 
-    private Long getClientAccountId(Long clientId) throws IllegalAccessException {
-        Long accountId;
-        Optional<ClientDto> optionalClient = clientsService.findById(clientId);
-        if(!optionalClient.isPresent()) {
-            throw new IllegalAccessException("Client not found");
-        }
-        accountId = optionalClient.get().getAccountId();
-        return accountId;
-    }
 
-    private Long getProjectAccountId(Long projectId) throws IllegalAccessException {
-        Long accountId;
-        Optional<ProjectDto> optionalProject = projectsService.findById(projectId);
-        if(!optionalProject.isPresent()) {
-            throw new IllegalAccessException("Client not found");
-        }
-        accountId = optionalProject.get().getAccountId();
-        return accountId;
-    }
-
+    //Временный метод до запуска Spring Security и получения id пользователя из контекста
     private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {

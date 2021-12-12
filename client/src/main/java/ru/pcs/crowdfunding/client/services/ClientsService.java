@@ -16,5 +16,7 @@ public interface ClientsService {
 
     Optional<ImageDto> getImageById(Long id);
 
+    Long getAccountIdByClientId(Long clientId) throws IllegalAccessException;
+
     Optional<Client> findByProject(ProjectDto projectDto);
 }
