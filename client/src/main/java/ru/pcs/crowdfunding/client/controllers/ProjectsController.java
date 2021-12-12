@@ -61,8 +61,8 @@ public class ProjectsController {
     }
 
     @PostMapping(value = "/create")
-    public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
-                                HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+    public String createProject(@Valid ProjectForm form, BindingResult result, Model model, HttpServletRequest request,
+                                @RequestParam("file") MultipartFile file) {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
             log.error("Can't create new project, 'result' has error(s) - {}", result.getAllErrors());
