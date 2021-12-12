@@ -92,6 +92,15 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    public BigDecimal getMoneyGoal(Long projectId) {
+        Optional<ProjectDto> optionalProjectDto = findById(projectId);
+        if(!optionalProjectDto.isPresent()) {
+            return null;
+        }
+        return optionalProjectDto.get().getMoneyGoal();
+    }
+
+    @Override
     @Transactional
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Trying to create project from {}", form.toString());
@@ -218,15 +227,36 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public Long getAccountIdByProjectId(Long projectId) throws IllegalAccessException {
+    public Long getAccountIdByProjectId(Long projectId){
         Long accountId;
         Optional<ProjectDto> optionalProject = findById(projectId);
         if(!optionalProject.isPresent()) {
-            throw new IllegalAccessException("Client not found");
+            return null;
         }
-        accountId = optionalProject.get().getAccountId();
-        return accountId;
+        return optionalProject.get().getAccountId();
     }
+
+    @Override
+    public Long getAuthorByProjectId(Long projectId){
+        Long accountId;
+        Optional<ProjectDto> optionalProject = findById(projectId);
+        if(!optionalProject.isPresent()) {
+            return null;
+        }
+        return optionalProject.get().getClientId();
+    }
+
+    @Override
+    public void setProjectStatus(Long projectId, ProjectStatus projectStatus){
+
+        Optional<Project> optionalProject = projectsRepository.getProjectById(projectId);
+
+        if(!optionalProject.isPresent()) {
+            throw new IllegalArgumentException("Project with id = " + projectId + " does not exits");
+        }
+        optionalProject.get().setStatus(projectStatus);
+    }
+
 
     /**
      * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется
