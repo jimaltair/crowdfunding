@@ -47,7 +47,7 @@ public class OperationServiceImpl implements OperationService {
         }
 
         OperationDto operationDto = OperationDto.builder()
-                .operationType(OperationDto.Type.PAYMENT)
+                .operationType(OperationDto.Type.WITHDRAW)
                 .sum(moneyCollected)
                 .initiatorId(clientId)
                 .debitAccountId(clientAccountId)
@@ -59,6 +59,45 @@ public class OperationServiceImpl implements OperationService {
 
         projectsService.setProjectStatus(projectId,
                 projectStatusesRepository.getByStatus(ProjectStatus.Status.FINISHED));
+    }
+
+    @Override
+    @Transactional
+    public void paymentToProject(Long projectId, Long clientId, BigDecimal sumPayment) throws IllegalArgumentException {
+
+        Long clientAccountId = clientsService.getAccountIdByClientId(clientId);
+        Long projectAccountId = projectsService.getAccountIdByProjectId(projectId);
+
+
+        OperationDto operationDto = OperationDto.builder()
+                .operationType(OperationDto.Type.PAYMENT)
+                .sum(sumPayment)
+                .initiatorId(clientId)
+                .debitAccountId(projectAccountId)
+                .creditAccountId(clientAccountId)
+                .build();
+
+        operationDto = operate(operationDto);
+        log.info("Getting operationDto from tran service = {} ", operationDto);
+
+    }
+
+    @Override
+    @Transactional
+    public void topUpToClient(Long clientId, BigDecimal sumTopUp) throws IllegalArgumentException {
+
+        Long clientAccountId = clientsService.getAccountIdByClientId(clientId);
+
+        OperationDto operationDto = OperationDto.builder()
+                .operationType(OperationDto.Type.TOP_UP)
+                .sum(sumTopUp)
+                .initiatorId(clientId)
+                .debitAccountId(clientAccountId)
+                .build();
+
+        operationDto = operate(operationDto);
+        log.info("Getting operationDto from tran service = {} ", operationDto);
+
     }
 
 }
