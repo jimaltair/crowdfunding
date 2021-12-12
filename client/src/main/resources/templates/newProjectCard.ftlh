@@ -80,11 +80,7 @@
     <!-- Links -->
     <ul class="navbar-nav mr-auto">
         <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
-        <#if userId == 0 >
-            <li class="nav-item"><a class="nav-link" href="/signIn">Профиль</a></li>
-        <#else>
-            <li class="nav-item"><a class="nav-link" href="/clients/">Профиль</a></li>
-        </#if>
+        <li class="nav-item"><a class="nav-link" href="/clients">Профиль</a></li>
         <li class="nav-item"><a class="nav-link" href="/logout">Выход</a></li>
     </ul>
 </nav>
