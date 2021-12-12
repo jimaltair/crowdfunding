@@ -152,7 +152,7 @@
                                 <form role="form" class="form-inline" action="/operation/withdraw" method="post"
                                       enctype="multipart/form-data">
                                     <input name="project_id" type="hidden" class="form-control" value="${project.id}"/>
-                                    <input type="submit" class="btn btn-success col-12" style="width: auto" value="Вывести деньги с проекта"/>
+                                    <input type="submit" class="btn btn-success col-12" style="text-justify: auto" value="Вывести деньги"/>
                                 </form>
                             </div>
                         </#if>
