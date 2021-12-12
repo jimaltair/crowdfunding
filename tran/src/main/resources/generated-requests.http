@@ -4,10 +4,10 @@ GET http://localhost:8082/api/account
 
 ###
 GET http://localhost:8082/api/account/2
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI
 
 ###
 GET http://localhost:8082/api/account/3/balance?date=1638806337
-
 
 ### Operation
 

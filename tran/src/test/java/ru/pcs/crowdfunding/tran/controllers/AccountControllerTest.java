@@ -43,12 +43,6 @@ class AccountControllerTest {
     @Autowired
     private AccountsRepository accountsRepository;
 
-    @Autowired
-    private OperationsRepository operationsRepository;
-
-    @Autowired
-    private PaymentsRepository paymentsRepository;
-
     private String techTranToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI";
     private String otherTechTranToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjQxNTc5Nzc2fQ.zaAgZjCMUEzML_W-px8al2DQsSOIqemMxDjoRHlQ7MQ";
 
@@ -66,44 +60,12 @@ class AccountControllerTest {
                 .createdAt(Instant.parse("2018-02-03T11:25:30.00Z"))
                 .modifiedAt(Instant.parse("2019-02-03T11:25:30.00Z"))
                 .build());
-//        operationsRepository.save(Operation.builder()
-//                        .operationType(OperationType.builder().type(OperationType.Type.PAYMENT).build())
-//                        .initiator(1l)
-//                        .datetime(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                        .debitAccount(Account.builder()
-//                                .isActive(true)
-//                                .id(1l)
-//                                .createdAt(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                                .modifiedAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                                .build())
-//                        .creditAccount(Account.builder()
-//                                .isActive(true)
-//                                .id(2l)
-//                                .createdAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                                .modifiedAt(Instant.parse("2019-02-03T11:25:30.00Z"))
-//                                .build())
-//                        .id(1l)
-//                        .sum(BigDecimal.valueOf(500))
-//                .build());
-//        operationsRepository.save(Operation.builder()
-//                .operationType(OperationType.builder().type(OperationType.Type.REFUND).build())
-//                .initiator(2l)
-//                .datetime(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                .debitAccount(Account.builder()
-//                        .isActive(true)
-//                        .id(2l)
-//                        .createdAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                        .modifiedAt(Instant.parse("2019-02-03T11:25:30.00Z"))
-//                        .build())
-//                .creditAccount(Account.builder()
-//                        .isActive(true)
-//                        .id(1l)
-//                        .createdAt(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                        .modifiedAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                        .build())
-//                .id(2l)
-//                .sum(BigDecimal.valueOf(500))
-//                .build());
+        AccountDto updateDto = AccountDto.builder()
+                .isActive(true)
+                .modifiedAt(Instant.parse("2021-02-03T11:25:30.00Z"))
+                .build();
+
+
     }
 
     @Nested
@@ -218,7 +180,7 @@ class AccountControllerTest {
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
     @DisplayName("POST /api/account")
-    class GetSignUpTest {
+    class CreateAccountTest {
 
         @Test
         void when_create_Account_then_Status201_and_ResponseReturnsAccountionInfo() throws Exception {
@@ -233,10 +195,11 @@ class AccountControllerTest {
         }
 
         @Test
-        void when_create_Account_with_Bad_then_Status201_and_ResponseReturnsAccountionInfo() throws Exception {
+        void when_create_Account_with_Bad_Token_then_Status201_and_ResponseReturnsAccount_Info() throws Exception {
             mockMvc.perform(get("/api/account")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("Authorization", otherTechTranToken)
+
                     )
                     .andDo(print())
                     .andExpect(status().is4xxClientError())
