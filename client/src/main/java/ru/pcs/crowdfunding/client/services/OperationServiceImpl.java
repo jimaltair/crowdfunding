@@ -47,7 +47,7 @@ public class OperationServiceImpl implements OperationService {
         }
 
         OperationDto operationDto = OperationDto.builder()
-                .operationType(OperationDto.Type.WITHDRAW)
+                .operationType(OperationDto.Type.PAYMENT)
                 .sum(moneyCollected)
                 .initiatorId(clientId)
                 .debitAccountId(clientAccountId)
