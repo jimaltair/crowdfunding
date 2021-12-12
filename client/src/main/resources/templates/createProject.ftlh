@@ -26,7 +26,7 @@
     <@spring.showErrors '<br>' 'error' />
     <br>
     <label for="finishDate">Введите дату завершения проекта:</label>
-    <@spring.formInput 'projectForm.finishDate' 'id="finishDate" placeholder="Дата"' 'datetime-local'/>
+    <@spring.formInput 'projectForm.finishDate' 'id="finishDate" placeholder="Дата"' 'date'/>
     <@spring.showErrors '<br>' 'error' />
     <#if dateMustBeFutureError??>
         <br>
