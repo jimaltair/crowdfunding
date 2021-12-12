@@ -9,10 +9,13 @@ import ru.pcs.crowdfunding.client.dto.AuthSignInResponse;
 @Service
 @RequiredArgsConstructor
 public class SignInServiceImpl implements SignInService {
+
     private final AuthorizationServiceClient authorizationServiceClient;
 
     @Override
     public AuthSignInResponse signIn(AuthSignInRequest authSignInRequest) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         return authorizationServiceClient.signIn(authSignInRequest);
     }
+
 }

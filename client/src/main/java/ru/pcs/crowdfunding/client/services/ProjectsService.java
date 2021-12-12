@@ -1,17 +1,20 @@
 package ru.pcs.crowdfunding.client.services;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
+import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.dto.ImageDto;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public interface ProjectsService {
+
+    /**
+     * есть предложение использовать над каждым методом @Retryable(value = Exception.class)
+     */
     Optional<ProjectDto> findById(Long id);
 
     Optional<Long> createProject(ProjectForm form, MultipartFile file);
@@ -27,4 +30,5 @@ public interface ProjectsService {
     List<ProjectDto> getConfirmedProjects();
 
     List<ProjectDto> getProjectsFromClient(ClientDto client);
+
 }

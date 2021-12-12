@@ -20,13 +20,20 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,18 +51,21 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public BigDecimal getMoneyCollectedByProjectId(Long projectId) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         Project project = projectsRepository.getProjectById(projectId).get();
         return transactionServiceClient.getBalance(project.getAccountId());
     }
 
     @Override
     public Long getContributorsCountByProjectId(Long projectId) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         Project project = projectsRepository.getProjectById(projectId).get();
         return transactionServiceClient.getContributorsCount(project.getAccountId());
     }
 
     @Override
     public List<ProjectDto> getProjectsFromClient(ClientDto clientDto) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         List<Project> projects = clientDto.getProjects();
         return projects.stream().map(project -> {
             Optional<ProjectDto> projectDto = findById(project.getId());
@@ -69,6 +79,7 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public Optional<ProjectDto> findById(Long id) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         Optional<Project> project = projectsRepository.findById(id);
         if (!project.isPresent()) {
             log.warn("Project with 'id' = {} not found", id);
@@ -91,7 +102,9 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    /** А мы не хотим провести эту операцию транзакционно? */
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
         Project project = getProject(form, projectStatus);
@@ -115,7 +128,9 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    /** А мы не хотим провести эту операцию транзакционно? */
     public ProjectDto updateProject(Long id, ProjectForm form, MultipartFile file) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         log.info("Try to update project with id={}", id);
         Optional<Project> project = projectsRepository.getProjectById(id);
         if (!project.isPresent()) {
@@ -177,6 +192,7 @@ public class ProjectsServiceImpl implements ProjectsService {
 
     @Override
     public Optional<ImageDto> getImageById(Long id) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         return projectImagesRepository.findById(id)
                 .map(image -> ImageDto.builder()
                         .format(FilenameUtils.getExtension(image.getName()))
@@ -185,6 +201,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     private ProjectImage getImage(MultipartFile file, Project project) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         try {
             return ProjectImage.builder()
                     .content(file.getBytes())
@@ -221,6 +238,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         if (form == null || projectStatus == null) {
             log.error("Can't create project - ProjectForm is null or ProjectStatus is null");
             throw new IllegalArgumentException("Can't create project");
@@ -261,4 +279,5 @@ public class ProjectsServiceImpl implements ProjectsService {
                     .build());
         }
     }
+
 }

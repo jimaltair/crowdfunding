@@ -10,15 +10,21 @@ import java.util.Optional;
 
 @Repository
 public interface ClientsRepository extends JpaRepository<Client, Long> {
+
     Optional<Client> findClientById(Long id);
+
     Optional<Client> findClientByAccountId(Long accountId);
 
     Page<Client> findAllByProjectsIsNotNull(Pageable pageable);
 
     Integer countAllByCountry(String country);
+
     Integer countAllByCity(String city);
 
     Page<Client> findClientsByFirstNameContainsOrLastNameContains(String firstName, String lastName, Pageable pageable);
+
     Page<Client> findClientsByCountryContains(String country, Pageable pageable);
+
     Page<Client> findClientsByCityContains(String city, Pageable pageable);
+
 }

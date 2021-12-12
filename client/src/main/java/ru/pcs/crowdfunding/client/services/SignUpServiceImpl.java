@@ -6,16 +6,22 @@ import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
-import ru.pcs.crowdfunding.client.dto.*;
+import ru.pcs.crowdfunding.client.dto.AuthSignUpRequest;
+import ru.pcs.crowdfunding.client.dto.AuthSignUpResponse;
+import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
+import ru.pcs.crowdfunding.client.dto.SignUpForm;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
 import javax.transaction.Transactional;
 
-
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SignUpServiceImpl implements SignUpService {
+
     private final ClientsRepository clientsRepository;
     private final AuthorizationServiceClient authorizationServiceClient;
     private final TransactionServiceClient transactionServiceClient;
@@ -23,6 +29,7 @@ public class SignUpServiceImpl implements SignUpService {
     @Transactional
     @Override
     public SignUpForm signUp(SignUpForm form) {
+        /** А мы не хотим отвалидировать сначала входные данные? */
         Client newClient = Client.builder()
                 .firstName(form.getFirstName())
                 .lastName(form.getLastName())
@@ -65,4 +72,5 @@ public class SignUpServiceImpl implements SignUpService {
         log.info("Result of method 'createAccount': {}", response.getId());
         return response.getId();
     }
+
 }
