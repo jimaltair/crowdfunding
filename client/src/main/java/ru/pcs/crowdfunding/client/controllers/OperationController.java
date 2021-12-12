@@ -20,14 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Controller
+@RequiredArgsConstructor
 /** А почему не RestController? */
 @RequestMapping("/operation")
-@RequiredArgsConstructor
-@Slf4j
 public class OperationController {
 
     private final OperationService operationService;
