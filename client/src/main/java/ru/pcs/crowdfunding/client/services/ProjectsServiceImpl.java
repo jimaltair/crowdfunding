@@ -122,6 +122,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    @Transactional
     public ProjectDto updateProject(Long id, ProjectForm form, MultipartFile file) {
         log.info("Try to update project with id={}", id);
         Optional<Project> project = projectsRepository.getProjectById(id);
@@ -176,7 +177,8 @@ public class ProjectsServiceImpl implements ProjectsService {
                     projectImagesRepository.save(projectImage.get());
                 }
             } catch (IOException e) {
-                throw new IllegalStateException("Problem with updating project image");
+                log.info("Exception while updating image", e);
+                throw new ImageProcessingError();
             }
             log.info("Project image was updated successfully");
         }
