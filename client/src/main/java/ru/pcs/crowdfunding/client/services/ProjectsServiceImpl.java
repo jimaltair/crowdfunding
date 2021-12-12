@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
@@ -91,10 +92,20 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    @Transactional
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
-        Project project = getProject(form, projectStatus);
+
+        Project project = Project.builder()
+                .author(clientsRepository.getById(form.getClientId()))
+                .title(form.getTitle())
+                .description(form.getDescription())
+                .createdAt(Instant.now())
+                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
+                .moneyGoal(form.getMoneyGoal())
+                .status(projectStatus)
+                .build();
 
         // создаём запрос в transaction-service на создание счёта для проекта
         log.info("Trying to create account for project");
@@ -204,6 +215,17 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(
                 statusConfirmed));
+    }
+
+    @Override
+    public Long getAccountIdByProjectId(Long projectId) throws IllegalAccessException {
+        Long accountId;
+        Optional<ProjectDto> optionalProject = findById(projectId);
+        if(!optionalProject.isPresent()) {
+            throw new IllegalAccessException("Client not found");
+        }
+        accountId = optionalProject.get().getAccountId();
+        return accountId;
     }
 
     /**
