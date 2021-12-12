@@ -131,7 +131,7 @@ class SignUpControllerTest {
         mockMvc.perform(get("/signUp"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Sign Up Page")));
+                .andExpect(content().string(containsString("Заполните форму регистрации:")));
     }
 
     @Test
