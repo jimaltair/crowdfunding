@@ -30,6 +30,10 @@
     <@spring.showErrors '<br>' 'error' />
     <h3>Пожалуйста, загрузите изображение для проекта:</h3>
     <input type="file" name="file">
+    <#if imageProcessingError??>
+        <br>
+        <span class="error">Не удалось обработать изображение</span>
+    </#if>
     <br>
     <input type="submit" value="Сохранить">
 </form>
