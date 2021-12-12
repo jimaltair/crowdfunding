@@ -80,6 +80,8 @@ public class ClientController {
             model.addAttribute("projectDtos", projectsService.getProjectsFromClient(client.get()));
         }
         model.addAttribute("clientForm", form);
+        // чтобы открылась нужная вкладка
+        model.addAttribute("isUpdating", Boolean.TRUE);
         return "profile_page";
     }
 

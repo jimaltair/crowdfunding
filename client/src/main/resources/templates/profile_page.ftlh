@@ -243,4 +243,13 @@
 
 </div><!-- /.main -->
 </div><!-- /.container -->
+<body>
+<script>
+    $(document).ready(function(){
+        <#if isUpdating??>
+            $('.nav-pills a[href="#change_profile"]').tab('show');
+        </#if>
+    });
+</script>
+</body>
 </html>
