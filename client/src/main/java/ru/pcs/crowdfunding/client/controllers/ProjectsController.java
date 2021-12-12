@@ -182,7 +182,7 @@ public class ProjectsController {
                 .build();
         model.addAttribute("projectForm", projectForm);
 
-        return "updateProject";
+        return "newUpdateProject";
     }
 
     @PostMapping(value = "/update/{id}")
@@ -203,6 +203,6 @@ public class ProjectsController {
 
         model.addAttribute("id", id);
         model.addAttribute("projectForm", form);
-        return "updateProject";
+        return "newUpdateProject";
     }
 }
