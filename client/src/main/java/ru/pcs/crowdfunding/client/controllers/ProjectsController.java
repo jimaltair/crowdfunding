@@ -65,7 +65,7 @@ public class ProjectsController {
         Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
         if (!clientId.isPresent()) {
             log.warn("Can't get user id from RequestContext");
-            return "createProject";
+            return "newCreateProject";
         }
         log.info("Get clientId = {} from secutity context", clientId.get());
         Long tokenClientId = clientId.get();
@@ -99,7 +99,7 @@ public class ProjectsController {
     public String getProjectCreatePage(Model model) {
         log.info("Starting 'get /projects/create'");
         model.addAttribute("projectForm", new ProjectForm());
-        return "createProject";
+        return "newCreateProject";
     }
 
     @PostMapping(value = "/create")
@@ -109,7 +109,7 @@ public class ProjectsController {
         if (result.hasErrors()) {
             log.error("Can't create new project, 'result' has error(s) - {}", result.getAllErrors());
             model.addAttribute("projectForm", form);
-            return "createProject";
+            return "newCreateProject";
         }
 
         Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
@@ -137,7 +137,7 @@ public class ProjectsController {
         }
 
         model.addAttribute("projectForm", form);
-        return "createProject";
+        return "newCreateProject";
     }
 
     @GetMapping("/image/{id}")
@@ -166,7 +166,7 @@ public class ProjectsController {
         Optional<ProjectDto> currentProject = projectsService.findById(id);
         if(!currentProject.isPresent()){
             model.addAttribute("projectForm", new ProjectForm());
-            return "createProject";
+            return "newCreateProject";
         }
 
         ProjectDto project = currentProject.get();
