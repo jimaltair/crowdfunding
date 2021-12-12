@@ -12,12 +12,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.domain.Client;
+import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
+import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
+import ru.pcs.crowdfunding.client.services.ClientsService;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -29,21 +37,44 @@ import java.util.Optional;
 public class ProjectsController {
 
     private final ProjectsService projectsService;
+    private final ClientsService clientsService;
+    private final JwtTokenProvider tokenProvider;
 
     @GetMapping(value = "/{id}")
-    public String getById(@PathVariable("id") Long id, Model model) {
+    public String getById(@PathVariable("id") Long id, Model model,  HttpServletRequest request) {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
+        Optional<Client> client = clientsService.findByProject(project.get());
+        double moneyCollected = project.get().getMoneyCollected().doubleValue();
+        double moneyGoal = project.get().getMoneyGoal().doubleValue();
+        long percent = (long) ((moneyCollected / moneyGoal) * 100);
+        LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
+        LocalDate finishDate = project.get().getFinishDate().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = finishDate.compareTo(LocalDate.now());
         if (!project.isPresent()) {
             log.error("Project with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
+        }
+        Long tokenClientId = 0L;
+
+        try {
+            String token = getTokenFromCookie(request);
+            tokenClientId = tokenProvider.getClientIdFromToken(token);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
 
         log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
 
         model.addAttribute("project", project.get());
-        return "projectCard";
+        model.addAttribute("client", client.get());
+        model.addAttribute("size", client.get().getProjects().size());
+        model.addAttribute("percent", percent);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("finishDate", finish);
+        model.addAttribute("userId", tokenClientId);
+        return "newProjectCard";
     }
 
     @GetMapping(value = "/create")
@@ -125,5 +156,35 @@ public class ProjectsController {
 
         model.addAttribute("project", updatedProject);
         return "redirect:/projects/" + id;
+    }
+
+    private Long getClientAccountId(Long clientId) throws IllegalAccessException {
+        Long accountId;
+        Optional<ClientDto> optionalClient = clientsService.findById(clientId);
+        if(!optionalClient.isPresent()) {
+            throw new IllegalAccessException("Client not found");
+        }
+        accountId = optionalClient.get().getAccountId();
+        return accountId;
+    }
+
+    private Long getProjectAccountId(Long projectId) throws IllegalAccessException {
+        Long accountId;
+        Optional<ProjectDto> optionalProject = projectsService.findById(projectId);
+        if(!optionalProject.isPresent()) {
+            throw new IllegalAccessException("Client not found");
+        }
+        accountId = optionalProject.get().getAccountId();
+        return accountId;
+    }
+
+    private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(SignUpController.TOKEN_COOKIE_NAME)) {
+                return cookie.getValue();
+            }
+        }
+        throw new IllegalAccessException("Not enough rights for this operation");
     }
 }
