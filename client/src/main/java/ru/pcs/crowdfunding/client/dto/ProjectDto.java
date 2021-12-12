@@ -34,6 +34,7 @@ public class ProjectDto {
 
     private String status;
     private Long accountId;
+    private Long clientId;
 
     public static ProjectDto from(Project project) {
         return ProjectDto.builder()
@@ -46,6 +47,7 @@ public class ProjectDto {
                 .moneyGoal(project.getMoneyGoal())
                 .status(project.getStatus().getStatus().toString())
                 .accountId(project.getAccountId())
+                .clientId(project.getAuthor().getId())
                 .build();
     }
 
