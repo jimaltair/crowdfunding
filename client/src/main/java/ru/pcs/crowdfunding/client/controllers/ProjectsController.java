@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
@@ -25,6 +26,7 @@ import ru.pcs.crowdfunding.client.services.ProjectsService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -36,9 +38,11 @@ import java.util.Optional;
 public class ProjectsController {
 
     private final ProjectsService projectsService;
+    private final JwtTokenProvider tokenProvider;
+    private final ClientsService clientsService;
 
     @GetMapping(value = "/{id}")
-    public String getById(@PathVariable("id") Long id, Model model) {
+    public String getById(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
@@ -46,11 +50,51 @@ public class ProjectsController {
             log.error("Project with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
         }
+        Optional<Client> client = clientsService.findByProject(project.get());
+        if (!client.isPresent()) {
+            log.error("Client didn't found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client didn't found");
+        }
+
+        long percent = getPercentForProgressBar(project);
+
+        LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = getDaysLeft(project);
+
+
+        Long tokenClientId;
+
+        try {
+            String token = getTokenFromCookie(request);
+            tokenClientId = tokenProvider.getClientIdFromToken(token);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return "newProjectCard";
+        }
 
         log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
 
         model.addAttribute("project", project.get());
-        return "projectCard";
+        model.addAttribute("client", client.get());
+        model.addAttribute("size", client.get().getProjects().size());
+        model.addAttribute("percent", percent);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("finishDate", finish);
+        model.addAttribute("userId", tokenClientId);
+        return "newProjectCard";
+    }
+
+    private int getDaysLeft(Optional<ProjectDto> project) {
+        LocalDate finishDate = project.get().getFinishDate().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = finishDate.compareTo(LocalDate.now());
+        return finish;
+    }
+
+    private long getPercentForProgressBar(Optional<ProjectDto> project) {
+        double moneyCollected = project.get().getMoneyCollected().doubleValue();
+        double moneyGoal = project.get().getMoneyGoal().doubleValue();
+        long percent = (long) ((moneyCollected / moneyGoal) * 100);
+        return percent;
     }
 
     @GetMapping(value = "/create")

@@ -11,8 +11,10 @@ import ru.pcs.crowdfunding.client.domain.*;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
+import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.repositories.ClientImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.*;
 import java.util.Optional;
@@ -24,6 +26,7 @@ import static ru.pcs.crowdfunding.client.dto.ClientDto.from;
 @Slf4j
 public class ClientsServiceImpl implements ClientsService {
     private final ClientsRepository clientsRepository;
+    private final ProjectsRepository projectsRepository;
 
     private final ClientImagesRepository clientImagesRepository;
     private final TransactionServiceClient transactionServiceClient;
@@ -45,7 +48,15 @@ public class ClientsServiceImpl implements ClientsService {
         return Optional.of(clientDto);
     }
 
-
+    @Override
+    public Optional<Client> findByProject(ProjectDto projectDto) {
+        Optional<Project> project = projectsRepository.findById(projectDto.getId());
+        if(!project.isPresent()) {
+            log.error("Project didn't found");
+            throw new IllegalArgumentException("Project didn't found");
+        }
+        return clientsRepository.findById(project.get().getAuthor().getId());
+    }
     @Override
     public Optional<ImageDto> getImageById(Long id) {
         return clientImagesRepository.findById(id)
