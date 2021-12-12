@@ -144,12 +144,22 @@ public class ProjectsController {
             return "updateProject";
         }
 
-        ProjectDto updatedProject = projectsService.updateProject(id, form, file);
+        try {
+            ProjectDto updatedProject = projectsService.updateProject(id, form, file);
 
-        updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
-        updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
+            updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
+            updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
 
-        model.addAttribute("project", updatedProject);
-        return "redirect:/projects/" + id;
+            model.addAttribute("project", updatedProject);
+            return "redirect:/projects/" + id;
+        } catch (ImageProcessingError e) {
+            log.warn("Caught ImageProcessingError exception");
+
+            model.addAttribute("id", id);
+            model.addAttribute("projectForm", form);
+            model.addAttribute("imageProcessingError", Boolean.TRUE);
+
+            return "updateProject";
+        }
     }
 }
