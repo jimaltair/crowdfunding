@@ -17,6 +17,7 @@ import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
+import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
@@ -57,6 +58,21 @@ public class ClientController {
                 .build());
 
         return "profile_page";
+    }
+
+    @GetMapping
+    public String forwardToClientProfilePage() {
+        log.info("Starting 'get /clients");
+
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (!clientId.isPresent()) {
+            log.warn("Can't get user id from RequestContext");
+            return "redirect:/signIn";
+        }
+        log.info("Get clientId = {} from secutity context", clientId.get());
+        Long contextClientId = clientId.get();
+
+        return "redirect:/clients/" + contextClientId;
     }
 
     @PostMapping(value = "/{id}")
