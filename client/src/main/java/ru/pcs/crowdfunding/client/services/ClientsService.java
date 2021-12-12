@@ -19,4 +19,7 @@ public interface ClientsService {
     /** есть предложение использовать над каждым методом @Retryable(value = Exception.class) */
     Optional<ImageDto> getImageById(Long id);
 
+    Long getAccountIdByClientId(Long clientId) throws IllegalAccessException;
+}
+
 }

@@ -31,4 +31,7 @@ public interface ProjectsService {
 
     List<ProjectDto> getProjectsFromClient(ClientDto client);
 
+    Long getAccountIdByProjectId(Long projectId) throws IllegalAccessException;
+}
+
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
@@ -102,12 +103,21 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    /** А мы не хотим провести эту операцию транзакционно? */
+    @Transactional
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         /** А мы не хотим отвалидировать сначала входные данные? */
         log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
-        Project project = getProject(form, projectStatus);
+
+        Project project = Project.builder()
+                .author(clientsRepository.getById(form.getClientId()))
+                .title(form.getTitle())
+                .description(form.getDescription())
+                .createdAt(Instant.now())
+                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
+                .moneyGoal(form.getMoneyGoal())
+                .status(projectStatus)
+                .build();
 
         // создаём запрос в transaction-service на создание счёта для проекта
         log.info("Trying to create account for project");
@@ -223,6 +233,17 @@ public class ProjectsServiceImpl implements ProjectsService {
                 statusConfirmed));
     }
 
+    @Override
+    public Long getAccountIdByProjectId(Long projectId) throws IllegalAccessException {
+        Long accountId;
+        Optional<ProjectDto> optionalProject = findById(projectId);
+        if(!optionalProject.isPresent()) {
+            throw new IllegalAccessException("Client not found");
+        }
+        accountId = optionalProject.get().getAccountId();
+        return accountId;
+    }
+
     /**
      * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется
      */
@@ -236,48 +257,4 @@ public class ProjectsServiceImpl implements ProjectsService {
             }
         }
     }
-
-    private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
-        /** А мы не хотим отвалидировать сначала входные данные? */
-        if (form == null || projectStatus == null) {
-            log.error("Can't create project - ProjectForm is null or ProjectStatus is null");
-            throw new IllegalArgumentException("Can't create project");
-        }
-
-        // получаем автора проекта через временный метод, пока не работает функционал,
-        // позволяющий создать проект уже зарегистрированному пользователю
-        Client userForTesting = getUserForTesting();
-        log.info("Use the test {} to create project", userForTesting.toString());
-
-        return Project.builder()
-                .author(userForTesting) // временно используем тестового пользователя в качестве автора
-                .title(form.getTitle())
-                .description(form.getDescription())
-                .createdAt(Instant.now())
-                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
-                .moneyGoal(form.getMoneyGoal())
-                .status(projectStatus)
-                .build();
-    }
-
-    /**
-     * Временный метод, создающий пользователя в базе для последующего использования в качестве автора проекта,
-     * если в базе на данный момент пусто. В противном случае возвращает первого по порядку пользователя.
-     *
-     * @return Client - сущность, представляющую пользователя данного сервиса.
-     */
-    private Client getUserForTesting() {
-        List<Client> users = clientsRepository.findAll();
-        if (!users.isEmpty()) {
-            return users.get(0);
-        } else {
-            return clientsRepository.save(Client.builder()
-                    .firstName("Иван")
-                    .lastName("Иванов")
-                    .city("Москва")
-                    .country("Россия")
-                    .build());
-        }
-    }
-
 }

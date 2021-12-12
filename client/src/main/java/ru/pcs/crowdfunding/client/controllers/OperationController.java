@@ -53,7 +53,7 @@ public class OperationController {
                 throw new IllegalArgumentException("Not enough rights for this operation");
             }
 
-            accountId = getClientAccountId(tokenClientId);
+            accountId = clientsService.getAccountIdByClientId(tokenClientId);
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -94,8 +94,8 @@ public class OperationController {
             tokenClientId = tokenProvider.getClientIdFromToken(token);
             log.info("Found tokenClientId = {} ", tokenClientId);
 
-            clientAccountId = getClientAccountId(tokenClientId);
-            projectAccountId = getProjectAccountId(projectId);
+            clientAccountId = clientsService.getAccountIdByClientId(tokenClientId);
+            projectAccountId = projectsService.getAccountIdByProjectId(projectId);
 
         } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -120,26 +120,8 @@ public class OperationController {
         return "redirect:/projects/" + projectId;
     }
 
-    private Long getClientAccountId(Long clientId) throws IllegalAccessException {
-        Long accountId;
-        Optional<ClientDto> optionalClient = clientsService.findById(clientId);
-        if(!optionalClient.isPresent()) {
-            throw new IllegalAccessException("Client not found");
-        }
-        accountId = optionalClient.get().getAccountId();
-        return accountId;
-    }
 
-    private Long getProjectAccountId(Long projectId) throws IllegalAccessException {
-        Long accountId;
-        Optional<ProjectDto> optionalProject = projectsService.findById(projectId);
-        if(!optionalProject.isPresent()) {
-            throw new IllegalAccessException("Client not found");
-        }
-        accountId = optionalProject.get().getAccountId();
-        return accountId;
-    }
-
+    //Временный метод до запуска Spring Security и получения id пользователя из контекста
     private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
