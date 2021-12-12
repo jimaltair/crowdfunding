@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.pcs.crowdfunding.client.dto.SignUpForm;
+import ru.pcs.crowdfunding.client.exceptions.EmailAlreadyExistsError;
 import ru.pcs.crowdfunding.client.services.SignUpService;
 
 import javax.servlet.http.Cookie;
@@ -46,12 +47,21 @@ public class SignUpController {
             return "signUp";
         }
 
-        form = signUpService.signUp(form);
+        try {
+            form = signUpService.signUp(form);
 
-        Cookie cookie = new Cookie(TOKEN_COOKIE_NAME, form.getAccessToken());
-        response.addCookie(cookie);
-        log.info("Finishing 'post /signUp': post 'form' - {}, 'cookie' - {}", form, cookie);
-        return "redirect:/clients/" + form.getId();
+            Cookie cookie = new Cookie(TOKEN_COOKIE_NAME, form.getAccessToken());
+            response.addCookie(cookie);
+            log.info("Finishing 'post /signUp': post 'form' - {}, 'cookie' - {}", form, cookie);
+            return "redirect:/clients/" + form.getId();
+        } catch (EmailAlreadyExistsError e) {
+            log.info("Caught EmailAlreadyExistsError exception");
+
+            model.addAttribute("signUpForm", form);
+            model.addAttribute("emailAlreadyExists", Boolean.TRUE);
+
+            return "signUp";
+        }
     }
 
 }

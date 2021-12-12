@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 /**
  * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
  */
@@ -14,7 +17,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AuthSignInRequest {
 
+    @Email
+    @NotBlank
     private String email;
-    private String password;
 
+    @NotBlank
+    private String password;
 }

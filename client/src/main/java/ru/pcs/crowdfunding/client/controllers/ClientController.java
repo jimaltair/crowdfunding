@@ -14,9 +14,12 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
+import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.services.ClientsService;
+import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,6 +37,7 @@ import java.util.Optional;
 public class ClientController {
 
     private final ClientsService clientsService;
+    private final ProjectsService projectsService;
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable Long id, Model model) {
@@ -44,10 +48,10 @@ public class ClientController {
             log.error("Client with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client with id " + id + " not found"); /** Есть предположение что использовать канкатенацию плохой подход, лучше как минимум String.format() */
         }
-
+        List<ProjectDto> projectDtos = projectsService.getProjectsFromClient(client.get());
         log.info("Finishing 'get /clients/{id}': result = {}", client.get());
         model.addAttribute("clientDto", client.get());
-
+        model.addAttribute("projectDtos", projectDtos);
         return "profile_page";
     }
 

@@ -1,13 +1,18 @@
 package ru.pcs.crowdfunding.client.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import ru.pcs.crowdfunding.client.dto.*;
+import ru.pcs.crowdfunding.client.exceptions.EmailAlreadyExistsError;
 
 @Component
+@Slf4j
 public class AuthorizationServiceRestTemplateClient extends RestTemplateClient implements AuthorizationServiceClient {
     private static final String SIGNUP_URL = "/api/signUp";
     private static final String SIGNIN_URL = "/api/signIn";
@@ -25,7 +30,15 @@ public class AuthorizationServiceRestTemplateClient extends RestTemplateClient i
 
     @Override
     public AuthSignUpResponse signUp(AuthSignUpRequest request) {
-        return post(SIGNUP_URL, request, AuthSignUpResponse.class);
+        try {
+            return post(SIGNUP_URL, request, AuthSignUpResponse.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getRawStatusCode() == HttpStatus.CONFLICT.value()) {
+                log.warn("Got 409 CONFLICT");
+                throw new EmailAlreadyExistsError();
+            }
+            throw e;
+        }
     }
 
     @Override

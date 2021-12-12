@@ -12,12 +12,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class AuthenticationInfoDto {
 
     @NotNull

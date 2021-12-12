@@ -9,7 +9,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString()
 @EqualsAndHashCode()
 @Entity
 @Table(name = "client_image")

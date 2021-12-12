@@ -130,9 +130,26 @@
                             </div>
                             <#----------------------------------->
                             <div class="tab-pane fade" id="own_projects">
-                                <h4>Типа свои проекты </h4>
+                                <h4>Данные по своим проектам </h4>
                                 <table class="table table-th-block">
                                     <tbody>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Цель</td>
+                                        <td>Собрано</td>
+                                        <td>Количество участников</td>
+                                        <td>Статус проекта</td>
+                                    </tr>
+                                    <#list projectDtos as project>
+                                        <tr>
+                                            <td> <a href="../projects/${project.id}">${project.title}</a></td>
+                                            <td>${project.moneyGoal}</td>
+                                            <td>${project.moneyCollected}</td>
+                                            <td>${project.contributorsCount}</td>
+                                            <td>${project.status}</td>
+                                        </tr>
+                                    </#list>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="tab-pane fade" id="sponsored_projects">
@@ -150,7 +167,6 @@
                                 <form role="form" class="form-inline" action="/operation/top_up" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <input name="client_id" type="hidden" class="form-control" value="${clientDto.id}"/>
-                                        <input name="account_id" type="hidden" class="form-control" value="${clientDto.accountId}"/>
                                         <label class="control-label col-sm-4">Пополнить баланс</label>
                                         <input name="sum" type="text" class="form-control" placeholder="введите сумму"/>
                                     </div>
