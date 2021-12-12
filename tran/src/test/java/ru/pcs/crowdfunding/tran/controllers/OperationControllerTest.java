@@ -18,12 +18,13 @@ import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -93,47 +94,15 @@ class OperationControllerTest {
 
 
 
-//        operationsRepository.save(Operation.builder()
-//                .operationType(OperationType.builder().type(testType.getType()).build())
-//                .initiator(1l)
-//                .datetime(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                .debitAccount(Account.builder()
-//                        .isActive(true)
-//                        .id(1l)
-//                        .createdAt(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                        .modifiedAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                        .build())
-//                .creditAccount(Account.builder()
-//                        .isActive(true)
-//                        .id(2l)
-//                        .createdAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                        .modifiedAt(Instant.parse("2019-02-03T11:25:30.00Z"))
-//                        .build())
-//                .id(1l)
-//                .sum(BigDecimal.valueOf(500))
-//                .build());
-//
-//
-//
-//        operationsRepository.save(Operation.builder()
-//                .operationType(OperationType.builder().type(testType.getType()).build())
-//                .initiator(2l)
-//                .datetime(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                .debitAccount(Account.builder()
-//                        .isActive(true)
-//                        .id(2l)
-//                        .createdAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                        .modifiedAt(Instant.parse("2019-02-03T11:25:30.00Z"))
-//                        .build())
-//                .creditAccount(Account.builder()
-//                        .isActive(true)
-//                        .id(1l)
-//                        .createdAt(Instant.parse("2017-02-03T11:25:30.00Z"))
-//                        .modifiedAt(Instant.parse("2018-02-03T11:25:30.00Z"))
-//                        .build())
-//                .id(2l)
-//                .sum(BigDecimal.valueOf(500))
-//                .build());
+        operationsRepository.save(Operation.builder()
+                .operationType(operationTypesRepository.getById(1L))
+                .initiator(1l)
+                .datetime(Instant.parse("2017-02-03T11:25:30.00Z"))
+                .debitAccount(accountsRepository.getById(1L))
+                .creditAccount(accountsRepository.getById(1L))
+                .id(1l)
+                .sum(BigDecimal.valueOf(500))
+                .build());
     }
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -151,6 +120,67 @@ class OperationControllerTest {
                     .andExpect(status().is2xxSuccessful())
                     .andExpect(jsonPath("$['success']", is(true)))
                     .andExpect(jsonPath("$['error']",  nullValue(null)));
+        }
+
+        @Test
+        void when_create_Operation_with_invalidID_then_Status400_and_ResponseReturnsAccount_Info() throws Exception {
+            mockMvc.perform(post("/api/operation")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", techTranToken)
+                            .content("{\"initiatorId\": 1, \"operationType\": \"TOP_UP\", \"debitAccountId\": \"101\", \"sum\": \"200.00\"}")
+                    )
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andExpect(jsonPath("$['success']",  is(false)));
+        }
+
+        @Test
+        void when_create_Operation_with_Bad_Token_then_Status400_and_ResponseReturnsAccount_Info() throws Exception {
+            mockMvc.perform(post("/api/operation")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", otherTechTranToken)
+                            .content("{\"initiatorId\": 1, \"operationType\": \"TOP_UP\", \"debitAccountId\": \"1\", \"sum\": \"200.00\"}")
+                    )
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andExpect(jsonPath("$['error']",  is("User not found with token")));
+        }
+    }
+
+    @Nested
+    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+    @DisplayName("Get /api/operation")
+    class GetOperationTest {
+
+        @Test
+        void when_get_Operation_then_Status201_and_ResponseReturnsAccount_Info() throws Exception {
+            mockMvc.perform(get("/api/operation/1")
+                            .header("Authorization", techTranToken)
+                    )
+                    .andDo(print())
+                    .andExpect(status().is2xxSuccessful())
+                    .andExpect(jsonPath("$['success']", is(true)))
+                    .andExpect(jsonPath("$['error']",  nullValue(null)));
+        }
+
+        @Test
+        void when_get_Operation_with_invalidID_then_Status400_and_ResponseReturnsAccount_Info() throws Exception {
+            mockMvc.perform(get("/api/operation/100")
+                            .header("Authorization", techTranToken)
+                    )
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andExpect(jsonPath("$['success']",  is(false)));
+        }
+
+        @Test
+        void when_get_Operation_with_Bad_Token_then_Status400_and_ResponseReturnsAccount_Info() throws Exception {
+            mockMvc.perform(post("/api/operation")
+                            .header("Authorization", otherTechTranToken)
+                    )
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andExpect(jsonPath("$['error']",  is("User not found with token")));
         }
     }
 }

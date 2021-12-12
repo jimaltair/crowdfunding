@@ -89,7 +89,7 @@ class AccountControllerTest {
 
         @Test
         void when_accountDoesNotExists_thenStatus404() throws Exception {
-            mockMvc.perform(get("/api/account/3")
+            mockMvc.perform(get("/api/account/30")
                             .header("Authorization", techTranToken))
                     .andDo(print())
                     .andExpect(status().is4xxClientError())
@@ -125,7 +125,7 @@ class AccountControllerTest {
 
         @Test
         void when_accountDoesNotExists_thenStatus404() throws Exception {
-            mockMvc.perform(get("/api/account/3/balance?date=1638806337")
+            mockMvc.perform(get("/api/account/30/balance?date=1638806337")
                             .header("Authorization", techTranToken))
                     .andDo(print())
                     .andExpect(status().is4xxClientError())
@@ -160,7 +160,7 @@ class AccountControllerTest {
 
         @Test
         void when_accountDoesNotExists_thenStatus404() throws Exception {
-            mockMvc.perform(get("/api/account/3/contributorsCount?date=1638806337")
+            mockMvc.perform(get("/api/account/30/contributorsCount?date=1638806337")
                             .header("Authorization", techTranToken))
                     .andDo(print())
                     .andExpect(status().is4xxClientError())
