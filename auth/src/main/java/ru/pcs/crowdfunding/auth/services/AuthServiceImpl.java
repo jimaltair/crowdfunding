@@ -34,7 +34,6 @@ public class AuthServiceImpl implements AuthService {
      * Возможно тут имеет смысл использовать @Retryable и @Transactional
      */
     @Override
-    @Transactional
     public Optional<AuthenticationInfo> createAuthenticationInfo(AuthenticationInfoDto authenticationInfo) {
 
         Optional<AuthenticationInfo> authInfo = authenticationInfosRepository.findByEmail(authenticationInfo.getEmail());
@@ -60,7 +59,6 @@ public class AuthServiceImpl implements AuthService {
 
     /** Возможно тут имеет смысл использовать @Retryable и @Transactional*/
     @Override
-    @Transactional
     public Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo) {
         Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.builder().build());
         log.info("Result of 'updateAuthenticationInfo' - {}", result);
@@ -69,7 +67,6 @@ public class AuthServiceImpl implements AuthService {
 
     /** Возможно тут имеет смысл использовать @Retryable и @Transactional*/
     @Override
-    @Transactional
     public Optional<AuthenticationInfoDto> deleteAuthenticationInfo(Long id) {
 
         Optional<AuthenticationInfo> aut = authenticationInfosRepository.findById(id);

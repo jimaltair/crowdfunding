@@ -9,8 +9,8 @@ import java.time.Instant;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateAccountResponse {
 
     private Long id;

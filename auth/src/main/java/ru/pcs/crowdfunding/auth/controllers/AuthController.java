@@ -13,10 +13,10 @@ import ru.pcs.crowdfunding.auth.services.AuthService;
 import java.util.Arrays;
 import java.util.Optional;
 
-@RequestMapping("/api/auth")
-@RequiredArgsConstructor
-@RestController
 @Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;

@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class AuthorizationInfoDto {
 
     private Long userId;

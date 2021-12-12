@@ -10,8 +10,8 @@ import java.time.Instant;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class OperationDto {
 
     public enum Type {

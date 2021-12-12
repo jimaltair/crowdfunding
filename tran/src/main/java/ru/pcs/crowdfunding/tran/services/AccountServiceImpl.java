@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AccountServiceImpl implements AccountService {
 
     private final AccountsRepository accountsRepository;

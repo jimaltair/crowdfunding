@@ -67,7 +67,6 @@ public class OperationServiceImpl implements OperationService {
      * Возможно тут имеет смысл использовать @Retryable
      */
     @Override
-    @Transactional
     public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException {
 
         operationDto.setDatetime(Instant.now());

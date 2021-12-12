@@ -11,9 +11,9 @@ import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
 
 import java.math.BigDecimal;
 
-@RequiredArgsConstructor
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class OperationValidator {
 
     private final AccountsRepository accountsRepository;

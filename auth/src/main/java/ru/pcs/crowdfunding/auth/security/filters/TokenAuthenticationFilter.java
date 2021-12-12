@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-
 @Slf4j
 @Deprecated
 public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFilter {

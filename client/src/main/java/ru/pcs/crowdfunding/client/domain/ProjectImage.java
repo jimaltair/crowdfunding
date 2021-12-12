@@ -6,11 +6,11 @@ import javax.persistence.*;
 
 @Getter
 @Setter
+@Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode()
-@Entity
+@EqualsAndHashCode
 public class ProjectImage {
 
     @Id

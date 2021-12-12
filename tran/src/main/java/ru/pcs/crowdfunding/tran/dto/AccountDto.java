@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class AccountDto {
 
     private Long id;

@@ -5,15 +5,15 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Table(name = "client")
 @ToString(exclude = {"projects", "image"})
 @EqualsAndHashCode(exclude = {"projects", "image"})
-@Entity
-@Table(name = "client")
 public class Client {
 
     @Id

@@ -6,12 +6,12 @@ import javax.persistence.*;
 
 @Getter
 @Setter
+@Entity
+@Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString()
 @EqualsAndHashCode()
-@Entity
 @Table(name = "project_status")
 public class ProjectStatus {
 

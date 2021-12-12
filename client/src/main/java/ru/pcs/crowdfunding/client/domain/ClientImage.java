@@ -6,11 +6,11 @@ import javax.persistence.*;
 
 @Getter
 @Setter
+@Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @EqualsAndHashCode()
-@Entity
 @Table(name = "client_image")
 public class ClientImage {
 

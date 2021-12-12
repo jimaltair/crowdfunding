@@ -13,8 +13,8 @@ import javax.validation.constraints.Size;
 @Setter
 @Builder
 @NotSameNames
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class SignUpForm {
 
     private Long id;

@@ -9,13 +9,13 @@ import java.util.List;
 
 @Getter
 @Setter
+@Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Table(name = "project")
 @ToString(exclude = {"images"})
 @EqualsAndHashCode(exclude = {"images"})
-@Entity
-@Table(name = "project")
 public class Project {
 
     @Id

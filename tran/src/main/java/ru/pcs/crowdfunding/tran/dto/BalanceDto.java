@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class BalanceDto {
 
     private Long accountId;

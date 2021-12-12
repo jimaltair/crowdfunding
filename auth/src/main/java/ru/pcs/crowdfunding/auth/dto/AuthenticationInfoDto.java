@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class AuthenticationInfoDto {
 
     @NotNull

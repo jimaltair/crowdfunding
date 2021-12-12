@@ -18,8 +18,8 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/account")
 @RequiredArgsConstructor
+@RequestMapping("/api/account")
 public class AccountController {
 
     private final AccountService accountService;

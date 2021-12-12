@@ -11,8 +11,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import ru.pcs.crowdfunding.client.dto.*;
 import ru.pcs.crowdfunding.client.exceptions.EmailAlreadyExistsError;
 
-@Component
 @Slf4j
+@Component
 public class AuthorizationServiceRestTemplateClient extends RestTemplateClient implements AuthorizationServiceClient {
     private static final String SIGNUP_URL = "/api/signUp";
     private static final String SIGNIN_URL = "/api/signIn";
