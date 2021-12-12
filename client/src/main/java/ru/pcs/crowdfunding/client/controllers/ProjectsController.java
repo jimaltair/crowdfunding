@@ -26,9 +26,13 @@ import ru.pcs.crowdfunding.client.services.ProjectsService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
 import java.util.Optional;
 
 @Controller
@@ -60,7 +64,7 @@ public class ProjectsController {
         long percent = getPercentForProgressBar(project);
 
         LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
-        int finish = getDaysLeft(project);
+        long finish = getDaysLeft(project);
 
         Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
         if (!clientId.isPresent()) {
@@ -82,10 +86,10 @@ public class ProjectsController {
         return "newProjectCard";
     }
 
-    private int getDaysLeft(Optional<ProjectDto> project) {
-        LocalDate finishDate = project.get().getFinishDate().atZone(ZoneOffset.UTC).toLocalDate();
-        int finish = finishDate.compareTo(LocalDate.now());
-        return finish;
+    private long getDaysLeft(Optional<ProjectDto> project) {
+        Instant finishDate = project.get().getFinishDate();
+        Instant createdAt = project.get().getCreatedAt();
+        return Duration.between(createdAt, finishDate).toDays();
     }
 
     private long getPercentForProgressBar(Optional<ProjectDto> project) {
