@@ -12,6 +12,8 @@ import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.*;
+import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
+import ru.pcs.crowdfunding.client.exceptions.DateMustBeFutureError;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
+
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
     private final ProjectsRepository projectsRepository;
 
@@ -92,6 +96,15 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    public BigDecimal getMoneyGoal(Long projectId) {
+        Optional<ProjectDto> optionalProjectDto = findById(projectId);
+        if(!optionalProjectDto.isPresent()) {
+            return null;
+        }
+        return optionalProjectDto.get().getMoneyGoal();
+    }
+
+    @Override
     @Transactional
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Trying to create project from {}", form.toString());
@@ -102,10 +115,13 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .title(form.getTitle())
                 .description(form.getDescription())
                 .createdAt(Instant.now())
-                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
-                .moneyGoal(form.getMoneyGoal())
+                .finishDate(getInstantFromString(form.getFinishDate(), YYYY_MM_DD))
+                .moneyGoal(new BigDecimal(form.getMoneyGoal()))
                 .status(projectStatus)
                 .build();
+        if (project.getFinishDate().isBefore(Instant.now())) {
+            throw new DateMustBeFutureError();
+        }
 
         // создаём запрос в transaction-service на создание счёта для проекта
         log.info("Trying to create account for project");
@@ -126,6 +142,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    @Transactional
     public ProjectDto updateProject(Long id, ProjectForm form, MultipartFile file) {
         log.info("Try to update project with id={}", id);
         Optional<Project> project = projectsRepository.getProjectById(id);
@@ -143,7 +160,10 @@ public class ProjectsServiceImpl implements ProjectsService {
             existedProject.setDescription(form.getDescription());
         }
         if (form.getFinishDate() != null) {
-            Instant finishDate = getInstantFromString(form.getFinishDate(), "yyyy-MM-dd");
+            Instant finishDate = getInstantFromString(form.getFinishDate(), YYYY_MM_DD);
+            if (finishDate.isBefore(Instant.now())) {
+                throw new DateMustBeFutureError();
+            }
             existedProject.setFinishDate(finishDate);
         }
         projectsRepository.save(existedProject);
@@ -180,7 +200,8 @@ public class ProjectsServiceImpl implements ProjectsService {
                     projectImagesRepository.save(projectImage.get());
                 }
             } catch (IOException e) {
-                throw new IllegalStateException("Problem with updating project image");
+                log.info("Exception while updating image", e);
+                throw new ImageProcessingError();
             }
             log.info("Project image was updated successfully");
         }
@@ -203,8 +224,8 @@ public class ProjectsServiceImpl implements ProjectsService {
                     .project(project)
                     .build();
         } catch (IOException e) {
-            log.error("Can't save image {}", file.getOriginalFilename());
-            throw new IllegalStateException(e);
+            log.error("Can't save image {}", file.getOriginalFilename(), e);
+            throw new ImageProcessingError();
         }
     }
 
@@ -218,15 +239,36 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public Long getAccountIdByProjectId(Long projectId) throws IllegalAccessException {
+    public Long getAccountIdByProjectId(Long projectId){
         Long accountId;
         Optional<ProjectDto> optionalProject = findById(projectId);
         if(!optionalProject.isPresent()) {
-            throw new IllegalAccessException("Client not found");
+            return null;
         }
-        accountId = optionalProject.get().getAccountId();
-        return accountId;
+        return optionalProject.get().getAccountId();
     }
+
+    @Override
+    public Long getAuthorByProjectId(Long projectId){
+        Long accountId;
+        Optional<ProjectDto> optionalProject = findById(projectId);
+        if(!optionalProject.isPresent()) {
+            return null;
+        }
+        return optionalProject.get().getClientId();
+    }
+
+    @Override
+    public void setProjectStatus(Long projectId, ProjectStatus projectStatus){
+
+        Optional<Project> optionalProject = projectsRepository.getProjectById(projectId);
+
+        if(!optionalProject.isPresent()) {
+            throw new IllegalArgumentException("Project with id = " + projectId + " does not exits");
+        }
+        optionalProject.get().setStatus(projectStatus);
+    }
+
 
     /**
      * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется

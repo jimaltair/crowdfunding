@@ -34,4 +34,5 @@ public interface ProjectsRepository extends JpaRepository<Project, Long> {
     Page<Project> findProjectsByMoneyGoalBetween(BigDecimal moneyGoalMin, BigDecimal moneyGoalMax, Pageable pageable);
     Page<Project> findProjectsByMoneyGoalGreaterThan(BigDecimal moneyGoalMin, Pageable pageable);
     Page<Project> findProjectsByMoneyGoalLessThan(BigDecimal moneyGoalMax, Pageable pageable);
+
 }

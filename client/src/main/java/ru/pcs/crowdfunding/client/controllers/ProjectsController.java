@@ -12,16 +12,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
+import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
 import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
 import ru.pcs.crowdfunding.client.services.ClientsService;
+import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
+import ru.pcs.crowdfunding.client.exceptions.DateMustBeFutureError;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -34,9 +39,10 @@ public class ProjectsController {
 
     private final ProjectsService projectsService;
     private final JwtTokenProvider tokenProvider;
+    private final ClientsService clientsService;
 
     @GetMapping(value = "/{id}")
-    public String getById(@PathVariable("id") Long id, Model model) {
+    public String getProjectPageById(@PathVariable("id") Long id, Model model) {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
@@ -45,48 +51,93 @@ public class ProjectsController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
         }
 
+        Optional<Client> clientProjectAuthor = clientsService.findByProject(project.get());
+        if (!clientProjectAuthor.isPresent()) {
+            log.error("Client didn't found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client didn't found");
+        }
+
+        long percent = getPercentForProgressBar(project);
+
+        LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = getDaysLeft(project);
+
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (!clientId.isPresent()) {
+            log.warn("Can't get user id from RequestContext");
+            return "createProject";
+        }
+        log.info("Get clientId = {} from secutity context", clientId.get());
+        Long tokenClientId = clientId.get();
+
         log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
 
         model.addAttribute("project", project.get());
-        return "projectCard";
+        model.addAttribute("client", clientProjectAuthor.get());
+        model.addAttribute("size", clientProjectAuthor.get().getProjects().size());
+        model.addAttribute("percent", percent);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("finishDate", finish);
+        model.addAttribute("userId", tokenClientId);
+        return "newProjectCard";
+    }
+
+    private int getDaysLeft(Optional<ProjectDto> project) {
+        LocalDate finishDate = project.get().getFinishDate().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = finishDate.compareTo(LocalDate.now());
+        return finish;
+    }
+
+    private long getPercentForProgressBar(Optional<ProjectDto> project) {
+        double moneyCollected = project.get().getMoneyCollected().doubleValue();
+        double moneyGoal = project.get().getMoneyGoal().doubleValue();
+        long percent = (long) ((moneyCollected / moneyGoal) * 100);
+        return percent;
     }
 
     @GetMapping(value = "/create")
     public String getProjectCreatePage(Model model) {
         log.info("Starting 'get /projects/create'");
-        model.addAttribute("projectCreatedForm", new ProjectForm());
+        model.addAttribute("projectForm", new ProjectForm());
         return "createProject";
     }
 
     @PostMapping(value = "/create")
-    public String createProject(@Valid ProjectForm form, BindingResult result, Model model, HttpServletRequest request,
+    public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
             log.error("Can't create new project, 'result' has error(s) - {}", result.getAllErrors());
-            model.addAttribute("projectCreatedForm", form);
+            model.addAttribute("projectForm", form);
             return "createProject";
         }
 
-        Long clientId;
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (!clientId.isPresent()) {
+            log.warn("Can't get user id from RequestContext");
+            return "createProject";
+        }
+        log.info("Get clientId = {} from secutity context", clientId.get());
+        form.setClientId(clientId.get());
 
         try {
-            String token = getTokenFromCookie(request);
-            clientId = tokenProvider.getClientIdFromToken(token);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return "createProject";
+            Optional<Long> projectId = projectsService.createProject(form, file);
+            if (!projectId.isPresent()) {
+                log.error("Unable to create project");
+                throw new IllegalStateException("Unable to create project");
+            }
+            log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
+            return "redirect:/projects/" + projectId.get();
+        } catch (ImageProcessingError e) {
+            log.warn("Caught ImageProcessingError exception");
+            model.addAttribute("imageProcessingError", Boolean.TRUE);
+        } catch (DateMustBeFutureError e) {
+            log.warn("Caught MustBeFutureError exception");
+            model.addAttribute("dateMustBeFutureError", Boolean.TRUE);
         }
 
-        form.setClientId(clientId);
-
-        Optional<Long> projectId = projectsService.createProject(form, file);
-        if (!projectId.isPresent()) {
-            log.error("Unable to create project");
-            throw new IllegalStateException("Unable to create project");
-        }
-        log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
-        return "redirect:/projects/" + projectId.get();
+        model.addAttribute("projectForm", form);
+        return "createProject";
     }
 
     @GetMapping("/image/{id}")
@@ -112,47 +163,46 @@ public class ProjectsController {
 
     @GetMapping(value = "/update/{id}")
     public String getProjectUpdatePage(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("projectUpdatedForm", new ProjectForm());
         Optional<ProjectDto> currentProject = projectsService.findById(id);
         if(!currentProject.isPresent()){
+            model.addAttribute("projectForm", new ProjectForm());
             return "createProject";
         }
+
         ProjectDto project = currentProject.get();
         model.addAttribute("id", id);
-        model.addAttribute("project_title", project.getTitle());
-        model.addAttribute("project_description", project.getDescription());
-        model.addAttribute("project_money_goal", project.getMoneyGoal().toString());
 
-        String finishDate = project.getFinishDate().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        ProjectForm projectForm = ProjectForm.builder()
+                .title(project.getTitle())
+                .description(project.getDescription())
+                .moneyGoal(project.getMoneyGoal().toString())
+                .finishDate(project.getFinishDate()
+                        .atOffset(ZoneOffset.UTC)
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .build();
+        model.addAttribute("projectForm", projectForm);
 
-        model.addAttribute("finish_date", finishDate);
         return "updateProject";
     }
 
     @PostMapping(value = "/update/{id}")
-    public String updateProject(@Valid ProjectForm form, @PathVariable("id") Long id, BindingResult result, Model model,
+    public String updateProject(@PathVariable("id") Long id, @Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
-        if (result.hasErrors()) {
-            model.addAttribute("projectUpdatedForm", form);
-        }
-        ProjectDto updatedProject = projectsService.updateProject(id, form, file);
-
-        updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
-        updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
-
-        model.addAttribute("project", updatedProject);
-        return "redirect:/projects/" + id;
-    }
-
-
-    //Временный метод до запуска Spring Security и получения id пользователя из контекста
-    private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(SignUpController.TOKEN_COOKIE_NAME)) {
-                return cookie.getValue();
+        try {
+            if (!result.hasErrors()) {
+                projectsService.updateProject(id, form, file);
+                return "redirect:/projects/" + id;
             }
+        } catch (ImageProcessingError e) {
+            log.warn("Caught ImageProcessingError exception");
+            model.addAttribute("imageProcessingError", Boolean.TRUE);
+        } catch (DateMustBeFutureError e) {
+            log.warn("Caught DateMustBeFutureError exception");
+            model.addAttribute("dateMustBeFutureError", Boolean.TRUE);
         }
-        throw new IllegalAccessException("Not enough rights for this operation");
+
+        model.addAttribute("id", id);
+        model.addAttribute("projectForm", form);
+        return "updateProject";
     }
 }

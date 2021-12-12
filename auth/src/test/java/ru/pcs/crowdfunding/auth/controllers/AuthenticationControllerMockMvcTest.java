@@ -17,7 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
+import ru.pcs.crowdfunding.auth.domain.Role;
+import ru.pcs.crowdfunding.auth.domain.Status;
+import ru.pcs.crowdfunding.auth.dto.AuthorizationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
+import ru.pcs.crowdfunding.auth.repositories.AuthorizationInfosRepository;
+import ru.pcs.crowdfunding.auth.repositories.RolesRepository;
 
 import java.util.Arrays;
 
@@ -43,8 +48,12 @@ public class AuthenticationControllerMockMvcTest {
     @Autowired
     private AuthenticationInfosRepository authenticationInfosRepository;
 
+    @Autowired
+    private RolesRepository rolesRepository;
+
     private String techAuthToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI";
     private String otherTechAuthToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjQxNTc5Nzc2fQ.zaAgZjCMUEzML_W-px8al2DQsSOIqemMxDjoRHlQ7MQ";
+    private String accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNjQxOTE1MDU1fQ.orwbNoIQ9EBImDXdbUc8e9j3_o0Qi_AOLwh45dwrM34";
 
     @BeforeEach
     void setUp() {
@@ -55,8 +64,12 @@ public class AuthenticationControllerMockMvcTest {
             .refreshToken("refresh_test_token")
             .isActive(true)
             .build());
-    }
 
+        rolesRepository.save(Role.builder()
+            .roleId(1L)
+            .name(Role.RoleEnum.USER)
+            .build());
+    }
     @AfterEach
     public void tearDown() {
         authenticationInfosRepository.deleteAll();
