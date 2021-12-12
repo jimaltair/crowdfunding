@@ -6,9 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 /**
@@ -24,9 +22,11 @@ import java.math.BigDecimal;
 @Builder
 public class ProjectForm {
     @NotBlank
+    @Size(min = 2, max = 255)
     private String title;
 
     @NotBlank
+    @Size(min = 2, max = 4096)
     private String description;
 
     @NotBlank
