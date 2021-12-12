@@ -16,6 +16,7 @@ import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
 import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
+import ru.pcs.crowdfunding.client.exceptions.DateMustBeFutureError;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
@@ -73,10 +74,17 @@ public class ProjectsController {
             log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
             return "redirect:/projects/" + projectId.get();
         } catch (ImageProcessingError e) {
-            log.info("Caught ImageProcessingError exception");
+            log.warn("Caught ImageProcessingError exception");
 
             model.addAttribute("projectForm", form);
             model.addAttribute("imageProcessingError", Boolean.TRUE);
+
+            return "createProject";
+        } catch (DateMustBeFutureError e) {
+            log.warn("Caught MustBeFutureError exception");
+
+            model.addAttribute("projectForm", form);
+            model.addAttribute("dateMustBeFutureError", Boolean.TRUE);
 
             return "createProject";
         }
