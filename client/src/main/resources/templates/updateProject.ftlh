@@ -12,7 +12,7 @@
 <body>
 <h1>Изменение данных проекта</h1>
 <h2>Пожалуйста, введите новые данные:</h2>
-<form action="/projects/update/${id}" method="post" enctype="multipart/form-data">
+<form action="/projects/update" method="post" enctype="multipart/form-data">
     <label for="title">Новое название проекта:</label>
     <@spring.formInput 'projectForm.title' 'id="title"'/>
     <@spring.showErrors '<br>' 'error' />
@@ -41,3 +41,7 @@
     <br>
     <input type="submit" value="Сохранить">
 </form>
+</body>
+</html>
+
+
