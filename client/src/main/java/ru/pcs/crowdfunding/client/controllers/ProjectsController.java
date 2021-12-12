@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
+import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
 import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
@@ -35,7 +36,6 @@ import java.util.Optional;
 public class ProjectsController {
 
     private final ProjectsService projectsService;
-    private final JwtTokenProvider tokenProvider;
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable("id") Long id, Model model) {
@@ -61,7 +61,7 @@ public class ProjectsController {
     }
 
     @PostMapping(value = "/create")
-    public String createProject(@Valid ProjectForm form, BindingResult result, Model model, HttpServletRequest request,
+    public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
@@ -70,18 +70,13 @@ public class ProjectsController {
             return "createProject";
         }
 
-        Long clientId;
-
-        try {
-            String token = getTokenFromCookie(request);
-            clientId = tokenProvider.getClientIdFromToken(token);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            model.addAttribute("projectForm", form);
-            return "createProject";
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (clientId.isPresent()) {
+            log.info("Getting creating project page for user with id={}", clientId);
+        } else {
+            log.warn("Can't get user id from RequestContext");
         }
-
-        form.setClientId(clientId);
+        form.setClientId(clientId.get());
 
         try {
             Optional<Long> projectId = projectsService.createProject(form, file);
@@ -167,17 +162,5 @@ public class ProjectsController {
         model.addAttribute("id", id);
         model.addAttribute("projectForm", form);
         return "updateProject";
-    }
-
-
-    //Временный метод до запуска Spring Security и получения id пользователя из контекста
-    private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(SignUpController.TOKEN_COOKIE_NAME)) {
-                return cookie.getValue();
-            }
-        }
-        throw new IllegalAccessException("Not enough rights for this operation");
     }
 }
