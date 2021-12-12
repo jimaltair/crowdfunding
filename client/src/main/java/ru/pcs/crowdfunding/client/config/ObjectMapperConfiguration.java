@@ -14,4 +14,5 @@ public class ObjectMapperConfiguration {
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
+
 }

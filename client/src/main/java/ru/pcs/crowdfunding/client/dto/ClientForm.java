@@ -9,6 +9,9 @@ import ru.pcs.crowdfunding.client.domain.ClientImage;
 
 import java.math.BigDecimal;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,7 +32,6 @@ public class ClientForm {
 
     private ClientImage image;
 
-
     public static ClientForm from(Client client) {
         return ClientForm.builder()
                 .firstName(client.getFirstName())
@@ -39,4 +41,5 @@ public class ClientForm {
                 .image(client.getImage())
                 .build();
     }
+
 }

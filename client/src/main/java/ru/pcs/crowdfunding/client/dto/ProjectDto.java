@@ -11,6 +11,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,4 +53,5 @@ public class ProjectDto {
     public static List<ProjectDto> from(List<Project> projects) {
         return projects.stream().map(ProjectDto::from).collect(Collectors.toList());
     }
+
 }

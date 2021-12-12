@@ -1,7 +1,6 @@
 package ru.pcs.crowdfunding.client.domain;
 
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -26,4 +25,5 @@ public class ProjectImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+
 }

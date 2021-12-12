@@ -22,6 +22,9 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Controller
 @RequestMapping("/projects")
 @RequiredArgsConstructor
@@ -95,6 +98,7 @@ public class ProjectsController {
 
     @GetMapping(value = "/update/{id}")
     public String getProjectUpdatePage(@PathVariable("id") Long id, Model model) {
+        /** Хочу видеть логи тут о том что планируется сделать с входящими параметрами */
         model.addAttribute("projectUpdatedForm", new ProjectForm());
         Optional<ProjectDto> currentProject = projectsService.findById(id);
         if(!currentProject.isPresent()){
@@ -126,4 +130,5 @@ public class ProjectsController {
         model.addAttribute("project", updatedProject);
         return "redirect:/projects/" + id;
     }
+
 }

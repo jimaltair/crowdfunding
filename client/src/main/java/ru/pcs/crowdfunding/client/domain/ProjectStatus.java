@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "project_status")
 public class ProjectStatus {
+
     public enum Status {
         NOT_CONFIRMED,
         CONFIRMED,
@@ -32,4 +33,5 @@ public class ProjectStatus {
 
     @Column(name = "description", length = 4096)
     private String description;
+
 }

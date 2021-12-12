@@ -18,11 +18,15 @@ import java.math.BigDecimal;
  * @author Nikolay Ponomarev
  * @version 1.0
  */
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ProjectForm {
+
     @NotBlank
     private String title;
 
@@ -37,4 +41,5 @@ public class ProjectForm {
     private BigDecimal moneyGoal;
 
     private ProjectImage image;
+
 }

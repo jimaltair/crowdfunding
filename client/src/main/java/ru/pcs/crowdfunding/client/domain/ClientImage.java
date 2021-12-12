@@ -26,4 +26,5 @@ public class ClientImage {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
 }

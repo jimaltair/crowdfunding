@@ -2,6 +2,9 @@ package ru.pcs.crowdfunding.client.dto;
 
 import lombok.*;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @Builder
@@ -18,7 +21,5 @@ public class GetAuthInfoResponseDto {
     private String accessToken;
     private String refreshToken;
     private Boolean isActive;
-
-
 
 }

@@ -8,9 +8,15 @@ import ru.pcs.crowdfunding.client.dto.ImageDto;
 import java.util.Optional;
 
 public interface ClientsService {
+    /**
+     * есть предложение использовать над каждым методом @Retryable(value = Exception.class)
+     */
     Optional<ClientDto> findById(Long id);
 
+    /** есть предложение использовать над каждым методом @Retryable(value = Exception.class) */
     ClientForm updateClient(Long clientId, ClientForm form, MultipartFile file);
 
+    /** есть предложение использовать над каждым методом @Retryable(value = Exception.class) */
     Optional<ImageDto> getImageById(Long id);
+
 }

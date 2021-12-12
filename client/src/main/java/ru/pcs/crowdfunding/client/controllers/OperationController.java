@@ -3,17 +3,20 @@ package ru.pcs.crowdfunding.client.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.pcs.crowdfunding.client.dto.OperationDto;
 import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
 import ru.pcs.crowdfunding.client.services.OperationService;
-
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
-
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Controller
 @RequestMapping("/operation")
 @RequiredArgsConstructor
@@ -28,7 +31,6 @@ public class OperationController {
                                        @RequestParam("sum") BigDecimal sumTopUp,
                                        @RequestParam("client_id") Long clientId,
                                        @RequestParam("account_id") Long accountId) {
-
         log.info("post /api/operation/top_up: post operation TOP_UP with " +
                 "clientId = {}, accountId = {}, sum = {}", clientId, accountId, sumTopUp);
 

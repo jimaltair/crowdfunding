@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "client")
 public class Client {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -40,7 +41,5 @@ public class Client {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     private List<Project> projects;
-
-
 
 }

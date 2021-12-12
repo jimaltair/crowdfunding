@@ -14,7 +14,9 @@ import ru.pcs.crowdfunding.client.services.SignInService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @RequiredArgsConstructor
 @Controller
 @Slf4j

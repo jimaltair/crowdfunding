@@ -17,6 +17,7 @@ import java.util.List;
 @Entity
 @Table(name = "project")
 public class Project {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -50,4 +51,5 @@ public class Project {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<ProjectImage> images;
+
 }

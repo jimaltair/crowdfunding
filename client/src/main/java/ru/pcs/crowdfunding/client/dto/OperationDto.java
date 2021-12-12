@@ -1,9 +1,16 @@
 package ru.pcs.crowdfunding.client.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,4 +31,5 @@ public class OperationDto {
     private Long debitAccountId;
     private Long creditAccountId;
     private BigDecimal sum;
+
 }

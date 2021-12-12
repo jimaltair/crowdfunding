@@ -8,6 +8,9 @@ import ru.pcs.crowdfunding.client.domain.Project;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

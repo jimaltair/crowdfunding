@@ -11,6 +11,9 @@ import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import java.util.List;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Controller
 @RequestMapping("/")
 @RequiredArgsConstructor
@@ -33,7 +36,7 @@ public class HomePageController {
 
     @RequestMapping()
     public String getHomePage(Model model) {
-
+        /** Хочу видеть логи тут о том что планируется сделать с входящими параметрами */
         List<ProjectDto> page = projectsService.getConfirmedProjects();
 
         model.addAttribute("ListProject", page);
@@ -41,7 +44,8 @@ public class HomePageController {
         model.addAttribute("SignInUri", uriSignInPage);
         model.addAttribute("ProjectsUri", uriProjects);
         model.addAttribute("Logout", uriLogout);
-
+        /** Хочу видеть логи тут о том что сделано */
         return "homePage";
     }
+
 }
