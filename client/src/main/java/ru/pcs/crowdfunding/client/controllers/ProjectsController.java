@@ -160,6 +160,14 @@ public class ProjectsController {
             model.addAttribute("imageProcessingError", Boolean.TRUE);
 
             return "updateProject";
+        } catch (DateMustBeFutureError e) {
+            log.warn("Caught DateMustBeFutureError exception");
+
+            model.addAttribute("id", id);
+            model.addAttribute("projectForm", form);
+            model.addAttribute("dateMustBeFutureError", Boolean.TRUE);
+
+            return "updateProject";
         }
     }
 }
