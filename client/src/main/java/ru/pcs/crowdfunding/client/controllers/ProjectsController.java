@@ -12,9 +12,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
+import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
 import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
@@ -24,6 +26,7 @@ import ru.pcs.crowdfunding.client.services.ProjectsService;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -36,9 +39,10 @@ public class ProjectsController {
 
     private final ProjectsService projectsService;
     private final JwtTokenProvider tokenProvider;
+    private final ClientsService clientsService;
 
     @GetMapping(value = "/{id}")
-    public String getById(@PathVariable("id") Long id, Model model) {
+    public String getById(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
@@ -46,11 +50,51 @@ public class ProjectsController {
             log.error("Project with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
         }
+        Optional<Client> client = clientsService.findByProject(project.get());
+        if (!client.isPresent()) {
+            log.error("Client didn't found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client didn't found");
+        }
+
+        long percent = getPercentForProgressBar(project);
+
+        LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = getDaysLeft(project);
+
+
+        Long tokenClientId;
+
+        try {
+            String token = getTokenFromCookie(request);
+            tokenClientId = tokenProvider.getClientIdFromToken(token);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return "newProjectCard";
+        }
 
         log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
 
         model.addAttribute("project", project.get());
-        return "projectCard";
+        model.addAttribute("client", client.get());
+        model.addAttribute("size", client.get().getProjects().size());
+        model.addAttribute("percent", percent);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("finishDate", finish);
+        model.addAttribute("userId", tokenClientId);
+        return "newProjectCard";
+    }
+
+    private int getDaysLeft(Optional<ProjectDto> project) {
+        LocalDate finishDate = project.get().getFinishDate().atZone(ZoneOffset.UTC).toLocalDate();
+        int finish = finishDate.compareTo(LocalDate.now());
+        return finish;
+    }
+
+    private long getPercentForProgressBar(Optional<ProjectDto> project) {
+        double moneyCollected = project.get().getMoneyCollected().doubleValue();
+        double moneyGoal = project.get().getMoneyGoal().doubleValue();
+        long percent = (long) ((moneyCollected / moneyGoal) * 100);
+        return percent;
     }
 
     @GetMapping(value = "/create")
@@ -61,7 +105,7 @@ public class ProjectsController {
     }
 
     @PostMapping(value = "/create")
-    public String createProject(@Valid ProjectForm form, BindingResult result, Model model, HttpServletRequest request,
+    public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
@@ -70,18 +114,13 @@ public class ProjectsController {
             return "createProject";
         }
 
-        Long clientId;
-
-        try {
-            String token = getTokenFromCookie(request);
-            clientId = tokenProvider.getClientIdFromToken(token);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            model.addAttribute("projectForm", form);
-            return "createProject";
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (clientId.isPresent()) {
+            log.info("Getting creating project page for user with id={}", clientId);
+        } else {
+            log.warn("Can't get user id from RequestContext");
         }
-
-        form.setClientId(clientId);
+        form.setClientId(clientId.get());
 
         try {
             Optional<Long> projectId = projectsService.createProject(form, file);
@@ -167,17 +206,5 @@ public class ProjectsController {
         model.addAttribute("id", id);
         model.addAttribute("projectForm", form);
         return "updateProject";
-    }
-
-
-    //Временный метод до запуска Spring Security и получения id пользователя из контекста
-    private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(SignUpController.TOKEN_COOKIE_NAME)) {
-                return cookie.getValue();
-            }
-        }
-        throw new IllegalAccessException("Not enough rights for this operation");
     }
 }
