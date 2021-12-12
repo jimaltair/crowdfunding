@@ -59,35 +59,27 @@ public class ProjectsController {
     public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
-        if (result.hasErrors()) {
-            log.error("Can't create new project, 'result' has error(s) - {}", result.getAllErrors());
-            model.addAttribute("projectForm", form);
-            return "createProject";
-        }
 
         try {
-            Optional<Long> projectId = projectsService.createProject(form, file);
-            if (!projectId.isPresent()) {
-                log.error("Unable to create project");
-                throw new IllegalStateException("Unable to create project");
+            if (!result.hasErrors()) {
+                Optional<Long> projectId = projectsService.createProject(form, file);
+                if (!projectId.isPresent()) {
+                    log.error("Unable to create project");
+                    throw new IllegalStateException("Unable to create project");
+                }
+                log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
+                return "redirect:/projects/" + projectId.get();
             }
-            log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
-            return "redirect:/projects/" + projectId.get();
         } catch (ImageProcessingError e) {
             log.warn("Caught ImageProcessingError exception");
-
-            model.addAttribute("projectForm", form);
             model.addAttribute("imageProcessingError", Boolean.TRUE);
-
-            return "createProject";
         } catch (DateMustBeFutureError e) {
             log.warn("Caught MustBeFutureError exception");
-
-            model.addAttribute("projectForm", form);
             model.addAttribute("dateMustBeFutureError", Boolean.TRUE);
-
-            return "createProject";
         }
+
+        model.addAttribute("projectForm", form);
+        return "createProject";
     }
 
     @GetMapping("/image/{id}")
@@ -138,36 +130,21 @@ public class ProjectsController {
     @PostMapping(value = "/update/{id}")
     public String updateProject(@PathVariable("id") Long id, @Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
-        if (result.hasErrors()) {
-            model.addAttribute("id", id);
-            model.addAttribute("projectForm", form);
-            return "updateProject";
-        }
-
         try {
-            ProjectDto updatedProject = projectsService.updateProject(id, form, file);
-
-            updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
-            updatedProject.setContributorsCount(projectsService.getContributorsCountByProjectId(id));
-
-            model.addAttribute("project", updatedProject);
-            return "redirect:/projects/" + id;
+            if (!result.hasErrors()) {
+                projectsService.updateProject(id, form, file);
+                return "redirect:/projects/" + id;
+            }
         } catch (ImageProcessingError e) {
             log.warn("Caught ImageProcessingError exception");
-
-            model.addAttribute("id", id);
-            model.addAttribute("projectForm", form);
             model.addAttribute("imageProcessingError", Boolean.TRUE);
-
-            return "updateProject";
         } catch (DateMustBeFutureError e) {
             log.warn("Caught DateMustBeFutureError exception");
-
-            model.addAttribute("id", id);
-            model.addAttribute("projectForm", form);
             model.addAttribute("dateMustBeFutureError", Boolean.TRUE);
-
-            return "updateProject";
         }
+
+        model.addAttribute("id", id);
+        model.addAttribute("projectForm", form);
+        return "updateProject";
     }
 }
