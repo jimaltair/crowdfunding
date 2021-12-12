@@ -19,6 +19,7 @@
     <br>
     <label for="finishDate">Введите дату завершения проекта:</label>
     <input id="finishDate" type="datetime-local"  name="finishDate" placeholder="Дата">
+    <input id="clientId" type="hidden"  name="clientId">
     <h3>Пожалуйста, загрузите изображение для проекта:</h3>
     <input type="file" name="file">
     <br>

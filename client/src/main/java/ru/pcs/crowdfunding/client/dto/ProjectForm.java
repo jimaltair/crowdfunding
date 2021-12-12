@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 
 import javax.validation.constraints.NotBlank;
@@ -37,4 +38,6 @@ public class ProjectForm {
     private BigDecimal moneyGoal;
 
     private ProjectImage image;
+
+    private Long clientId;
 }
