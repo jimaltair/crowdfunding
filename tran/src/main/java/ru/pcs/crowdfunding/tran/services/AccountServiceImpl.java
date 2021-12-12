@@ -43,6 +43,9 @@ public class AccountServiceImpl implements AccountService {
         return accountDto;
     }
 
+    /**
+     * Возможно тут имеет смысл использовать @Retryable и @Transactional
+     */
     @Override
     public Optional<AccountDto> updateAccount(Long id, AccountDto accountDto) {
         Optional<Account> optionalAccount = accountsRepository.findById(id);
@@ -60,6 +63,7 @@ public class AccountServiceImpl implements AccountService {
         return updateAccount;
     }
 
+    /** Возможно тут имеет смысл использовать @Retryable и @Transactional*/
     @Override
     public AccountDto createAccount() {
         Account account = Account.builder()
@@ -73,6 +77,7 @@ public class AccountServiceImpl implements AccountService {
         return createAccount;
     }
 
+    /** Возможно тут имеет смысл использовать @Retryable и @Transactional*/
     @Override
     public Optional<AccountDto> deleteAccount(Long accountId) {
         Optional<Account> optionalAccount = accountsRepository.findById(accountId);
@@ -89,4 +94,5 @@ public class AccountServiceImpl implements AccountService {
         log.info("delete account = {}", deleteAccount);
         return deleteAccount;
     }
+
 }

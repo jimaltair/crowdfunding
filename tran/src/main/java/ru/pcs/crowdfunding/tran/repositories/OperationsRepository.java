@@ -15,6 +15,9 @@ public interface OperationsRepository extends JpaRepository<Operation, Long> {
 
     Optional<Operation> findById(Long id);
 
+    /**
+     * Методы не используются... они нам нужны? если нет давайте обозначим комментариями, что это задел на будущее
+     */
     Page<Operation> findAllByInitiator(Long initiator, Pageable pageable);
 
     Page<Operation> findAllByOperationType(OperationType operationType, Pageable pageable);
@@ -28,7 +31,8 @@ public interface OperationsRepository extends JpaRepository<Operation, Long> {
     }
 
     @Query(value = "SELECT COUNT(DISTINCT o.creditAccount) " +
-                   "FROM Operation o " +
-                   "WHERE o.debitAccount = ?1 AND o.datetime <= ?2 AND o.operationType.type = ?3")
+            "FROM Operation o " +
+            "WHERE o.debitAccount = ?1 AND o.datetime <= ?2 AND o.operationType.type = ?3")
     Long getContributorsCountWithOperationType(Account account, Instant dateTime, OperationType.Type type);
+
 }

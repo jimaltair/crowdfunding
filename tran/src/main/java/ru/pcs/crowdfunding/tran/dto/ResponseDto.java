@@ -5,6 +5,9 @@ import lombok.*;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,6 +15,7 @@ import java.util.List;
 @Builder
 @ToString
 public class ResponseDto {
+
     private boolean success = true;
     private List<String> error = null;
     private Object data = null;
@@ -31,4 +35,5 @@ public class ResponseDto {
                 .data(null)
                 .build();
     }
+
 }

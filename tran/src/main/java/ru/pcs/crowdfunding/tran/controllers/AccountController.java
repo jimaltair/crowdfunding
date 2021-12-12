@@ -13,11 +13,12 @@ import ru.pcs.crowdfunding.tran.services.AccountService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-
 import java.util.Arrays;
 import java.util.Optional;
 
-
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @RestController
 @RequestMapping("/api/account")
 @RequiredArgsConstructor
@@ -54,10 +55,13 @@ public class AccountController {
         return responseBody;
     }
 
+    /**
+     * Очень длинный класс, есть возможность его отрефакторить для улучшения понимания?
+     */
     @GetMapping(value = "/{id}/balance")
     public ResponseEntity<ResponseDto> getBalanceById(@PathVariable("id") Long id,
                                                       @RequestParam("date")
-                                                      Long epochSecondTimeStamp) {
+                                                              Long epochSecondTimeStamp) { /** Этот параметр нам точно нужен? */
 
         Instant balanceDateTime = Instant.now();
         log.info("get /api/account/{id}/balance: id = {}, date = {}", id, balanceDateTime);
@@ -193,4 +197,5 @@ public class AccountController {
                 , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
+
 }

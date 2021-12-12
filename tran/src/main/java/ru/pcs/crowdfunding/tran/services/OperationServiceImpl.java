@@ -13,6 +13,7 @@ import ru.pcs.crowdfunding.tran.repositories.OperationTypesRepository;
 import ru.pcs.crowdfunding.tran.repositories.OperationsRepository;
 import ru.pcs.crowdfunding.tran.repositories.PaymentsRepository;
 import ru.pcs.crowdfunding.tran.validator.OperationValidator;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
@@ -62,6 +63,9 @@ public class OperationServiceImpl implements OperationService {
     }
     //endregion
 
+    /**
+     * Возможно тут имеет смысл использовать @Retryable
+     */
     @Override
     @Transactional
     public OperationDto createOperation(OperationDto operationDto) throws IllegalArgumentException {
@@ -74,7 +78,7 @@ public class OperationServiceImpl implements OperationService {
         Operation operation = null;
 
         if (operationType.equals(OperationType.Type.REFUND.toString()) ||
-            operationType.equals(OperationType.Type.PAYMENT.toString())
+                operationType.equals(OperationType.Type.PAYMENT.toString())
         ) {
             operationBuild.setDebitAccount(accountsRepository.getById(operationDto.getDebitAccountId()));
             operationBuild.setCreditAccount(accountsRepository.getById(operationDto.getCreditAccountId()));
@@ -123,5 +127,5 @@ public class OperationServiceImpl implements OperationService {
         Optional<Operation> optionalOperation = operationsRepository.findById(id);
         return optionalOperation.map(OperationDto::from);
     }
-}
 
+}

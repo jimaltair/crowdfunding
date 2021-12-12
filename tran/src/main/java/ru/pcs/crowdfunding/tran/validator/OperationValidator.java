@@ -106,4 +106,5 @@ public class OperationValidator {
             throw new IllegalArgumentException("Осуществлять перевод с с кошелька на этот же кошелек запрещено");
         }
     }
+
 }

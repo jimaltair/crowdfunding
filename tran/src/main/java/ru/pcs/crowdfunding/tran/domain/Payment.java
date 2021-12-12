@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +19,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "payment")
 public class Payment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -34,4 +38,5 @@ public class Payment {
 
     @Column(name = "date_time", nullable = false)
     private Instant datetime;
+
 }

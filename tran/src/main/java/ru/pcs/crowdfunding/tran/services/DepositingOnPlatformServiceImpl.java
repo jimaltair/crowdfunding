@@ -11,4 +11,5 @@ public class DepositingOnPlatformServiceImpl implements DepositingOnPlatformServ
     public Boolean createDepositOnPlatform() {
         return true;
     }
+
 }

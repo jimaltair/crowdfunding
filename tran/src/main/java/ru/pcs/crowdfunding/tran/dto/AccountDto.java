@@ -10,7 +10,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

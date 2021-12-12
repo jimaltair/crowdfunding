@@ -1,6 +1,9 @@
 package ru.pcs.crowdfunding.tran.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.tran.domain.Operation;
 
 import java.math.BigDecimal;
@@ -8,6 +11,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,4 +45,5 @@ public class OperationDto {
                 .map(OperationDto::from)
                 .collect(Collectors.toList());
     }
+
 }

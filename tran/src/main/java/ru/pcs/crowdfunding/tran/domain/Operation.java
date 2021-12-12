@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,6 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "operation")
 public class Operation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -45,4 +49,5 @@ public class Operation {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "operation")
     private List<Payment> payments;
+
 }

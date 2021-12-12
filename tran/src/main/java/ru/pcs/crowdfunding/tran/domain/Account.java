@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "account")
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,4 +36,5 @@ public class Account {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
     private List<Payment> payments;
+
 }

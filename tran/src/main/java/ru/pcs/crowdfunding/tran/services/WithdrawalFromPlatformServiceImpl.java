@@ -11,4 +11,5 @@ public class WithdrawalFromPlatformServiceImpl implements WithdrawalFromPlatform
     public Boolean createWithdrowalFromPlatform() {
         return true;
     }
+
 }

@@ -4,6 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,4 +36,5 @@ public class OperationType {
 
     @Column(name = "description", length = 4096)
     private String description;
+
 }
