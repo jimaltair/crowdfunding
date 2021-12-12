@@ -41,6 +41,7 @@ public class ExceptionInterceptor implements HandlerInterceptor {
         response.getWriter().println("<h1>Ой, что-то пошло не так</h1>");
         response.getWriter().println("<p>Ошибка:</p>");
         response.getWriter().println("<p>" + ex.getMessage() + "</p>");
+        response.getWriter().println("<img src=\"/img/crying_cat.jpg\" style=\"max-width: 512px; max-height: 512px; width: auto; height: auto;\"/>");
         response.getWriter().println("</body>");
 
         response.getWriter().println("</html>");
