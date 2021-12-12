@@ -7199,9 +7199,9 @@ button.close {
 }
 .wrapper {
     display: flex;
-    align-items: center;
+    align-items: normal;
     flex-direction: column;
-    justify-content: center;
+    justify-content: normal;
     width: 100%;
     min-height: 100%;
     padding: 20px;
@@ -7212,13 +7212,13 @@ button.close {
     border-radius: 10px 10px 10px 10px;
     background: #fff;
     padding: 30px;
-    width: 90%;
-    max-width: 450px;
+    width: 100%;
+    max-width: max-content;
     position: relative;
     padding: 0px;
     -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
     box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
-    text-align: center;
+    text-align: ;
 }
 
 #formFooter {
@@ -7425,28 +7425,6 @@ input[type=password]:placeholder {
     -moz-animation-delay: 1s;
     animation-delay: 1s;
 }
-
-/* Simple CSS3 Fade-in Animation */
-.underlineHover:after {
-    display: block;
-    left: 0;
-    bottom: -10px;
-    width: 0;
-    height: 2px;
-    background-color: #56baed;
-    content: "";
-    transition: width 0.2s;
-}
-
-.underlineHover:hover {
-    color: #0d0d0d;
-}
-
-.underlineHover:hover:after{
-    width: 100%;
-}
-
-
 
 /* OTHERS */
 
