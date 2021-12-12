@@ -33,8 +33,9 @@ public class ProjectForm {
     private String finishDate;
 
     @NotNull
-    @Positive
-    private BigDecimal moneyGoal;
+    @Pattern(regexp = "^[0-9]+([.]([0-9]([0-9])?)?)?$",
+            message = "Must represent a floating point number with up to two decimal places")
+    private String moneyGoal;
 
     private ProjectImage image;
 }

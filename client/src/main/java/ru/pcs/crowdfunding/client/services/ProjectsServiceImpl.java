@@ -237,7 +237,7 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .description(form.getDescription())
                 .createdAt(Instant.now())
                 .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
-                .moneyGoal(form.getMoneyGoal())
+                .moneyGoal(new BigDecimal(form.getMoneyGoal()))
                 .status(projectStatus)
                 .build();
     }
