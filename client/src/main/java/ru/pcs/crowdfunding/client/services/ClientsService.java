@@ -13,4 +13,6 @@ public interface ClientsService {
     ClientForm updateClient(Long clientId, ClientForm form, MultipartFile file);
 
     Optional<ImageDto> getImageById(Long id);
+
+    Long getAccountIdByClientId(Long clientId) throws IllegalAccessException;
 }

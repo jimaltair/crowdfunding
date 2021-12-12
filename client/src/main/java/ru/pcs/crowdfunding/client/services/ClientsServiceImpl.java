@@ -94,6 +94,17 @@ public class ClientsServiceImpl implements ClientsService {
         }
     }
 
+    @Override
+    public Long getAccountIdByClientId(Long clientId) throws IllegalAccessException {
+        Long accountId;
+        Optional<ClientDto> optionalClient = findById(clientId);
+        if(!optionalClient.isPresent()) {
+            throw new IllegalAccessException("Client not found");
+        }
+        accountId = optionalClient.get().getAccountId();
+        return accountId;
+    }
+
     private String getEmail(Long idClient) {
         return authorizationServiceClient.getAuthInfo(idClient).getEmail();
     }
