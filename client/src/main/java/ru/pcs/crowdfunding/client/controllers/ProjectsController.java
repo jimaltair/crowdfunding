@@ -15,12 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.security.JwtTokenProvider;
-import ru.pcs.crowdfunding.client.services.ClientsService;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -33,7 +29,6 @@ import java.util.Optional;
 public class ProjectsController {
 
     private final ProjectsService projectsService;
-    private final JwtTokenProvider tokenProvider;
 
     @GetMapping(value = "/{id}")
     public String getById(@PathVariable("id") Long id, Model model) {
@@ -59,7 +54,7 @@ public class ProjectsController {
     }
 
     @PostMapping(value = "/create")
-    public String createProject(@Valid ProjectForm form, BindingResult result, Model model, HttpServletRequest request,
+    public String createProject(@Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
@@ -67,18 +62,6 @@ public class ProjectsController {
             model.addAttribute("projectCreatedForm", form);
             return "createProject";
         }
-
-        Long clientId;
-
-        try {
-            String token = getTokenFromCookie(request);
-            clientId = tokenProvider.getClientIdFromToken(token);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return "createProject";
-        }
-
-        form.setClientId(clientId);
 
         Optional<Long> projectId = projectsService.createProject(form, file);
         if (!projectId.isPresent()) {
@@ -142,17 +125,5 @@ public class ProjectsController {
 
         model.addAttribute("project", updatedProject);
         return "redirect:/projects/" + id;
-    }
-
-
-    //Временный метод до запуска Spring Security и получения id пользователя из контекста
-    private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(SignUpController.TOKEN_COOKIE_NAME)) {
-                return cookie.getValue();
-            }
-        }
-        throw new IllegalAccessException("Not enough rights for this operation");
     }
 }

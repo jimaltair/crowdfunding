@@ -11,8 +11,10 @@ import ru.pcs.crowdfunding.client.domain.*;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
+import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.repositories.ClientImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
+import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
 import java.io.*;
 import java.util.Optional;
@@ -28,6 +30,7 @@ public class ClientsServiceImpl implements ClientsService {
     private final ClientImagesRepository clientImagesRepository;
     private final TransactionServiceClient transactionServiceClient;
     private final AuthorizationServiceClient authorizationServiceClient;
+    private final ProjectsRepository projectsRepository;
 
     @Override
     public Optional<ClientDto> findById(Long id) {
@@ -44,6 +47,17 @@ public class ClientsServiceImpl implements ClientsService {
         clientDto.setSumAccount(transactionServiceClient.getBalance(client.get().getAccountId()));
         return Optional.of(clientDto);
     }
+
+    @Override
+    public Optional<Client> findByProject(ProjectDto projectDto) {
+        Optional<Project> project = projectsRepository.findById(projectDto.getId());
+        if(!project.isPresent()) {
+            log.error("Project didn't found");
+            throw new IllegalArgumentException("Project didn't found");
+        }
+        return clientsRepository.findById(project.get().getAuthor().getId());
+    }
+
 
 
     @Override
