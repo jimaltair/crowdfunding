@@ -28,7 +28,7 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/bootstrap/css/font-awesome.min.css"/>
-<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.2.min.css"/>
 
 <style>
     .error {
@@ -82,7 +82,7 @@
     <!-- Links -->
     <ul class="navbar-nav mr-auto">
         <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
-        <li class="nav-item"><a class="nav-link" href="/signIn">Профиль</a></li>
+        <li class="nav-item"><a class="nav-link" href="/clients">Профиль</a></li>
         <li class="nav-item"><a class="nav-link" href="/logout">Выход</a></li>
     </ul>
 </nav>
