@@ -11,11 +11,13 @@ import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
 import ru.pcs.crowdfunding.client.dto.*;
+import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -91,6 +93,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    @Transactional
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
@@ -192,8 +195,8 @@ public class ProjectsServiceImpl implements ProjectsService {
                     .project(project)
                     .build();
         } catch (IOException e) {
-            log.error("Can't save image {}", file.getOriginalFilename());
-            throw new IllegalStateException(e);
+            log.error("Can't save image {}", file.getOriginalFilename(), e);
+            throw new ImageProcessingError();
         }
     }
 
