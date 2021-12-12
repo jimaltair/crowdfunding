@@ -49,7 +49,7 @@ public class ProjectsController {
     @GetMapping(value = "/create")
     public String getProjectCreatePage(Model model) {
         log.info("Starting 'get /projects/create'");
-        model.addAttribute("projectCreatedForm", new ProjectForm());
+        model.addAttribute("projectForm", new ProjectForm());
         return "createProject";
     }
 
@@ -59,7 +59,7 @@ public class ProjectsController {
         log.info("Starting 'post /projects/create': post 'form' - {}, 'result' - {}", form.toString(), result.toString());
         if (result.hasErrors()) {
             log.error("Can't create new project, 'result' has error(s) - {}", result.getAllErrors());
-            model.addAttribute("projectCreatedForm", form);
+            model.addAttribute("projectForm", form);
             return "createProject";
         }
 
