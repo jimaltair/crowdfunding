@@ -141,6 +141,9 @@ public class ProjectsServiceImpl implements ProjectsService {
         }
         if (form.getFinishDate() != null) {
             Instant finishDate = getInstantFromString(form.getFinishDate(), "yyyy-MM-dd");
+            if (finishDate.isBefore(Instant.now())) {
+                throw new DateMustBeFutureError();
+            }
             existedProject.setFinishDate(finishDate);
         }
         projectsRepository.save(existedProject);
