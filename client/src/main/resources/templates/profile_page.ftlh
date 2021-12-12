@@ -220,6 +220,10 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Фото профиля:</label>
                                         <input type="file" name="file">
+                                        <#if imageProcessingError??>
+                                            <br>
+                                            <span class="error">Не удалось обработать изображение</span>
+                                        </#if>
                                         <div class="form-group">
                                             <div class="col-sm-offset-2 col-sm-10">
                                                 <br>

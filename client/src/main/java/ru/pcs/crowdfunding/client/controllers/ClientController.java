@@ -16,6 +16,7 @@ import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.ClientForm;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
+import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
@@ -63,19 +64,23 @@ public class ClientController {
                          @RequestParam("file") MultipartFile file) {
         log.info("update by id = {}", id);
 
-        if (bindingResult.hasErrors()) {
-            Optional<ClientDto> client = clientsService.findById(id);
-            if (client.isPresent()) {
-                model.addAttribute("clientDto", client.get());
-                model.addAttribute("projectDtos", projectsService.getProjectsFromClient(client.get()));
+        try {
+            if (!bindingResult.hasErrors()) {
+                clientsService.updateClient(id, form, file);
+                return "redirect:/clients/" + id;
             }
-            model.addAttribute("clientForm", form);
-            return "profile_page";
+        } catch (ImageProcessingError e) {
+            log.warn("Caught ImageProcessingError exception");
+            model.addAttribute("imageProcessingError", Boolean.TRUE);
         }
 
-        clientsService.updateClient(id, form, file);
-
-        return "redirect:/clients/" + id;
+        Optional<ClientDto> client = clientsService.findById(id);
+        if (client.isPresent()) {
+            model.addAttribute("clientDto", client.get());
+            model.addAttribute("projectDtos", projectsService.getProjectsFromClient(client.get()));
+        }
+        model.addAttribute("clientForm", form);
+        return "profile_page";
     }
 
     @GetMapping("/image/{id}")
