@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
@@ -16,11 +14,9 @@ import ru.pcs.crowdfunding.client.services.ClientsService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -41,7 +37,8 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getRequestURI().equals(SecurityConfiguration.SIGN_IN_PAGE) ||
                 request.getRequestURI().equals(SecurityConfiguration.SIGN_UP_PAGE) ||
-                request.getRequestURI().equals(SecurityConfiguration.HOME_PAGE)) {
+                request.getRequestURI().equals(SecurityConfiguration.HOME_PAGE) ||
+                request.getRequestURI().equals(SecurityConfiguration.LOGOUT_FILTER_PROCESSES_URL)) {
             filterChain.doFilter(request, response);
         } else {
             Optional<String> tokenOptional = CrowdfundingUtils.getCookieValueFromRequest(request, TOKEN_COOKIE_NAME);
@@ -58,8 +55,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         objectMapper.writeValue(response.getWriter(), Collections.singletonMap("error", "user not found with token"));
                     } else {
-                        // кладём id пользователя в аттрибуты RequestContextHolder'а, чтобы он был доступен из любой точки
-                        // нашего сервиса
+
                         RequestContextHolder.getRequestAttributes().setAttribute("client_id", clientId, 1);
                         filterChain.doFilter(request, response);
                     }
@@ -72,8 +68,10 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 logger.warn("Token is missing");
+                response.sendRedirect("/signIn");
                 filterChain.doFilter(request, response);
             }
         }
     }
+
 }
