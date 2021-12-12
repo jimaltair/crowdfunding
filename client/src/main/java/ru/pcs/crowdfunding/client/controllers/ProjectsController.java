@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.pcs.crowdfunding.client.dto.ImageDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
 import ru.pcs.crowdfunding.client.dto.ProjectForm;
+import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
 import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import javax.validation.Valid;
@@ -63,13 +64,22 @@ public class ProjectsController {
             return "createProject";
         }
 
-        Optional<Long> projectId = projectsService.createProject(form, file);
-        if (!projectId.isPresent()) {
-            log.error("Unable to create project");
-            throw new IllegalStateException("Unable to create project");
+        try {
+            Optional<Long> projectId = projectsService.createProject(form, file);
+            if (!projectId.isPresent()) {
+                log.error("Unable to create project");
+                throw new IllegalStateException("Unable to create project");
+            }
+            log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
+            return "redirect:/projects/" + projectId.get();
+        } catch (ImageProcessingError e) {
+            log.info("Caught ImageProcessingError exception");
+
+            model.addAttribute("projectForm", form);
+            model.addAttribute("imageProcessingError", Boolean.TRUE);
+
+            return "createProject";
         }
-        log.info("Finishing 'post /projects/create': with 'id' - {}", projectId.get());
-        return "redirect:/projects/" + projectId.get();
     }
 
     @GetMapping("/image/{id}")
