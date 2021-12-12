@@ -42,7 +42,7 @@ public class ProjectsController {
     private final ClientsService clientsService;
 
     @GetMapping(value = "/{id}")
-    public String getById(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
+    public String getProjectPageById(@PathVariable("id") Long id, Model model) {
         log.info("Starting 'get /projects/{id}': get 'id' = {}", id);
 
         Optional<ProjectDto> project = projectsService.findById(id);
@@ -50,8 +50,9 @@ public class ProjectsController {
             log.error("Project with 'id' - {} didn't found", id);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id " + id + " not found");
         }
-        Optional<Client> client = clientsService.findByProject(project.get());
-        if (!client.isPresent()) {
+
+        Optional<Client> clientProjectAuthor = clientsService.findByProject(project.get());
+        if (!clientProjectAuthor.isPresent()) {
             log.error("Client didn't found");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client didn't found");
         }
@@ -61,22 +62,19 @@ public class ProjectsController {
         LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
         int finish = getDaysLeft(project);
 
-
-        Long tokenClientId;
-
-        try {
-            String token = getTokenFromCookie(request);
-            tokenClientId = tokenProvider.getClientIdFromToken(token);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return "newProjectCard";
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (!clientId.isPresent()) {
+            log.warn("Can't get user id from RequestContext");
+            return "createProject";
         }
+        log.info("Get clientId = {} from secutity context", clientId.get());
+        Long tokenClientId = clientId.get();
 
         log.debug("Finishing 'get /projects/{id}': result = {}", project.get());
 
         model.addAttribute("project", project.get());
-        model.addAttribute("client", client.get());
-        model.addAttribute("size", client.get().getProjects().size());
+        model.addAttribute("client", clientProjectAuthor.get());
+        model.addAttribute("size", clientProjectAuthor.get().getProjects().size());
         model.addAttribute("percent", percent);
         model.addAttribute("startDate", startDate);
         model.addAttribute("finishDate", finish);
@@ -115,11 +113,11 @@ public class ProjectsController {
         }
 
         Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
-        if (clientId.isPresent()) {
-            log.info("Getting creating project page for user with id={}", clientId);
-        } else {
+        if (!clientId.isPresent()) {
             log.warn("Can't get user id from RequestContext");
+            return "createProject";
         }
+        log.info("Get clientId = {} from secutity context", clientId.get());
         form.setClientId(clientId.get());
 
         try {

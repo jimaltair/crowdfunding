@@ -117,6 +117,31 @@ public class OperationController {
         return "redirect:/projects/" + projectId;
     }
 
+    @PostMapping("/withdraw")
+    public String createWithdrawOperation(HttpServletRequest request,
+                                         @RequestParam("project_id") Long projectId) {
+
+        log.info("post /api/operation/withdraw: post operation WITHDRAW with project_id = {}", projectId);
+
+        Long tokenClientId;
+        try {
+            String token = getTokenFromCookie(request);
+            tokenClientId = tokenProvider.getClientIdFromToken(token);
+            log.info("Found tokenClientId = {} ", tokenClientId);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return "redirect:/projects/" + projectId + "?error=" + e;
+        }
+
+        try {
+            operationService.withdrawMoneyFromProject(projectId, tokenClientId);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return "redirect:/projects/" + projectId + "?error=" + e;
+        }
+        return "redirect:/projects/" + projectId;
+    }
+
 
     //Временный метод до запуска Spring Security и получения id пользователя из контекста
     private String getTokenFromCookie(HttpServletRequest request) throws IllegalAccessException {
