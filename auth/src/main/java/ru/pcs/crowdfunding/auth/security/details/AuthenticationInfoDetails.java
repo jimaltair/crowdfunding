@@ -1,7 +1,6 @@
 package ru.pcs.crowdfunding.auth.security.details;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +8,6 @@ import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.domain.Status;
 
 import java.util.Collection;
-
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -51,4 +49,5 @@ public class AuthenticationInfoDetails implements UserDetails {
     public boolean isEnabled() {
         return info.isActive();
     }
+
 }

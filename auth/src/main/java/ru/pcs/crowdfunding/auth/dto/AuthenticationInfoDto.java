@@ -1,6 +1,9 @@
 package ru.pcs.crowdfunding.auth.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.validation.ValidPassword;
 
@@ -49,4 +52,5 @@ public class AuthenticationInfoDto {
                 .map(AuthenticationInfoDto::from)
                 .collect(Collectors.toList());
     }
+
 }

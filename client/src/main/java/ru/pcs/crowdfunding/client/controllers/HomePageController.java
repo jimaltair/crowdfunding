@@ -15,6 +15,7 @@ import java.util.List;
  * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
  */
 @Controller
+/** А почему не RestController? */
 @RequestMapping("/")
 @RequiredArgsConstructor
 @Slf4j

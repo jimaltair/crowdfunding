@@ -13,6 +13,9 @@ import ru.pcs.crowdfunding.auth.services.AuthService;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -54,9 +57,9 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
 
             ResponseDto response = ResponseDto.builder()
-                .success(false)
-                .error(Arrays.asList(e.getMessage()))
-                .build();
+                    .success(false)
+                    .error(Arrays.asList(e.getMessage()))
+                    .build();
 
             ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             return responseBody;
@@ -64,7 +67,7 @@ public class AuthController {
         ResponseDto response = ResponseDto.buildResponse(true, null, authenticationInfoDto);
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.status(HttpStatus.CREATED).body(response);
         log.info("Finishing 'post /api/auth/': 'responseBody' - 'status':{}, 'body': {} "
-            , responseBody.getStatusCode(), responseBody.getBody().getData());
+                , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
 
@@ -111,4 +114,5 @@ public class AuthController {
                 , responseBody.getStatusCode(), responseBody.getBody().getData());
         return responseBody;
     }
+
 }

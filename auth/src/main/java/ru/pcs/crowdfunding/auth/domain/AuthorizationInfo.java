@@ -2,8 +2,14 @@ package ru.pcs.crowdfunding.auth.domain;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +27,5 @@ public class AuthorizationInfo {
 
     @Column(name = "access_token", length = 4096)
     private String accessToken;
-
 
 }

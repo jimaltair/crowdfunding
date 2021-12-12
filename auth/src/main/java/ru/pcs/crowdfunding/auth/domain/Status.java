@@ -1,13 +1,12 @@
 package ru.pcs.crowdfunding.auth.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @Entity
@@ -29,4 +28,5 @@ public class Status {
         BANNED,
         DELETED
     }
+
 }

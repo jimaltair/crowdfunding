@@ -28,10 +28,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${security.jwt_ms_client_secret_key}")
     public String JWT_SECRET_KEY;
 
-
     @Autowired
     private ObjectMapper objectMapper;
-
 
     @Autowired
     private AuthenticationInfosRepository authenticationInfosRepository;
@@ -79,4 +77,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(new TokenAuthorizationFilter(objectMapper, JWT_SECRET_KEY),
                 UsernamePasswordAuthenticationFilter.class);
     }
+
 }

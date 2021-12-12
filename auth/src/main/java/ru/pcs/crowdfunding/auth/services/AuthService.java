@@ -14,4 +14,5 @@ public interface AuthService {
     Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo);
 
     Optional<AuthenticationInfoDto> deleteAuthenticationInfo(Long id);
+
 }

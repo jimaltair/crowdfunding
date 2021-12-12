@@ -8,4 +8,5 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 
     @Query(value = "select * from role where name = ?1", nativeQuery=true)
     Role getRoleByName(String name);
+
 }

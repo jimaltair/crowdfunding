@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 
+/**
+ * В качестве прям придирок: лучше располагать аннотации в порядке увеличения длинны
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -62,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .userId(client.getUserId())
                 .accessToken(generateAccessToken(client.getUserId()))
                 .build();
-        log.info("Saving 'authorizationInfo' - {} in 'authorizationInfosRepostiory'", authorizationInfo);
+        log.info("Saving 'authorizationInfo' - {} in 'authorizationInfosRepository'", authorizationInfo);
         authorizationInfosRepository.save(authorizationInfo);
 
         AuthenticationInfoDto result = AuthenticationInfoDto.from(newClientInfo);
@@ -124,4 +127,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("Result of 'generateAccessToken' - {}", result);
         return result;
     }
+
 }

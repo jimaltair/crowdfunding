@@ -20,4 +20,5 @@ public class AuthenticationInfoDetailsService implements UserDetailsService {
                 .orElseThrow(
                         () -> new UsernameNotFoundException("Was not found")));
     }
+
 }

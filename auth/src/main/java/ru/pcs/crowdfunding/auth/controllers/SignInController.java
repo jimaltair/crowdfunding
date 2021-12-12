@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
-import ru.pcs.crowdfunding.auth.dto.AuthorizationInfoDto;
 import ru.pcs.crowdfunding.auth.dto.ResponseDto;
 import ru.pcs.crowdfunding.auth.dto.SignInForm;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
@@ -14,11 +13,15 @@ import ru.pcs.crowdfunding.auth.services.AuthenticationService;
 
 import java.util.Arrays;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @RestController
 @RequestMapping("/api/signIn")
 @RequiredArgsConstructor
 @Slf4j
 public class SignInController {
+
     private final AuthenticationService authenticationService;
     private final AuthenticationInfosRepository authenticationInfosRepository;
 
@@ -47,4 +50,5 @@ public class SignInController {
         ResponseEntity<ResponseDto> responseBody = ResponseEntity.ok().body(response);
         return responseBody;
     }
+
 }

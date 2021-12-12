@@ -31,6 +31,7 @@ import java.util.Optional;
  * @RequestMapping("/clients")
  */
 @Controller
+/** А почему не RestController? */
 @RequestMapping("/clients")
 @RequiredArgsConstructor
 @Slf4j

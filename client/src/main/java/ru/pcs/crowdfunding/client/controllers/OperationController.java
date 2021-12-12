@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import ru.pcs.crowdfunding.client.domain.Client;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.pcs.crowdfunding.client.dto.ClientDto;
 import ru.pcs.crowdfunding.client.dto.OperationDto;
 import ru.pcs.crowdfunding.client.dto.ProjectDto;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
  */
 @Controller
+/** А почему не RestController? */
 @RequestMapping("/operation")
 @RequiredArgsConstructor
 @Slf4j

@@ -1,11 +1,13 @@
 package ru.pcs.crowdfunding.auth.dto;
 
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,4 +25,5 @@ public class ResponseDto {
                 .data(data)
                 .build();
     }
+
 }

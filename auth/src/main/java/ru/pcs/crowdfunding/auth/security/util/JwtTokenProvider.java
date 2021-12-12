@@ -11,6 +11,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
+/**
+ * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
+ */
 @Component
 @Slf4j
 public class JwtTokenProvider implements TokenProvider {
@@ -48,4 +51,5 @@ public class JwtTokenProvider implements TokenProvider {
         Instant expirationInstant = Instant.now().plus(lifeTime);
         return Date.from(expirationInstant);
     }
+
 }

@@ -21,6 +21,7 @@ import javax.validation.Valid;
  */
 @RequiredArgsConstructor
 @Controller
+/** А почему не RestController? */
 @Slf4j
 @RequestMapping("/signIn")
 public class SignInController {

@@ -26,6 +26,7 @@ import java.util.Optional;
  * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
  */
 @Controller
+/** А почему не RestController? */
 @RequestMapping("/projects")
 @RequiredArgsConstructor
 @Slf4j

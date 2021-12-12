@@ -8,4 +8,5 @@ public interface StatusRepository extends JpaRepository<Status, Long> {
 
     @Query(value = "select * from status where name = ?1", nativeQuery=true)
     Status getStatusByName(String name);
+
 }
