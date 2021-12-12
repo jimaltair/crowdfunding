@@ -7,7 +7,7 @@ import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 import ru.pcs.crowdfunding.auth.repositories.RolesRepository;
-import ru.pcs.crowdfunding.auth.repositories.StatusRepository;
+import ru.pcs.crowdfunding.auth.repositories.StatusesRepository;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationInfosRepository authenticationInfosRepository;
-    private final StatusRepository statusRepository;
+    private final StatusesRepository statusesRepository;
     private final RolesRepository rolesRepository;
 
     @Override
@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
                 .refreshToken("refresh")  //TODO дописать
                 .isActive(true)
                 .roles(Arrays.asList(rolesRepository.getRoleByName("USER")))
-                .status(statusRepository.getStatusByName("CONFIRMED"))
+                .status(statusesRepository.getStatusByName("CONFIRMED"))
                 .build();
             AuthenticationInfo result = authenticationInfosRepository.save(build);
             log.info("Result of 'createAuthenticationInfo' with 'authenticationInfosRepository' -  {}", result);
