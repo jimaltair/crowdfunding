@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
 
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
+
     private final ProjectsRepository projectsRepository;
 
     private final ClientsRepository clientsRepository;
@@ -104,7 +106,7 @@ public class ProjectsServiceImpl implements ProjectsService {
                 .title(form.getTitle())
                 .description(form.getDescription())
                 .createdAt(Instant.now())
-                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
+                .finishDate(getInstantFromString(form.getFinishDate(), YYYY_MM_DD))
                 .moneyGoal(new BigDecimal(form.getMoneyGoal()))
                 .status(projectStatus)
                 .build();
@@ -149,7 +151,7 @@ public class ProjectsServiceImpl implements ProjectsService {
             existedProject.setDescription(form.getDescription());
         }
         if (form.getFinishDate() != null) {
-            Instant finishDate = getInstantFromString(form.getFinishDate(), "yyyy-MM-dd");
+            Instant finishDate = getInstantFromString(form.getFinishDate(), YYYY_MM_DD);
             if (finishDate.isBefore(Instant.now())) {
                 throw new DateMustBeFutureError();
             }
