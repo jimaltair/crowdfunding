@@ -44,7 +44,7 @@ public class ClientController {
         log.info("Finishing 'get /clients/{id}': result = {}", client.get());
         model.addAttribute("clientDto", client.get());
         model.addAttribute("projectDtos", projectDtos);
-        return "profile_page";
+        return "newProfilePage";
     }
 
     @PostMapping(value = "/{id}")
