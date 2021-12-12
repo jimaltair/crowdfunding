@@ -251,46 +251,4 @@ public class ProjectsServiceImpl implements ProjectsService {
             }
         }
     }
-
-    private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
-        if (form == null || projectStatus == null) {
-            log.error("Can't create project - ProjectForm is null or ProjectStatus is null");
-            throw new IllegalArgumentException("Can't create project");
-        }
-
-        // получаем автора проекта через временный метод, пока не работает функционал,
-        // позволяющий создать проект уже зарегистрированному пользователю
-        Client userForTesting = getUserForTesting();
-        log.info("Use the test {} to create project", userForTesting.toString());
-
-        return Project.builder()
-                .author(userForTesting) // временно используем тестового пользователя в качестве автора
-                .title(form.getTitle())
-                .description(form.getDescription())
-                .createdAt(Instant.now())
-                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
-                .moneyGoal(new BigDecimal(form.getMoneyGoal()))
-                .status(projectStatus)
-                .build();
-    }
-
-    /**
-     * Временный метод, создающий пользователя в базе для последующего использования в качестве автора проекта,
-     * если в базе на данный момент пусто. В противном случае возвращает первого по порядку пользователя.
-     *
-     * @return Client - сущность, представляющую пользователя данного сервиса.
-     */
-    private Client getUserForTesting() {
-        List<Client> users = clientsRepository.findAll();
-        if (!users.isEmpty()) {
-            return users.get(0);
-        } else {
-            return clientsRepository.save(Client.builder()
-                    .firstName("Иван")
-                    .lastName("Иванов")
-                    .city("Москва")
-                    .country("Россия")
-                    .build());
-        }
-    }
 }
