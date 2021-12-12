@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<#import "spring.ftl" as spring/>
 <head>
     <meta charset="UTF-8">
     <title>Изменение данных проекта</title>
