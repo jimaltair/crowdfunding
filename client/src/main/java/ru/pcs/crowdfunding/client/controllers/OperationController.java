@@ -117,7 +117,7 @@ public class OperationController {
         return "redirect:/projects/" + projectId;
     }
 
-    @PostMapping("/withdrow")
+    @PostMapping("/withdraw")
     public String createWithdrawOperation(HttpServletRequest request,
                                          @RequestParam("project_id") Long projectId) {
 
