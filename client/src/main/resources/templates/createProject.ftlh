@@ -32,6 +32,7 @@
         <br>
         <span class="error">Дата должна быть из будущего</span>
     </#if>
+    <input id="clientId" type="hidden"  name="clientId">
     <h3>Пожалуйста, загрузите изображение для проекта:</h3>
     <input type="file" name="file">
     <#if imageProcessingError??>

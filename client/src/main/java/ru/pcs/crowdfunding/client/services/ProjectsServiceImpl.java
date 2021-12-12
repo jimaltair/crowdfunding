@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
@@ -18,7 +19,6 @@ import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectsRepository;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -98,7 +98,16 @@ public class ProjectsServiceImpl implements ProjectsService {
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
-        Project project = getProject(form, projectStatus);
+
+        Project project = Project.builder()
+                .author(clientsRepository.getById(form.getClientId()))
+                .title(form.getTitle())
+                .description(form.getDescription())
+                .createdAt(Instant.now())
+                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
+                .moneyGoal(new BigDecimal(form.getMoneyGoal()))
+                .status(projectStatus)
+                .build();
         if (project.getFinishDate().isBefore(Instant.now())) {
             throw new DateMustBeFutureError();
         }
@@ -216,6 +225,17 @@ public class ProjectsServiceImpl implements ProjectsService {
 
         return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(
                 statusConfirmed));
+    }
+
+    @Override
+    public Long getAccountIdByProjectId(Long projectId) throws IllegalAccessException {
+        Long accountId;
+        Optional<ProjectDto> optionalProject = findById(projectId);
+        if(!optionalProject.isPresent()) {
+            throw new IllegalAccessException("Client not found");
+        }
+        accountId = optionalProject.get().getAccountId();
+        return accountId;
     }
 
     /**
