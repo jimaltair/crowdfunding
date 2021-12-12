@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>profile page</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/bootstrap/css/font-awesome.min.css"/>
@@ -181,29 +186,29 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Имя</label>
                                         <div class="col-sm-10">
-                                            <input name="firstName" type="text" class="form-control"
-                                                   value="${clientDto.firstName}"/>
+                                            <@spring.formInput 'clientForm.firstName' 'id="firstName" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Фамилия</label>
                                         <div class="col-sm-10">
-                                            <input name="lastName" type="text" class="form-control"
-                                                   value="${clientDto.lastName}"/>
+                                            <@spring.formInput 'clientForm.lastName' 'id="lastName" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Страна</label>
                                         <div class="col-sm-10">
-                                            <input name="country" type="text" class="form-control"
-                                                   value="${clientDto.country}"/>
+                                            <@spring.formInput 'clientForm.country' 'id="country" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Город</label>
                                         <div class="col-sm-10">
-                                            <input name="city" type="text" class="form-control"
-                                                   value="${clientDto.city}"/>
+                                            <@spring.formInput 'clientForm.city' 'id="city" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">

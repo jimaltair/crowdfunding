@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -44,17 +45,35 @@ public class ClientController {
         log.info("Finishing 'get /clients/{id}': result = {}", client.get());
         model.addAttribute("clientDto", client.get());
         model.addAttribute("projectDtos", projectDtos);
+
+        // добавляем атрибут "clientForm" с данными из "clientDto",
+        // чтобы заполнились нужные поля во вкладке обновления клиента.
+        model.addAttribute("clientForm", ClientForm.builder()
+                .firstName(client.get().getFirstName())
+                .lastName(client.get().getLastName())
+                .country(client.get().getCountry())
+                .city(client.get().getCity())
+                .build());
+
         return "profile_page";
     }
 
     @PostMapping(value = "/{id}")
-    public String update(@PathVariable Long id, @Valid ClientForm form, Model model,
+    public String update(@PathVariable Long id, @Valid ClientForm form, BindingResult bindingResult, Model model,
                          @RequestParam("file") MultipartFile file) {
         log.info("update by id = {}", id);
 
-        ClientForm newForm = clientsService.updateClient(id, form, file);
+        if (bindingResult.hasErrors()) {
+            Optional<ClientDto> client = clientsService.findById(id);
+            if (client.isPresent()) {
+                model.addAttribute("clientDto", client.get());
+                model.addAttribute("projectDtos", projectsService.getProjectsFromClient(client.get()));
+            }
+            model.addAttribute("clientForm", form);
+            return "profile_page";
+        }
 
-        model.addAttribute("clientDto", newForm);
+        clientsService.updateClient(id, form, file);
 
         return "redirect:/clients/" + id;
     }
