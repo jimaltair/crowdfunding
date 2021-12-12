@@ -113,29 +113,37 @@ public class ProjectsController {
 
     @GetMapping(value = "/update/{id}")
     public String getProjectUpdatePage(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("projectUpdatedForm", new ProjectForm());
         Optional<ProjectDto> currentProject = projectsService.findById(id);
         if(!currentProject.isPresent()){
+            model.addAttribute("projectForm", new ProjectForm());
             return "createProject";
         }
+
         ProjectDto project = currentProject.get();
         model.addAttribute("id", id);
-        model.addAttribute("project_title", project.getTitle());
-        model.addAttribute("project_description", project.getDescription());
-        model.addAttribute("project_money_goal", project.getMoneyGoal().toString());
 
-        String finishDate = project.getFinishDate().atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        ProjectForm projectForm = ProjectForm.builder()
+                .title(project.getTitle())
+                .description(project.getDescription())
+                .moneyGoal(project.getMoneyGoal().toString())
+                .finishDate(project.getFinishDate()
+                        .atOffset(ZoneOffset.UTC)
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .build();
+        model.addAttribute("projectForm", projectForm);
 
-        model.addAttribute("finish_date", finishDate);
         return "updateProject";
     }
 
     @PostMapping(value = "/update/{id}")
-    public String updateProject(@Valid ProjectForm form, @PathVariable("id") Long id, BindingResult result, Model model,
+    public String updateProject(@PathVariable("id") Long id, @Valid ProjectForm form, BindingResult result, Model model,
                                 @RequestParam("file") MultipartFile file) {
         if (result.hasErrors()) {
-            model.addAttribute("projectUpdatedForm", form);
+            model.addAttribute("id", id);
+            model.addAttribute("projectForm", form);
+            return "updateProject";
         }
+
         ProjectDto updatedProject = projectsService.updateProject(id, form, file);
 
         updatedProject.setMoneyCollected(projectsService.getMoneyCollectedByProjectId(id));
