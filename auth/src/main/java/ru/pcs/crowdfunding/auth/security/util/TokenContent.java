@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pcs.crowdfunding.auth.domain.Role;
 
 @Data
 @NoArgsConstructor
@@ -11,5 +12,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TokenContent {
     private Long userId;
-    // TODO: add roles
+    private Role role;
 }
