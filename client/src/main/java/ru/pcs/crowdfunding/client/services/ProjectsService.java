@@ -33,5 +33,3 @@ public interface ProjectsService {
 
     Long getAccountIdByProjectId(Long projectId) throws IllegalAccessException;
 }
-
-}

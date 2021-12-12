@@ -5,15 +5,12 @@ import lombok.*;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResponseDto {
 
     private boolean success = true;

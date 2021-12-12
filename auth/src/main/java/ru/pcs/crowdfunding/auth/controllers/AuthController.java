@@ -13,12 +13,9 @@ import ru.pcs.crowdfunding.auth.services.AuthService;
 import java.util.Arrays;
 import java.util.Optional;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
-@RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@RestController
 @Slf4j
 public class AuthController {
 

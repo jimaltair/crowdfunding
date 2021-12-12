@@ -13,12 +13,9 @@ import ru.pcs.crowdfunding.auth.services.AuthenticationService;
 import javax.validation.Valid;
 import java.util.Arrays;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
-@RestController
 @RequestMapping("/api/signUp")
 @RequiredArgsConstructor
+@RestController
 @Slf4j
 public class AuthenticationController {
 

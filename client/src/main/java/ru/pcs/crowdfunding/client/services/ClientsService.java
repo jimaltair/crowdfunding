@@ -21,5 +21,3 @@ public interface ClientsService {
 
     Long getAccountIdByClientId(Long clientId) throws IllegalAccessException;
 }
-
-}

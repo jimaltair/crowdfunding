@@ -11,14 +11,12 @@ import ru.pcs.crowdfunding.client.services.ProjectsService;
 
 import java.util.List;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Controller
 /** А почему не RestController? */
 @RequestMapping("/")
 @RequiredArgsConstructor
-@Slf4j
+
 public class HomePageController {
 
     private final ProjectsService projectsService;

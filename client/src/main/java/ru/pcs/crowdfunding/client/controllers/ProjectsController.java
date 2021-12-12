@@ -161,5 +161,3 @@ public class ProjectsController {
         throw new IllegalAccessException("Not enough rights for this operation");
     }
 }
-
-}

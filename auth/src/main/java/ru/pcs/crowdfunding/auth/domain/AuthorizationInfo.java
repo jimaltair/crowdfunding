@@ -7,17 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Entity
 @Getter
 @Setter
+@Builder
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString()
-@EqualsAndHashCode()
-@Entity
 @Table(name = "authorization_info")
 public class AuthorizationInfo {
 

@@ -5,17 +5,14 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Getter
 @Setter
+@Entity
+@Builder
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString()
-@EqualsAndHashCode()
-@Entity
 @Table(name = "authentication_info")
 public class AuthenticationInfo {
     @Id

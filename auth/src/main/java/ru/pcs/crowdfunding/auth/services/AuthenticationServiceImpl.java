@@ -24,12 +24,9 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 
-/**
- * В качестве прям придирок: лучше располагать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final static Duration DEFAULT_TOKEN_DURATION = Duration.ofDays(30);

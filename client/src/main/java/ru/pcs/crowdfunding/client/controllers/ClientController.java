@@ -22,19 +22,12 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны, например
- *
- * @Slf4j
- * @Controller
- * @RequiredArgsConstructor
- * @RequestMapping("/clients")
- */
+@Slf4j
 @Controller
+@RequiredArgsConstructor
 /** А почему не RestController? */
 @RequestMapping("/clients")
-@RequiredArgsConstructor
-@Slf4j
+
 public class ClientController {
 
     private final ClientsService clientsService;
@@ -47,7 +40,7 @@ public class ClientController {
         Optional<ClientDto> client = clientsService.findById(id);
         if (!client.isPresent()) {
             log.error("Client with 'id' - {} didn't found", id);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client with id " + id + " not found"); /** Есть предположение что использовать канкатенацию плохой подход, лучше как минимум String.format() */
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Client with id  {0}  not found", id));
         }
         List<ProjectDto> projectDtos = projectsService.getProjectsFromClient(client.get());
         log.info("Finishing 'get /clients/{id}': result = {}", client.get());

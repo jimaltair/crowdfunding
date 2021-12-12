@@ -4,15 +4,12 @@ import lombok.*;
 
 import javax.persistence.*;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Table(name = "status")
 public class Status {
     @Id

@@ -11,11 +11,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
-@Component
 @Slf4j
+@Component
 public class JwtTokenProvider implements TokenProvider {
 
     @Value("${security.jwt_secret_key}")

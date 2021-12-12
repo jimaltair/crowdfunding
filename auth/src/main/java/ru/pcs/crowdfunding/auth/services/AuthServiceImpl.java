@@ -3,6 +3,7 @@ package ru.pcs.crowdfunding.auth.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
 import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
 import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
@@ -12,12 +13,9 @@ import ru.pcs.crowdfunding.auth.repositories.StatusRepository;
 import java.util.Arrays;
 import java.util.Optional;
 
-/**
- * В качестве прям придирок: лучше располагать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationInfosRepository authenticationInfosRepository;
@@ -36,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
      * Возможно тут имеет смысл использовать @Retryable и @Transactional
      */
     @Override
+    @Transactional
     public Optional<AuthenticationInfo> createAuthenticationInfo(AuthenticationInfoDto authenticationInfo) {
 
         Optional<AuthenticationInfo> authInfo = authenticationInfosRepository.findByEmail(authenticationInfo.getEmail());
@@ -61,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
 
     /** Возможно тут имеет смысл использовать @Retryable и @Transactional*/
     @Override
+    @Transactional
     public Optional<AuthenticationInfoDto> updateAuthenticationInfo(Long id, AuthenticationInfoDto authenticationInfo) {
         Optional<AuthenticationInfoDto> result = Optional.of(AuthenticationInfoDto.builder().build());
         log.info("Result of 'updateAuthenticationInfo' - {}", result);
@@ -69,6 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
     /** Возможно тут имеет смысл использовать @Retryable и @Transactional*/
     @Override
+    @Transactional
     public Optional<AuthenticationInfoDto> deleteAuthenticationInfo(Long id) {
 
         Optional<AuthenticationInfo> aut = authenticationInfosRepository.findById(id);
