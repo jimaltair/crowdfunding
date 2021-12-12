@@ -28,6 +28,10 @@
     <label for="finishDate">Новая дата завершения проекта:</label>
     <@spring.formInput 'projectForm.finishDate' 'id="finishDate"' 'date'/>
     <@spring.showErrors '<br>' 'error' />
+    <#if dateMustBeFutureError??>
+        <br>
+        <span class="error">Дата должна быть из будущего</span>
+    </#if>
     <h3>Пожалуйста, загрузите изображение для проекта:</h3>
     <input type="file" name="file">
     <#if imageProcessingError??>
