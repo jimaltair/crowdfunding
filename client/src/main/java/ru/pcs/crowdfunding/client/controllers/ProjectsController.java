@@ -61,14 +61,11 @@ public class ProjectsController {
         LocalDate startDate = project.get().getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
         int finish = getDaysLeft(project);
 
-
-        Long tokenClientId;
-
-        try {
-            String token = getTokenFromCookie(request);
-            tokenClientId = tokenProvider.getClientIdFromToken(token);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        Optional<Long> clientId = CrowdfundingUtils.getClientIdFromRequestContext();
+        if (clientId.isPresent()) {
+            log.info("Getting creating project page for user with id={}", clientId);
+        } else {
+            log.warn("Can't get user id from RequestContext");
             return "newProjectCard";
         }
 
@@ -80,7 +77,7 @@ public class ProjectsController {
         model.addAttribute("percent", percent);
         model.addAttribute("startDate", startDate);
         model.addAttribute("finishDate", finish);
-        model.addAttribute("userId", tokenClientId);
+        model.addAttribute("userId", clientId.get());
         return "newProjectCard";
     }
 
