@@ -28,7 +28,7 @@ public class SignUpController {
     public String getSignUpPage(Model model) {
         log.info("Starting 'get /signUp'");
         model.addAttribute("signUpForm", new SignUpForm());
-        return "signUp";
+        return "newSignUp";
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -39,7 +39,7 @@ public class SignUpController {
         if (bindingResult.hasErrors()) {
             log.error("Can't create new account, 'bindingResult' has error(s) - {}", bindingResult.getAllErrors());
             model.addAttribute("signUpForm", form);
-            return "signUp";
+            return "newSignUp";
         }
 
         try {
@@ -55,7 +55,7 @@ public class SignUpController {
             model.addAttribute("signUpForm", form);
             model.addAttribute("emailAlreadyExists", Boolean.TRUE);
 
-            return "signUp";
+            return "newSignUp";
         }
     }
 }
