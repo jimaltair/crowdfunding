@@ -7,13 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class CreateAccountResponse {
 
     private Long id;

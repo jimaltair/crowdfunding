@@ -9,13 +9,10 @@ import ru.pcs.crowdfunding.client.domain.ClientImage;
 
 import java.math.BigDecimal;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ClientForm {
 
     private String firstName;

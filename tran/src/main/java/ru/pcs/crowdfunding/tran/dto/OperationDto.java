@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
  * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OperationDto {
 
     private Long id;

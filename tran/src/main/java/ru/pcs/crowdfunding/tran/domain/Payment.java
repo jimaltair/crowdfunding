@@ -6,17 +6,14 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Entity
 @Getter
 @Setter
+@Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString()
 @EqualsAndHashCode()
-@Entity
 @Table(name = "payment")
 public class Payment {
 

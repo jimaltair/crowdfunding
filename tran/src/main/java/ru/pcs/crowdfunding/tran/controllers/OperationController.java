@@ -12,10 +12,10 @@ import ru.pcs.crowdfunding.tran.services.OperationService;
 import java.util.Arrays;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/operation")
-@RequiredArgsConstructor
 @Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/operation")
 public class OperationController {
 
     private final OperationService operationService;

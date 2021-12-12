@@ -20,9 +20,9 @@ import java.util.Optional;
 
 import static ru.pcs.crowdfunding.tran.dto.OperationDto.from;
 
-@RequiredArgsConstructor
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class OperationServiceImpl implements OperationService {
 
     private final PaymentsRepository paymentsRepository;

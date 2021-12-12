@@ -9,11 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
-@Component
 @Slf4j
+@Component
 public class JwtTokenProvider {
 
     @Value("${security.jwt_secret_key}")

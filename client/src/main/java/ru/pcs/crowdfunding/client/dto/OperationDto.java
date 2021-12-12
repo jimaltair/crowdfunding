@@ -8,13 +8,10 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class OperationDto {
 
     public enum Type {

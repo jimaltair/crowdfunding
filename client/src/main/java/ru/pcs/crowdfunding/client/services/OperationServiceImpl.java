@@ -6,12 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.dto.OperationDto;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class OperationServiceImpl implements OperationService {
 
     private final TransactionServiceClient transactionServiceClient;

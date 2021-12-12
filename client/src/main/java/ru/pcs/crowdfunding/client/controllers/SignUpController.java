@@ -16,14 +16,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
-@RequiredArgsConstructor
+@Slf4j
 @Controller
+@RequiredArgsConstructor
 /** А почему не RestController? */
 @RequestMapping("/signUp")
-@Slf4j
 public class SignUpController {
 
     public static final String TOKEN_COOKIE_NAME = "accessToken";

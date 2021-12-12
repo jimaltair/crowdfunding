@@ -6,18 +6,15 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Table(name = "account")
 @ToString(exclude = {"payments"})
 @EqualsAndHashCode(exclude = {"payments"})
-@Entity
-@Table(name = "account")
 public class Account {
 
     @Id

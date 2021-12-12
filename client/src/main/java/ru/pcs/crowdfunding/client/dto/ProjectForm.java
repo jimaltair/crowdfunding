@@ -12,20 +12,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
-/**
- * 28.11.2021
- * Crowdfunding
- *
- * @author Nikolay Ponomarev
- * @version 1.0
- */
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ProjectForm {
 
     @NotBlank

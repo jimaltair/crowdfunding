@@ -8,13 +8,10 @@ import ru.pcs.crowdfunding.client.domain.Project;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString(exclude = {"image", "projects"})
 @EqualsAndHashCode(exclude = {"image", "projects"})
 public class ClientDto {

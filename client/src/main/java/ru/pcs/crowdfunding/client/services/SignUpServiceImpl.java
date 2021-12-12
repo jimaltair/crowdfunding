@@ -14,12 +14,9 @@ import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 
 import javax.transaction.Transactional;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class SignUpServiceImpl implements SignUpService {
 
     private final ClientsRepository clientsRepository;

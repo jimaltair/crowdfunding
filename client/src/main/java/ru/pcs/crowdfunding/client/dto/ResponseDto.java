@@ -9,13 +9,10 @@ import lombok.NoArgsConstructor;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ResponseDto {
 
     private boolean success = true;

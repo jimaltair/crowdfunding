@@ -16,13 +16,10 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Optional;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @RestController
 @RequestMapping("/api/account")
 @RequiredArgsConstructor
-@Slf4j
 public class AccountController {
 
     private final AccountService accountService;

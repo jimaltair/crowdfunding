@@ -20,12 +20,9 @@ import java.util.Optional;
 
 import static ru.pcs.crowdfunding.client.dto.ClientDto.from;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ClientsServiceImpl implements ClientsService {
 
     private final ClientsRepository clientsRepository;

@@ -16,13 +16,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
-@RequiredArgsConstructor
-@Controller
-/** А почему не RestController? */
 @Slf4j
+@Controller
+@RequiredArgsConstructor
+/** А почему не RestController? */
 @RequestMapping("/signIn")
 public class SignInController {
 

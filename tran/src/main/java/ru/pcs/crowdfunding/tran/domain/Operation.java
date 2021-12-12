@@ -7,18 +7,15 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Table(name = "operation")
 @ToString(exclude = {"payments"})
 @EqualsAndHashCode(exclude = {"payments"})
-@Entity
-@Table(name = "operation")
 public class Operation {
 
     @Id

@@ -2,14 +2,11 @@ package ru.pcs.crowdfunding.client.dto;
 
 import lombok.*;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class GetAuthInfoResponseDto {
 
     private Long userId;

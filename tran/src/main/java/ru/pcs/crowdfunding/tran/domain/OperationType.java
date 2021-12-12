@@ -4,17 +4,14 @@ import lombok.*;
 
 import javax.persistence.*;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Entity
 @Getter
 @Setter
+@Builder
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString()
-@EqualsAndHashCode()
-@Entity
 @Table(name = "operation_type")
 public class OperationType {
 

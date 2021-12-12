@@ -32,12 +32,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * В качестве прям придирок: лучше распологать аннотации в порядке увеличения длинны
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
 
     private final ProjectsRepository projectsRepository;
