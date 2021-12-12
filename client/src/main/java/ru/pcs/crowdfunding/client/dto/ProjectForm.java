@@ -33,7 +33,7 @@ public class ProjectForm {
     private String finishDate;
 
     @NotNull
-    @PositiveOrZero
+    @Positive
     private BigDecimal moneyGoal;
 
     private ProjectImage image;
