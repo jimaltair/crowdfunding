@@ -19,6 +19,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static final String HOME_PAGE = "/";
     public static final String CLIENT_PAGE = "/clients/**";
     public static final String LOGOUT_FILTER_PROCESSES_URL = "/logout";
+
+    public static final String PROJECT_IMAGE_URL = "/projects/image/{id}";
+    public static final String CLIENT_IMAGE_URL = "/clients/image/{id}";
+
+    public static final String CSS_URL = "/**/*.css";
+    public static final String JS_URL = "/**/*.js";
+    public static final String ICO_URL = "/**/*.ico";
+    public static final String JPG_URL = "/**/*.jpg";
+    public static final String PNG_URL = "/**/*.png";
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -40,6 +50,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(SIGN_IN_PAGE, SIGN_UP_PAGE, HOME_PAGE).permitAll()
+                .antMatchers(PROJECT_IMAGE_URL, CLIENT_IMAGE_URL).permitAll()
+                .antMatchers(CSS_URL, JS_URL, ICO_URL, JPG_URL, PNG_URL).permitAll()
                 .and()
                 .logout()
                 .logoutUrl(LOGOUT_FILTER_PROCESSES_URL)
