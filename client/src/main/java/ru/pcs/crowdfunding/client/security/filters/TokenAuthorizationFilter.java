@@ -69,7 +69,6 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
             } else {
                 logger.warn("Token is missing");
                 response.sendRedirect("/signIn");
-                filterChain.doFilter(request, response);
             }
         }
     }

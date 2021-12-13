@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.pcs.crowdfunding.client.security.filters.TokenAuthorizationFilter;
-import ru.pcs.crowdfunding.client.security.filters.TokenLogoutFilter;
 import ru.pcs.crowdfunding.client.services.ClientsService;
 
 @EnableWebSecurity
@@ -36,7 +35,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.addFilterBefore(tokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new TokenLogoutFilter(), TokenAuthorizationFilter.class);
 
         http.authorizeRequests()
                 .antMatchers(SIGN_IN_PAGE, SIGN_UP_PAGE, HOME_PAGE).permitAll()
