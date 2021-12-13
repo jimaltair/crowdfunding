@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.pcs.crowdfunding.client.security.CrowdfundingUtils;
@@ -27,6 +29,22 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
     private static final String TOKEN_COOKIE_NAME = "accessToken";
 
+    private static final RequestMatcher PROJECT_IMAGE_REQUEST_MATCHER =
+            new AntPathRequestMatcher(SecurityConfiguration.PROJECT_IMAGE_URL, "GET");
+    private static final RequestMatcher CLIENT_IMAGE_REQUEST_MATCHER =
+            new AntPathRequestMatcher(SecurityConfiguration.CLIENT_IMAGE_URL, "GET");
+
+    private static final RequestMatcher CSS_REQUEST_MATCHER =
+            new AntPathRequestMatcher(SecurityConfiguration.CSS_URL, "GET");
+    private static final RequestMatcher JS_MATCHER =
+            new AntPathRequestMatcher(SecurityConfiguration.JS_URL, "GET");
+    private static final RequestMatcher ICO_MATCHER =
+            new AntPathRequestMatcher(SecurityConfiguration.ICO_URL, "GET");
+    private static final RequestMatcher JPG_MATCHER =
+            new AntPathRequestMatcher(SecurityConfiguration.JPG_URL, "GET");
+    private static final RequestMatcher PNG_MATCHER =
+            new AntPathRequestMatcher(SecurityConfiguration.PNG_URL, "GET");
+
     private final JwtTokenProvider tokenProvider;
 
     private final ObjectMapper objectMapper;
@@ -38,7 +56,9 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
         if (request.getRequestURI().equals(SecurityConfiguration.SIGN_IN_PAGE) ||
                 request.getRequestURI().equals(SecurityConfiguration.SIGN_UP_PAGE) ||
                 request.getRequestURI().equals(SecurityConfiguration.HOME_PAGE) ||
-                request.getRequestURI().equals(SecurityConfiguration.LOGOUT_FILTER_PROCESSES_URL)) {
+                request.getRequestURI().equals(SecurityConfiguration.LOGOUT_FILTER_PROCESSES_URL) ||
+                isProjectOrClientImage(request) ||
+                isStaticContent(request)) {
             filterChain.doFilter(request, response);
         } else {
             Optional<String> tokenOptional = CrowdfundingUtils.getCookieValueFromRequest(request, TOKEN_COOKIE_NAME);
@@ -74,4 +94,13 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
+    private boolean isProjectOrClientImage(HttpServletRequest request) {
+        return PROJECT_IMAGE_REQUEST_MATCHER.matches(request) ||
+                CLIENT_IMAGE_REQUEST_MATCHER.matches(request);
+    }
+
+    private boolean isStaticContent(HttpServletRequest request) {
+        return CSS_REQUEST_MATCHER.matches(request) || JS_MATCHER.matches(request) ||
+                ICO_MATCHER.matches(request) || JPG_MATCHER.matches(request) || PNG_MATCHER.matches(request);
+    }
 }
