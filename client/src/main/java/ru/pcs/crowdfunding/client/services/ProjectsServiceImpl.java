@@ -234,8 +234,10 @@ public class ProjectsServiceImpl implements ProjectsService {
         ProjectStatus statusConfirmed = projectStatusesRepository
                 .getByStatus(ProjectStatus.Status.CONFIRMED);
 
-        return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(
-                statusConfirmed));
+        List<Project> projects = projectsRepository.findProjectsByStatusEquals(
+                statusConfirmed);
+
+       return projects.stream().map(project -> findById(project.getId()).get()).collect(Collectors.toList());
     }
 
     @Override
