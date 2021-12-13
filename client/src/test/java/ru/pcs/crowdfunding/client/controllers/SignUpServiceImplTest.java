@@ -1,8 +1,11 @@
 package ru.pcs.crowdfunding.client.controllers;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.pcs.crowdfunding.client.api.AuthorizationServiceClient;
@@ -21,6 +24,8 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 class SignUpServiceImplTest {
 
     static final Long TEST_CLIENT_ID = 10L;
@@ -116,6 +121,11 @@ class SignUpServiceImplTest {
                         .isActive(true)
                         .build());
 
+    }
+
+    @AfterEach
+    public void tearDown() {
+        clientsRepository.deleteAll();
     }
 
     @Test

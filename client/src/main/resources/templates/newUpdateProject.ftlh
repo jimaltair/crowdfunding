@@ -102,7 +102,7 @@
             <@spring.formInput 'projectForm.description' 'id="description"'/>
             <br>
             <@spring.showErrors '<br>' 'error' />
-            <@spring.formInput 'projectForm.moneyGoal' 'id="moneyGoal"'/>
+            <@spring.formHiddenInput 'projectForm.moneyGoal'  'id="moneyGoal" '/>
             <br>
             <@spring.showErrors '<br>' 'error' />
             <@spring.formInput 'projectForm.finishDate' 'id="finishDate"' 'date'/>
