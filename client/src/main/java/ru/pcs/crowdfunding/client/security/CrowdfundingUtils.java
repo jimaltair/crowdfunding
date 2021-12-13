@@ -22,6 +22,10 @@ public class CrowdfundingUtils {
     }
 
     public static Optional<String> getCookieValueFromRequest(HttpServletRequest request, String cookieName) {
+        if (request.getCookies() == null) {
+            return Optional.empty();
+        }
+
         return Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals(cookieName))
                 .findFirst()
