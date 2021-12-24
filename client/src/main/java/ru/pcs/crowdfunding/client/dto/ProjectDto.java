@@ -33,6 +33,8 @@ public class ProjectDto {
     private List<Long> imagesIds;
 
     private String status;
+    private Long accountId;
+    private Long clientId;
 
     public static ProjectDto from(Project project) {
         return ProjectDto.builder()
@@ -44,6 +46,8 @@ public class ProjectDto {
                 .finishDate(project.getFinishDate())
                 .moneyGoal(project.getMoneyGoal())
                 .status(project.getStatus().getStatus().toString())
+                .accountId(project.getAccountId())
+                .clientId(project.getAuthor().getId())
                 .build();
     }
 

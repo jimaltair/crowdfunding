@@ -1,5 +1,6 @@
 package ru.pcs.crowdfunding.auth.controllers;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -7,67 +8,55 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.pcs.crowdfunding.auth.dto.AuthenticationInfoDto;
-import ru.pcs.crowdfunding.auth.services.AuthService;
+import ru.pcs.crowdfunding.auth.domain.AuthenticationInfo;
+import ru.pcs.crowdfunding.auth.repositories.AuthenticationInfosRepository;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@AutoConfigureWebTestClient
+@AutoConfigureTestDatabase
+@TestPropertySource(properties = {"spring.sql.init.mode=never"})
 @DisplayName("AuthController")
 class AuthControllerMockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private AuthService authService;
+    @Autowired
+    private AuthenticationInfosRepository authenticationInfosRepository;
 
     private String techAuthToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6Ik1TX0NMSUVOVCIsInN0YXR1cyI6IkFDVElWRSIsImV4cCI6MjIxNjIzOTAyMn0.Aj-UHmdBosUrf12BrXqn3dsGtXwn0QgBF-q6KP-LvpI";
     private String otherTechAuthToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNjQxNTc5Nzc2fQ.zaAgZjCMUEzML_W-px8al2DQsSOIqemMxDjoRHlQ7MQ";
 
     @BeforeEach
     void setUp() {
+        authenticationInfosRepository.save(AuthenticationInfo.builder()
+            .userId(1L)
+            .email("email@email.com")
+            .password("111!")
+            .refreshToken("refresh_test_token")
+            .isActive(true)
+            .build());
+    }
 
-        //region GET
-        when(authService.findById(1L)).thenReturn(
-            Optional.of(AuthenticationInfoDto.builder()
-                .userId(1L)
-                .email("email@email.com")
-                .password("111!")
-                .refreshToken("refresh_test_token")
-                .isActive(true)
-                .build())
-        );
-        when(authService.findById(100L)).thenReturn(Optional.empty());
-        //endregion
-
-        //region DELETE
-        when(authService.deleteAuthenticationInfo(1L)).thenReturn(
-            Optional.of(AuthenticationInfoDto.builder()
-                .userId(1L)
-                .email("email@email.com")
-                .password("111!")
-                .refreshToken("refresh_test_token")
-                .isActive(false)
-                .build())
-        );
-
-        when(authService.deleteAuthenticationInfo(3L)).thenReturn(Optional.empty());
-        //endregion
+    @AfterEach
+    public void tearDown() {
+        authenticationInfosRepository.deleteAll();
     }
 
     @Nested

@@ -42,6 +42,6 @@ public class HomePageController {
         model.addAttribute("ProjectsUri", uriProjects);
         model.addAttribute("Logout", uriLogout);
 
-        return "homePage";
+        return "newHomePage";
     }
 }

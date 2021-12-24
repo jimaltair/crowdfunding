@@ -59,7 +59,7 @@ public class AccountController {
                                                       @RequestParam("date")
                                                       Long epochSecondTimeStamp) {
 
-        Instant balanceDateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
+        Instant balanceDateTime = Instant.now();
         log.info("get /api/account/{id}/balance: id = {}, date = {}", id, balanceDateTime);
 
         ResponseDto response;
@@ -108,7 +108,7 @@ public class AccountController {
     @GetMapping(value = "/{id}/contributorsCount")
     public ResponseEntity<ResponseDto> getContributorsCount(@PathVariable("id") Long id,
                                                             @RequestParam("date") Long epochSecondTimeStamp) {
-        Instant dateTime = Instant.ofEpochSecond(epochSecondTimeStamp);
+        Instant dateTime = Instant.now();
 
         HttpStatus httpStatus;
         ResponseDto responseDto;

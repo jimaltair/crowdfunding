@@ -3,14 +3,27 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>profile page</title>
+    <title>Профиль</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/bootstrap/css/font-awesome.min.css"/>
-<script src="/bootstrap/js/jquery-1.11.3.min.js"></script>
-<script src="/bootstrap/js/bootstrap.min.js"></script>
-
-<br><br><br>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
 <style>
     body {
@@ -56,7 +69,17 @@
     }
 </style>
 
-<div class="container">
+<!-- Navigation bar -->
+<nav class="navbar navbar-dark bg-dark navbar-static-top navbar-expand-sm">
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+        <li class="nav-item"><a class="nav-link" href="/clients">Профиль</a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">Выход</a></li>
+    </ul>
+</nav>
+
+<div class="wrapper fadeInDown">
     <div id="main">
         <div class="row" id="real-estates-detail">
             <div class="col-lg-4 col-md-4 col-xs-12">
@@ -74,13 +97,6 @@
                                 <img src="/clients/image/${clientDto.image.id}" width="200" height="200"/>
                             </#if>
                             <h3>${clientDto.firstName} ${clientDto.lastName}</h3>
-                            <p></p>
-                            <p class="sosmed-author">
-                                <a href="#"><i class="fa fa-facebook" title="Facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter" title="Twitter"></i></a>
-                                <a href="#"><i class="fa fa-google-plus" title="Google Plus"></i></a>
-                                <a href="#"><i class="fa fa-linkedin" title="Linkedin"></i></a>
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -89,16 +105,15 @@
                 <div class="panel">
                     <div class="panel-body">
                         <ul id="myTab" class="nav nav-pills">
-                            <li class="active"><a href="#detail" data-toggle="tab">О пользователе</a></li>
+                            <li class=""><a href="#detail" data-toggle="tab">О пользователе</a></li>
                             <li class=""><a href="#own_projects" data-toggle="tab">Свои проекты</a></li>
-                            <li class=""><a href="#sponsored_projects" data-toggle="tab">Поддержанные проекты</a></li>
                             <li class=""><a href="#account" data-toggle="tab">Кошелёк</a></li>
                             <li class=""><a href="#change_profile" data-toggle="tab">Изменить данные</a></li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
                             <hr>
                             <div class="tab-pane fade active in" id="detail">
-                                <h4>Данные профиля</h4>
+                                <h4>Данные профиля:</h4>
                                 <table class="table table-th-block">
                                     <tbody>
                                     <tr>
@@ -130,13 +145,30 @@
                             </div>
                             <#----------------------------------->
                             <div class="tab-pane fade" id="own_projects">
-                                <h4>Типа свои проекты </h4>
+                                <button type="button" onclick="location.href='/projects/create'" class="btn btn-success">
+                                    Создать новый проект
+                                </button>
+                                <h4>Данные по своим проектам: </h4>
                                 <table class="table table-th-block">
                                     <tbody>
+                                    <tr>
+                                        <td>Название</td>
+                                        <td>Цель</td>
+                                        <td>Собрано</td>
+                                        <td>Количество участников</td>
+                                        <td>Статус проекта</td>
+                                    </tr>
+                                    <#list projectDtos as project>
+                                        <tr>
+                                            <td> <a href="../projects/${project.id}">${project.title}</a></td>
+                                            <td>${project.moneyGoal}</td>
+                                            <td>${project.moneyCollected}</td>
+                                            <td>${project.contributorsCount}</td>
+                                            <td>${project.status}</td>
+                                        </tr>
+                                    </#list>
+                                    </tbody>
                                 </table>
-                            </div>
-                            <div class="tab-pane fade" id="sponsored_projects">
-                                <h4>Поддержанные проекты</h4>
                             </div>
                             <div class="tab-pane fade" id="account">
                                 <table class="table table-bordered">
@@ -150,7 +182,6 @@
                                 <form role="form" class="form-inline" action="/operation/top_up" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <input name="client_id" type="hidden" class="form-control" value="${clientDto.id}"/>
-                                        <input name="account_id" type="hidden" class="form-control" value="${clientDto.accountId}"/>
                                         <label class="control-label col-sm-4">Пополнить баланс</label>
                                         <input name="sum" type="text" class="form-control" placeholder="введите сумму"/>
                                     </div>
@@ -165,29 +196,29 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Имя</label>
                                         <div class="col-sm-10">
-                                            <input name="firstName" type="text" class="form-control"
-                                                   value="${clientDto.firstName}"/>
+                                            <@spring.formInput 'clientForm.firstName' 'id="firstName" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Фамилия</label>
                                         <div class="col-sm-10">
-                                            <input name="lastName" type="text" class="form-control"
-                                                   value="${clientDto.lastName}"/>
+                                            <@spring.formInput 'clientForm.lastName' 'id="lastName" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Страна</label>
                                         <div class="col-sm-10">
-                                            <input name="country" type="text" class="form-control"
-                                                   value="${clientDto.country}"/>
+                                            <@spring.formInput 'clientForm.country' 'id="country" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Город</label>
                                         <div class="col-sm-10">
-                                            <input name="city" type="text" class="form-control"
-                                                   value="${clientDto.city}"/>
+                                            <@spring.formInput 'clientForm.city' 'id="city" class="form-control"'/>
+                                            <@spring.showErrors '<br>' 'error' />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -199,6 +230,10 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-2">Фото профиля:</label>
                                         <input type="file" name="file">
+                                        <#if imageProcessingError??>
+                                            <br>
+                                            <span class="error">Не удалось обработать изображение</span>
+                                        </#if>
                                         <div class="form-group">
                                             <div class="col-sm-offset-2 col-sm-10">
                                                 <br>
@@ -218,4 +253,13 @@
 
 </div><!-- /.main -->
 </div><!-- /.container -->
+<body>
+<script>
+    $(document).ready(function(){
+        <#if isUpdating??>
+            $('.nav-pills a[href="#change_profile"]').tab('show');
+        </#if>
+    });
+</script>
+</body>
 </html>

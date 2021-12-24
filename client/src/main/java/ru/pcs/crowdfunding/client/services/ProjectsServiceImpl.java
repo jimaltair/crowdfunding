@@ -4,16 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pcs.crowdfunding.client.api.TransactionServiceClient;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.Project;
 import ru.pcs.crowdfunding.client.domain.ProjectImage;
 import ru.pcs.crowdfunding.client.domain.ProjectStatus;
-import ru.pcs.crowdfunding.client.dto.CreateAccountResponse;
-import ru.pcs.crowdfunding.client.dto.ProjectDto;
-import ru.pcs.crowdfunding.client.dto.ProjectForm;
-import ru.pcs.crowdfunding.client.dto.ImageDto;
+import ru.pcs.crowdfunding.client.dto.*;
+import ru.pcs.crowdfunding.client.exceptions.ImageProcessingError;
+import ru.pcs.crowdfunding.client.exceptions.DateMustBeFutureError;
 import ru.pcs.crowdfunding.client.repositories.ClientsRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectImagesRepository;
 import ru.pcs.crowdfunding.client.repositories.ProjectStatusesRepository;
@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectsServiceImpl implements ProjectsService {
 
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
+
     private final ProjectsRepository projectsRepository;
 
     private final ClientsRepository clientsRepository;
@@ -55,6 +57,19 @@ public class ProjectsServiceImpl implements ProjectsService {
     public Long getContributorsCountByProjectId(Long projectId) {
         Project project = projectsRepository.getProjectById(projectId).get();
         return transactionServiceClient.getContributorsCount(project.getAccountId());
+    }
+
+    @Override
+    public List<ProjectDto> getProjectsFromClient(ClientDto clientDto) {
+        List<Project> projects = clientDto.getProjects();
+        return projects.stream().map(project -> {
+            Optional<ProjectDto> projectDto = findById(project.getId());
+            if (!projectDto.isPresent()) {
+                log.error("Project didn't found");
+                throw new IllegalArgumentException("Project didn't found");
+            }
+            return projectDto.get();
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -81,10 +96,32 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    public BigDecimal getMoneyGoal(Long projectId) {
+        Optional<ProjectDto> optionalProjectDto = findById(projectId);
+        if(!optionalProjectDto.isPresent()) {
+            return null;
+        }
+        return optionalProjectDto.get().getMoneyGoal();
+    }
+
+    @Override
+    @Transactional
     public Optional<Long> createProject(ProjectForm form, MultipartFile file) {
         log.info("Trying to create project from {}", form.toString());
         ProjectStatus projectStatus = projectStatusesRepository.getByStatus(ProjectStatus.Status.CONFIRMED);
-        Project project = getProject(form, projectStatus);
+
+        Project project = Project.builder()
+                .author(clientsRepository.getById(form.getClientId()))
+                .title(form.getTitle())
+                .description(form.getDescription())
+                .createdAt(Instant.now())
+                .finishDate(getInstantFromString(form.getFinishDate(), YYYY_MM_DD))
+                .moneyGoal(new BigDecimal(form.getMoneyGoal()))
+                .status(projectStatus)
+                .build();
+        if (project.getFinishDate().isBefore(Instant.now())) {
+            throw new DateMustBeFutureError();
+        }
 
         // создаём запрос в transaction-service на создание счёта для проекта
         log.info("Trying to create account for project");
@@ -105,6 +142,7 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
+    @Transactional
     public ProjectDto updateProject(Long id, ProjectForm form, MultipartFile file) {
         log.info("Try to update project with id={}", id);
         Optional<Project> project = projectsRepository.getProjectById(id);
@@ -122,7 +160,10 @@ public class ProjectsServiceImpl implements ProjectsService {
             existedProject.setDescription(form.getDescription());
         }
         if (form.getFinishDate() != null) {
-            Instant finishDate = getInstantFromString(form.getFinishDate(), "yyyy-MM-dd");
+            Instant finishDate = getInstantFromString(form.getFinishDate(), YYYY_MM_DD);
+            if (finishDate.isBefore(Instant.now())) {
+                throw new DateMustBeFutureError();
+            }
             existedProject.setFinishDate(finishDate);
         }
         projectsRepository.save(existedProject);
@@ -143,14 +184,25 @@ public class ProjectsServiceImpl implements ProjectsService {
     private void updateProjectImage(MultipartFile file, Project existedProject) {
         if (!file.isEmpty()) {
             log.info("Try to update project image with new image: name={} and size={}", file.getOriginalFilename(), file.getSize());
-            ProjectImage projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
+            Optional<ProjectImage> projectImage = projectImagesRepository.findProjectImageByProject(existedProject);
             try {
-                projectImage.setContent(file.getBytes());
-                projectImage.setName(file.getOriginalFilename());
+                if (!projectImage.isPresent()) {
+                    log.info("The project has no image, create new one");
+                    ProjectImage newProjectImage = ProjectImage.builder()
+                            .project(existedProject)
+                            .content(file.getBytes())
+                            .name(file.getName())
+                            .build();
+                    projectImagesRepository.save(newProjectImage);
+                } else {
+                    projectImage.get().setContent(file.getBytes());
+                    projectImage.get().setName(file.getOriginalFilename());
+                    projectImagesRepository.save(projectImage.get());
+                }
             } catch (IOException e) {
-                throw new IllegalStateException("Problem with updating project image");
+                log.info("Exception while updating image", e);
+                throw new ImageProcessingError();
             }
-            projectImagesRepository.save(projectImage);
             log.info("Project image was updated successfully");
         }
     }
@@ -172,8 +224,8 @@ public class ProjectsServiceImpl implements ProjectsService {
                     .project(project)
                     .build();
         } catch (IOException e) {
-            log.error("Can't save image {}", file.getOriginalFilename());
-            throw new IllegalStateException(e);
+            log.error("Can't save image {}", file.getOriginalFilename(), e);
+            throw new ImageProcessingError();
         }
     }
 
@@ -182,9 +234,43 @@ public class ProjectsServiceImpl implements ProjectsService {
         ProjectStatus statusConfirmed = projectStatusesRepository
                 .getByStatus(ProjectStatus.Status.CONFIRMED);
 
-        return ProjectDto.from(projectsRepository.findProjectsByStatusEquals(
-               statusConfirmed));
+        List<Project> projects = projectsRepository.findProjectsByStatusEquals(
+                statusConfirmed);
+
+       return projects.stream().map(project -> findById(project.getId()).get()).collect(Collectors.toList());
     }
+
+    @Override
+    public Long getAccountIdByProjectId(Long projectId){
+        Long accountId;
+        Optional<ProjectDto> optionalProject = findById(projectId);
+        if(!optionalProject.isPresent()) {
+            return null;
+        }
+        return optionalProject.get().getAccountId();
+    }
+
+    @Override
+    public Long getAuthorByProjectId(Long projectId){
+        Long accountId;
+        Optional<ProjectDto> optionalProject = findById(projectId);
+        if(!optionalProject.isPresent()) {
+            return null;
+        }
+        return optionalProject.get().getClientId();
+    }
+
+    @Override
+    public void setProjectStatus(Long projectId, ProjectStatus projectStatus){
+
+        Optional<Project> optionalProject = projectsRepository.getProjectById(projectId);
+
+        if(!optionalProject.isPresent()) {
+            throw new IllegalArgumentException("Project with id = " + projectId + " does not exits");
+        }
+        optionalProject.get().setStatus(projectStatus);
+    }
+
 
     /**
      * @deprecated в текущей реализации (сохранение картинки в базу) данный метод не используется
@@ -197,48 +283,6 @@ public class ProjectsServiceImpl implements ProjectsService {
                 log.error("Can't create directory {}", path, e);
                 throw new IllegalArgumentException(e);
             }
-        }
-    }
-
-    private Project getProject(ProjectForm form, ProjectStatus projectStatus) {
-        if (form == null || projectStatus == null) {
-            log.error("Can't create project - ProjectForm is null or ProjectStatus is null");
-            throw new IllegalArgumentException("Can't create project");
-        }
-
-        // получаем автора проекта через временный метод, пока не работает функционал,
-        // позволяющий создать проект уже зарегистрированному пользователю
-        Client userForTesting = getUserForTesting();
-        log.info("Use the test {} to create project", userForTesting.toString());
-
-        return Project.builder()
-                .author(userForTesting) // временно используем тестового пользователя в качестве автора
-                .title(form.getTitle())
-                .description(form.getDescription())
-                .createdAt(Instant.now())
-                .finishDate(LocalDateTime.parse(form.getFinishDate()).toInstant(ZoneOffset.UTC))
-                .moneyGoal(form.getMoneyGoal())
-                .status(projectStatus)
-                .build();
-    }
-
-    /**
-     * Временный метод, создающий пользователя в базе для последующего использования в качестве автора проекта,
-     * если в базе на данный момент пусто. В противном случае возвращает первого по порядку пользователя.
-     *
-     * @return Client - сущность, представляющую пользователя данного сервиса.
-     */
-    private Client getUserForTesting() {
-        List<Client> users = clientsRepository.findAll();
-        if (!users.isEmpty()) {
-            return users.get(0);
-        } else {
-            return clientsRepository.save(Client.builder()
-                    .firstName("Иван")
-                    .lastName("Иванов")
-                    .city("Москва")
-                    .country("Россия")
-                    .build());
         }
     }
 }

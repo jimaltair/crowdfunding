@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.pcs.crowdfunding.client.dto.SignUpForm;
+import ru.pcs.crowdfunding.client.exceptions.EmailAlreadyExistsError;
 import ru.pcs.crowdfunding.client.services.SignUpService;
 
 import javax.servlet.http.Cookie;
@@ -27,7 +28,7 @@ public class SignUpController {
     public String getSignUpPage(Model model) {
         log.info("Starting 'get /signUp'");
         model.addAttribute("signUpForm", new SignUpForm());
-        return "signUp";
+        return "newSignUp";
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -38,14 +39,23 @@ public class SignUpController {
         if (bindingResult.hasErrors()) {
             log.error("Can't create new account, 'bindingResult' has error(s) - {}", bindingResult.getAllErrors());
             model.addAttribute("signUpForm", form);
-            return "signUp";
+            return "newSignUp";
         }
 
-        form = signUpService.signUp(form);
+        try {
+            form = signUpService.signUp(form);
 
-        Cookie cookie = new Cookie(TOKEN_COOKIE_NAME, form.getAccessToken());
-        response.addCookie(cookie);
-        log.info("Finishing 'post /signUp': post 'form' - {}, 'cookie' - {}", form, cookie);
-        return "redirect:/clients/" + form.getId();
+            Cookie cookie = new Cookie(TOKEN_COOKIE_NAME, form.getAccessToken());
+            response.addCookie(cookie);
+            log.info("Finishing 'post /signUp': post 'form' - {}, 'cookie' - {}", form, cookie);
+            return "redirect:/clients/" + form.getId();
+        } catch (EmailAlreadyExistsError e) {
+            log.info("Caught EmailAlreadyExistsError exception");
+
+            model.addAttribute("signUpForm", form);
+            model.addAttribute("emailAlreadyExists", Boolean.TRUE);
+
+            return "newSignUp";
+        }
     }
 }

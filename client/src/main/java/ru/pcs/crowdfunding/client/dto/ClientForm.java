@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import ru.pcs.crowdfunding.client.domain.Client;
 import ru.pcs.crowdfunding.client.domain.ClientImage;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Data
@@ -15,12 +17,20 @@ import java.math.BigDecimal;
 @Builder
 public class ClientForm {
 
+    @Size(min = 2, max = 20)
+    @NotBlank
     private String firstName;
 
+    @Size(min = 2, max = 20)
+    @NotBlank
     private String lastName;
 
+    @Size(min = 2, max = 20)
+    @NotBlank
     private String country;
 
+    @Size(min = 2, max = 20)
+    @NotBlank
     private String city;
 
     private String email;
